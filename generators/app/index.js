@@ -53,6 +53,7 @@ module.exports = class extends Generator {
           { name: "Portal", checked: true },
           { name: "Link", checked: true },
           { name: "Markdown", checked: true },
+          { name: "MetaData", checked: true },
           { name: "ContentBlocks", checked: true }
         ],
         message: "Select the base components you would like to have?"
@@ -69,6 +70,7 @@ module.exports = class extends Generator {
     const websiteName = this.props.websiteName;
     this.destinationRoot(websiteName);
 
+    // Components
     this.props.baseComponents.map(component => {
       this.fs.copyTpl(
         `${this.templatePath()}/components/${component}/**/*`,
@@ -77,6 +79,12 @@ module.exports = class extends Generator {
       );
       return component;
     });
+    this.fs.copyTpl(
+      `${this.templatePath()}/components/index.ts`,
+      `${this.destinationPath()}/components/index.ts`,
+      this.props
+    );
+    // ---
 
     // Utils
     this.fs.copyTpl(
