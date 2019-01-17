@@ -1,0 +1,54 @@
+.LazyImg {
+  position: relative;
+  max-width: 100%;
+  display: block;
+}
+.LazyImg-in {
+  position: relative;
+  display: block;
+}
+
+.LazyImg-bg {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+.LazyImg-el {
+  opacity: 1;
+  transition: opacity 250ms;
+  will-change: opacity;
+  width: 100%;
+  display: block;
+  position: relative;
+  &.loading {
+    opacity: 0;
+  }
+  &.loaded,
+  &.failed {
+    opacity: 1;
+  }
+  svg {
+    max-width: 100%;
+  }
+}
+
+.LazyImg.lg .LazyImg-el {
+  transition: opacity 550ms 100ms;
+}
+
+.LazyImg-inline-svg > svg {
+  height: auto !important;
+
+  opacity: 0;
+  animation: fadeIn 250ms forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
