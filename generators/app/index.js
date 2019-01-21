@@ -117,14 +117,16 @@ module.exports = class extends Generator {
     const props = { ...this.props, websiteName: this.options.websiteName }
 
     // Components
-    this.props.baseComponents.map(component => {
-      this.fs.copyTpl(
-        `${this.templatePath()}/components/${component}/**/*`,
-        `${this.destinationPath()}/components/${component}`,
-        props
-      )
-      return component
-    })
+    this.props.baseComponents
+      .concat(['Navbar', 'Footer', 'Layout'])
+      .map(component => {
+        this.fs.copyTpl(
+          `${this.templatePath()}/components/${component}/**/*`,
+          `${this.destinationPath()}/components/${component}`,
+          props
+        )
+        return component
+      })
     this.fs.copyTpl(
       `${this.templatePath()}/components/index.ts`,
       `${this.destinationPath()}/components/index.ts`,
