@@ -9,9 +9,9 @@ import './Layout.scss'
 interface ILayoutProps {
   children: React.ReactNode | React.ReactNode[]
 
-  navbar?: {}
+  navbar?: any
 
-  footer?: {}
+  footer?: any
 
   /*
    * To show or not the Navbar

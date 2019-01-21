@@ -2,6 +2,7 @@ import * as React from 'react'
 import Parser from 'html-react-parser'
 import PrismicDOM from 'prismic-dom'
 
+import { languages } from '../constants'
 const { getLangFromPathHelper } = require('./../server/utils')
 export { getLangFromPathHelper as langFromPath }
 
@@ -80,9 +81,6 @@ export const ct = (element: any, fallback?: any) => {
   }
 }
 
-export const LINK_RESOLVER = (doc: any) =>
-  `/${doc.lang}/${doc.uid.replace('-en', '').replace('-de', '')}`
-
 export const cta = (
   element: any[],
   unwrapParagraphs: boolean = true,
@@ -92,7 +90,7 @@ export const cta = (
     return null
   }
   try {
-    let richText = PrismicDOM.RichText.asHtml(element, LINK_RESOLVER)
+    let richText = PrismicDOM.RichText.asHtml(element)
     if (unwrapParagraphs) {
       richText = richText.replace(
         new RegExp('<p>', 'g'),
@@ -106,8 +104,7 @@ export const cta = (
 
     // Add decorators to list items
     if (addListDecorator) {
-      const listItemDecorator =
-        '<span class="list-item-decorator"><svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#009BFF" cx="15" cy="15" r="15"/><path stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M9 16.5l3.36 3.5L21 11"/></g></svg></span>'
+      const listItemDecorator = '<span class="list-item-decorator" />'
       richText = richText.replace(
         new RegExp('<li>', 'g'),
         `<li>${listItemDecorator}`
@@ -174,13 +171,13 @@ export const renderMetaOpenGraph = (
 
 export const adjustPath = (path, req) => {
   if (!path || path.length < 1) {
-    path = '/de/home'
+    path = `/${languages[0]}/home`
     if (req) {
-      req.url = '/de/home'
+      req.url = `/${languages[0]}/home`
     }
   }
 
-  if (path === '' || path === '/en' || path === '/de') {
+  if (path === '' || languages.map(lang => `/${lang}`).includes(path)) {
     path += '/home'
     if (req) {
       req.url = '/home'
@@ -215,7 +212,7 @@ export const adjustPathReqWithLang = (path, req, lang) => {
   if (pathParts.length === 2) {
     pathParts.shift() // remove the space on the left
     const firstPart = pathParts.shift()
-    if (firstPart !== 'en' && firstPart !== 'de') {
+    if (!languages.includes(firstPart)) {
       path = firstPart
       if (req) {
         req.url = lang + firstPart
@@ -223,7 +220,7 @@ export const adjustPathReqWithLang = (path, req, lang) => {
     }
   } else {
     pathParts.shift() // remove the space on the left
-    if (pathParts[0] === 'en' || pathParts[0] === 'de') {
+    if (languages.includes(pathParts[0])) {
       pathParts.shift() // remove the lang part
     }
     path = pathParts.join('/') // Join the rest
@@ -308,8 +305,8 @@ export const shadeBlendConvert = (p: number, from: string, to?: string) => {
         ? to.length > 9
           ? true
           : to == 'c'
-            ? !h
-            : false
+          ? !h
+          : false
         : h,
     b = p < 0,
     p = b ? p * -1 : p,
@@ -327,8 +324,8 @@ export const shadeBlendConvert = (p: number, from: string, to?: string) => {
             f[3] > -1 && t[3] > -1
               ? r(((t[3] - f[3]) * p + f[3]) * 10000) / 10000
               : t[3] < 0
-                ? f[3]
-                : t[3]
+              ? f[3]
+              : t[3]
           })`
     }`
   return `#${(
@@ -339,10 +336,10 @@ export const shadeBlendConvert = (p: number, from: string, to?: string) => {
     (f[3] > -1 && t[3] > -1
       ? r(((t[3] - f[3]) * p + f[3]) * 255)
       : t[3] > -1
-        ? r(t[3] * 255)
-        : f[3] > -1
-          ? r(f[3] * 255)
-          : 255)
+      ? r(t[3] * 255)
+      : f[3] > -1
+      ? r(f[3] * 255)
+      : 255)
   )
     .toString(16)
     .slice(1, f[3] > -1 || t[3] > -1 ? undefined : -2)}`
