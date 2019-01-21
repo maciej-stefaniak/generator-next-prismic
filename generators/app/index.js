@@ -70,7 +70,13 @@ module.exports = class extends Generator {
             { name: 'en', checked: true }
           ],
           message:
-            'Select the base languages you would like to have? (If differents needed can be changed later in constants)'
+            'Select the base languages you would like to have? (If differents needed can be changed later in constants)',
+          validate: input => {
+            if (input && input.length >= 1) {
+              return true
+            }
+            return 'Select at least one language'
+          }
         },
         {
           type: 'checkbox',

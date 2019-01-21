@@ -6,7 +6,7 @@ export const getPage = (
   req: any,
   documentId: string,
   documenType: string,
-  lang: <%= languages ? languages.map(lang => `${lang}`).join(' | ') : ["de"] %>
+  lang: <%- languages.map(lang => `'${lang}'`).join(' | ') %>,
 ) => async (dispatch, getState) => {
   try {
     const protocol = req ? req.headers['x-forwarded-proto'] || 'http' : ''

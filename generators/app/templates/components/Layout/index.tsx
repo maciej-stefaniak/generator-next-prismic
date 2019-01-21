@@ -9,13 +9,9 @@ import './Layout.scss'
 interface ILayoutProps {
   children: React.ReactNode | React.ReactNode[]
 
-  navbar?: {
-    body: any
-  }
+  navbar?: {}
 
-  footer?: {
-    body: any
-  }
+  footer?: {}
 
   /*
    * To show or not the Navbar
@@ -52,9 +48,7 @@ class Layout extends React.Component<ILayoutProps> {
     } = this.props
     return (
       <div className="Layout">
-        {showNavbar && navbar && (
-          <Navbar links={navbar.body} lang={lang} {...navbar} />
-        )}
+        {showNavbar && navbar && <Navbar lang={lang} {...navbar} />}
         <div className="Layout-content">{children}</div>
         {showFooter && footer && <Footer lang={lang} {...footer} />}
       </div>

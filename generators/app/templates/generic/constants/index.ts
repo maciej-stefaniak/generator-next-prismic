@@ -1,7 +1,7 @@
 export const websiteURL = '<%= websiteURL %>'
 export const logoURL = ''
 export const companyName = '<%= websiteFullName %>'
-export const languages = [<%= languages ? languages.map(lang => `${lang}`) : ["de"] %>]
+export const languages = [<%- languages.map(lang => `'${lang}'`) %>]
 export const metadataDefaults = {
   title: companyName,
   description: '',
