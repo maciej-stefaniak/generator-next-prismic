@@ -2,8 +2,6 @@ import * as React from 'react'
 const { Link: InternalLink } = require('../../server/routes')
 import './styles.scss'
 
-import classnames from 'classnames'
-
 type OnClick = (event) => void
 
 interface ILinkProps {
@@ -50,7 +48,7 @@ const Link: React.SFC<ILinkProps> = ({
     <span className={`Link ${className}`}>
       <div>
         <InternalComponent type={type} url={url} onClick={handleClick}>
-          <p>{title}</p>
+          <span>{title}</span>
         </InternalComponent>
       </div>
     </span>

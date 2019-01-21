@@ -1,0 +1,3 @@
+$primaryTextColor: #000;
+$primaryColor: <%= primaryColor %>;
+$primaryLightColor: lighten(<%= primaryColor %>, 5%);

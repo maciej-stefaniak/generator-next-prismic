@@ -1,4 +1,5 @@
 # generator-next-prismic [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+
 > Create a next-prismic project with yo
 
 ## Installation
@@ -13,20 +14,19 @@ npm install -g generator-next-prismic
 Then generate your new project:
 
 ```bash
-yo next-prismic
+yo next-prismic ${websiteName}
 ```
 
 ## Getting To Know Yeoman
 
- * Yeoman has a heart of gold.
- * Yeoman is a person with feelings and opinions, but is very easy to work with.
- * Yeoman can be too opinionated at times but is easily convinced not to be.
- * Feel free to [learn more about Yeoman](http://yeoman.io/).
+- Yeoman has a heart of gold.
+- Yeoman is a person with feelings and opinions, but is very easy to work with.
+- Yeoman can be too opinionated at times but is easily convinced not to be.
+- Feel free to [learn more about Yeoman](http://yeoman.io/).
 
 ## License
 
 MIT © [Jon Ander Pérez]()
-
 
 [npm-image]: https://badge.fury.io/js/generator-next-prismic.svg
 [npm-url]: https://npmjs.org/package/generator-next-prismic

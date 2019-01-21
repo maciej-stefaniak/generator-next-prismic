@@ -19,12 +19,12 @@ interface ILayoutProps {
 
   /*
    * To show or not the Navbar
-  */
+   */
   showNavbar?: boolean
 
   /*
    * To show or not the Navbar
-  */
+   */
   showFooter?: boolean
 
   lang: string
@@ -51,16 +51,11 @@ class Layout extends React.Component<ILayoutProps> {
       lang
     } = this.props
     return (
-      <div>
-        {showNavbar &&
-          navbar && (
-            <Navbar
-              links={navbar.body}
-              lang={lang}
-              {...navbar}
-            />
-          )}
-        <div>{children}</div>
+      <div className="Layout">
+        {showNavbar && navbar && (
+          <Navbar links={navbar.body} lang={lang} {...navbar} />
+        )}
+        <div className="Layout-content">{children}</div>
         {showFooter && footer && <Footer lang={lang} {...footer} />}
       </div>
     )

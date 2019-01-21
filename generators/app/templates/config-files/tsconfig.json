@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "allowJs": true,
+    "jsx": "react",
+    "sourceMap": false,
+    "experimentalDecorators": true,
+    "removeComments": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitUseStrict": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es2017", "dom"],
+    "typeRoots": ["node_modules/@types", "@types"]
+  },
+  "compileOnSave": true,
+  "exclude": ["node_modules", "out", ".next"],
+  "include": ["**/*"]
+}
