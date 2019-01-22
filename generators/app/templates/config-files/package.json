@@ -88,8 +88,7 @@
     "stylelint-scss": "^2.2.0",
     "sw-precache-webpack-plugin": "^0.11.4",
     "ts-jest": "^23.10.5",
-    "webpack-bundle-analyzer": "^3.0.1",
-    "merge": ">=1.2.1"
+    "webpack-bundle-analyzer": "^3.0.1"
   },
   "engines": {
     "node": "8.11.x"
