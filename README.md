@@ -1,7 +1,8 @@
 # generator-next-prismic [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
 > Create a next-prismic project with yo
-> This generator will create a project with React, Typescript and Next.js to allow server side rendering and improving SEO on our site.
+
+This generator will create a project with React, Typescript and Next.js to allow server side rendering and improving SEO on our site.
 
 ## Installation
 
