@@ -27,9 +27,10 @@ Then to generate your new project (in any other folder) run the following:
 yo next-prismic
 ```
 
-## About the generator
+## About the generator
 
 If the generator gets updated on this repository and you want to get the last version of it. Go to your clonned version of the generator pull the changes and link it again.
+
 Run the following on the terminal inside your cloned folder `generator-next-prismic`:
 
 ```bash
