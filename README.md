@@ -1,4 +1,4 @@
-# generator-next-prismic [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+# generator-next-prismic
 
 > Create a next-prismic project with yo
 
