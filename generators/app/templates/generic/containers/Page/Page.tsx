@@ -11,16 +11,6 @@ import { getPage, getAllDocumentsOfType } from '../../store/actions/content'
 import { menuClose } from '../../store/actions/ui'
 import initStore from '../../store/store'
 
-export const GlobalVarContext = React.createContext({})
-export const GlobalVarProvider: React.SFC<{
-  initialValue: any
-  children: any
-}> = ({ initialValue, children }) => (
-  <GlobalVarContext.Provider value={initialValue}>
-    {children}
-  </GlobalVarContext.Provider>
-)
-
 import {
   c,
   ct,
@@ -84,9 +74,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
             : null
 
           return (
-            <GlobalVarProvider initialValue={{}} key={slice_type + index}>
-              <ContentBlock tag={componentName} {...item} lang={lang} />
-            </GlobalVarProvider>
+            <ContentBlock key={slice_type + index} tag={componentName} lang={lang} {...item} />
           )
         })}<% } %>
       </Layout>

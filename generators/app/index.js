@@ -98,6 +98,14 @@ module.exports = class extends Generator {
         message: 'Select the base components you would like to have?'
       },
       {
+        type: 'list',
+        name: 'addAnimLibrary',
+        message: `Which animation library do you wanna use? ${chalk.gray(
+          chalk.italic('(can be changed later in package.json)')
+        )}`,
+        choices: ['react-spring', 'gsap']
+      },
+      {
         type: 'input',
         name: 'primaryColor',
         message: `What will be primary hexadecimal color for the site? ${chalk.gray(
@@ -176,8 +184,8 @@ module.exports = class extends Generator {
       props
     )
     this.fs.copyTpl(
-      `${this.templatePath()}/config-files/.env`,
-      `${this.destinationPath()}/.env`,
+      `${this.templatePath()}/config-files/.*`,
+      this.destinationPath(),
       props
     )
   }

@@ -1,6 +1,7 @@
 {
   "name": "<%= websiteName %>",
   "version": "0.0.1",
+  "license": "UNLICENSED",
   "lint-staged": {
     "*.js": [
       "eslint --fix",
@@ -40,7 +41,9 @@
     "react": "^16.6.0",
     "react-dom": "^16.4.2",
     "react-helmet": "^5.2.0",
-    "react-redux": "^5.0.6",
+    "react-redux": "^5.0.6",<% if (addAnimLibrary === 'react-spring') { %>
+    "react-spring": "^7.2.10",<% } %><% if (addAnimLibrary === 'gsap') { %>
+    "gsap": "^2.0.2",<% } %>
     "redux": "^3.7.2",
     "rxjs": "^6.3.3",
     "ts-node": "^7.0.1",
@@ -85,7 +88,8 @@
     "stylelint-scss": "^2.2.0",
     "sw-precache-webpack-plugin": "^0.11.4",
     "ts-jest": "^23.10.5",
-    "webpack-bundle-analyzer": "^3.0.1"
+    "webpack-bundle-analyzer": "^3.0.1",
+    "merge": ">=1.2.1"
   },
   "engines": {
     "node": "8.11.x"

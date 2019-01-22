@@ -1,0 +1,70 @@
+{
+  "Main": {
+    "uid": {
+      "type": "UID",
+      "config": {
+        "label": "Page ID",
+        "placeholder": "ID for the Page. Append at the end -lang (example: -en) for the language"
+      }
+    },
+    "meta_tags": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "embed",
+        "label": "Meta Tags",
+        "placeholder": "Page's meta tags"
+      }
+    },
+    "meta_title": {
+      "type": "StructuredText",
+      "config": {
+        "single": "heading1",
+        "label": "Meta Title",
+        "placeholder": "Title of the page"
+      }
+    },
+    "schema_description": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "paragraph",
+        "label": "Schema Description",
+        "placeholder": "Schema Description"
+      }
+    },
+    "meta_open_graph_image": {
+      "type": "Image",
+      "config": {
+        "constraint": {},
+        "thumbnails": [],
+        "label": "Meta Open Graph Image"
+      }
+    }
+  },
+  "Hero": {
+    "navbar_style": {
+      "type": "Select",
+      "config": {
+        "options": ["dark", "light"],
+        "default_value": "dark",
+        "label": "Navbar style",
+        "placeholder": "Navbar style"
+      }
+    },
+    "body": {
+      "type": "Slices",
+      "fieldset": "Slice zone",
+      "config": {
+        "choices": {}
+      }
+    }
+  },
+  "Content": {
+    "body1": {
+      "type": "Slices",
+      "fieldset": "Slice zone",
+      "config": {
+        "choices": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "Main": {
+    "meta_tags": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "embed",
+        "label": "Meta Tags",
+        "placeholder": "Meta Tags"
+      }
+    },
+    "meta_title": {
+      "type": "StructuredText",
+      "config": {
+        "single": "heading1",
+        "label": "Meta Title",
+        "placeholder": "Meta Title"
+      }
+    },
+    "meta_open_graph_image": {
+      "type": "Image",
+      "config": {
+        "constraint": {},
+        "thumbnails": [],
+        "label": "Meta Open Graph Image"
+      }
+    }
+  },
+  "Hero": {
+    "hero_title": {
+      "type": "StructuredText",
+      "config": {
+        "single": "heading1",
+        "label": "Hero Title",
+        "placeholder": "Hero Title"
+      }
+    },
+    "hero_description": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "paragraph, strong, em, hyperlink",
+        "allowTargetBlank": true,
+        "label": "Hero Description",
+        "placeholder": "Hero Description"
+      }
+    },
+    "hero_link_url": {
+      "type": "Text",
+      "config": {
+        "label": "Hero Link Url",
+        "placeholder": "Hero Link Url"
+      }
+    },
+    "hero_link_text": {
+      "type": "Text",
+      "config": {
+        "label": "Hero Link Text",
+        "placeholder": "Hero Link Text"
+      }
+    }
+  }
+}

@@ -1,8 +1,8 @@
-export const websiteURL = '<%= websiteURL %>'
-export const logoURL = ''
-export const companyName = '<%= websiteFullName %>'
-export const languages = [<%- languages.map(lang => `'${lang}'`) %>]
-export const metadataDefaults = {
+const websiteURL = '<%= websiteURL %>'
+const logoURL = ''
+const companyName = '<%= websiteFullName %>'
+const languages = [<%- languages.map(lang => `'${lang}'`) %>]
+const metadataDefaults = {
   title: companyName,
   description: '',
   openGraph: {
@@ -24,4 +24,12 @@ export const metadataDefaults = {
     site: '',
     cardType: 'summary_large_image'
   }
+}
+
+module.exports = {
+  websiteURL,
+  logoURL,
+  companyName,
+  languages,
+  metadataDefaults
 }

@@ -7,8 +7,12 @@ const perPage = (
   sitemapXML: any,
   subRoute?: string
 ): string => {
+  const languages = [<%- languages.map(lang => `'${lang}'`) %>]
   for (const page of results) {
-    const pageName = page.uid.replace('-en', '').replace('-de', '')
+    let pageName = page.uid
+    languages.map(lang => {
+      pageName = pageName.replace(`-${lang}`, '')
+    })
 
     if (pageName && pageName.length > 0) {
       const page = `${SITE_ROOT}/${subRoute || ''}${pageName}`
@@ -21,16 +25,6 @@ const perPage = (
           -2
         )}-${`0${modDate.getDate()}`.slice(-2)}`
       )
-      /* url.ele('xhtml:link', {
-        rel: 'alternate',
-        hreflang: 'de',
-        href: `${SITE_ROOT}/de/${subRoute || ''}${pageName}`
-      })
-      url.ele('xhtml:link', {
-        rel: 'alternate',
-        hreflang: 'en',
-        href: `${SITE_ROOT}/en/${subRoute || ''}${pageName}`
-      }) */
       url.ele('changefreq', 'monthly')
       url.ele('priority', '0.5')
     }
@@ -48,7 +42,6 @@ module.exports = (app: any, prismicApi: any, path: any) => {
     let sitemapXML = builder
       .create('urlset', { encoding: 'utf-8' })
       .att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9')
-    // .att('xmlns:xhtml', 'http://www.w3.org/1999/xhtml')
 
     prismicApi.getDocument(
       null,
