@@ -29,10 +29,3 @@ yo next-prismic ${websiteName}
 ## License
 
 MIT © [Jon Ander Pérez]()
-
-[npm-image]: https://badge.fury.io/js/generator-next-prismic.svg
-[npm-url]: https://npmjs.org/package/generator-next-prismic
-[travis-image]: https://travis-ci.org/jonanderdev/generator-next-prismic.svg?branch=master
-[travis-url]: https://travis-ci.org/jonanderdev/generator-next-prismic
-[daviddm-image]: https://david-dm.org/jonanderdev/generator-next-prismic.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/jonanderdev/generator-next-prismic
