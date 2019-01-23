@@ -21,7 +21,9 @@ if (!process.env.CONTENT_API_URL || !process.env.CONTENT_API_TOKEN) {
 
 // Define Cache and delay
 let toResetCache = false
-const DELAY_API_CALLS = 1000 * 60 * 60 * 2 // 2 hours
+const DELAY_API_CALLS = process.env.DELAY_API_CALLS
+  ? process.env.DELAY_API_CALLS
+  : 1000 * 60 * 60 * 2 // 2 hours
 const cache = new NodeCache({
   stdTTL: DELAY_API_CALLS,
   checkperiod: 10000
@@ -85,6 +87,13 @@ const getDocument = (
         }
       }
 
+      const onErrorInit = error => {
+        console.log(
+          `Prismic: something went wrong when initializing the Prismic api: ${error}`
+        )
+        onError(error, value)
+      }
+
       // If not init then we init the primisAPI
       try {
         if (!prismicAPI || toResetCache) {
@@ -132,18 +141,10 @@ const getDocument = (
                 }, onErrorQuery)
                 .catch(onErrorQuery)
             } catch (err) {
-              console.log(
-                `Prismic: something went wrong when initializing the Prismic api: ${err}`
-              )
-              onError(err, value)
+              onErrorInit(err)
             }
           })
-          .catch(error => {
-            console.log(
-              `Prismic: something went wrong when initializing the Prismic api: ${error}`
-            )
-            onError(error, value)
-          })
+          .catch(onErrorInit)
       } catch (err) {
         console.log(
           `Prismic: something went wrong when initializing the Prismic api: ${err}`
@@ -266,7 +267,7 @@ const refreshContent = (
   onSuccess: (data: any) => void,
   onError: (err: string, dataFallback?: any) => void
 ) => {
-  // TODO: In here call getDocument with content needed to be cached
+  // TODO: IF NEEDED - in here call getDocument with content needed to be cached
 }
 
 // Exports API
