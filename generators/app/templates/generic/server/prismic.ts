@@ -77,19 +77,19 @@ const getDocument = (
       // Key not found
       // So we fetch data from Prismic
 
-      const onErrorQuery = err => {
+      const onErrorQuery = e => {
         cache.set(`${documentIdF}-${lang}`, null)
-        console.log(`Prismic: something went wrong: ${err}`)
+        console.log(`Prismic: ${documentIdF}: something went wrong: ${e}`)
         if (toResetCache) {
           onSuccess(value)
         } else {
-          onError(err, value)
+          onError(e, value)
         }
       }
 
       const onErrorInit = error => {
         console.log(
-          `Prismic: something went wrong when initializing the Prismic api: ${error}`
+          `Prismic: ${documentIdF}: something went wrong when initializing the Prismic api: ${error}`
         )
         onError(error, value)
       }

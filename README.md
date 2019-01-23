@@ -31,7 +31,7 @@ yo next-prismic
 
 In order to stay up to date with the last version of this generator, go to the folder containing your clonned version of this repository pull the changes and link it again.
 
-To achieve that run the following on the terminal inside your cloned folder `generator-next-prismic`:
+To achieve that, run the following on the terminal inside your cloned folder `generator-next-prismic`:
 
 ```bash
 git pull origin master

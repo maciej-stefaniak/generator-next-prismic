@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { languages } from '../../constants'
-import { Layout, MetaData, Link } from '../../components'
+import { Layout<% if (baseComponents.includes('MetaData')) { %>, MetaData<% } %><% if (baseComponents.includes('Link')) { %>, Link<% } %> } from '../../components'
 
 import { ct, cta } from '../../utils'
 

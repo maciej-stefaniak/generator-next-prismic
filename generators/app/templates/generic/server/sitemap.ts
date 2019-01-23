@@ -1,16 +1,17 @@
 const fs = require('fs')
 const builder = require('xmlbuilder')
 
+const { languages: langs } = require('../constants')
+
 const perPage = (
   SITE_ROOT: string,
   results: any[],
   sitemapXML: any,
   subRoute?: string
 ): string => {
-  const languages = [<%- languages.map(lang => `'${lang}'`) %>]
   for (const page of results) {
     let pageName = page.uid
-    languages.map(lang => {
+    langs.map(lang => {
       pageName = pageName.replace(`-${lang}`, '')
     })
 
