@@ -72,7 +72,7 @@ const bootstrap = async () => {
     })
 
     // Serve next static files
-    expressApp.use(express.static(path.join(__dirname, './_next/static')))
+    expressApp.use(express.static('/_next/static'))
     // Handler for the rest of request that are NOT to the API
     expressApp.get(/^\/(?!api).*/, (req, res) => {
       /**
