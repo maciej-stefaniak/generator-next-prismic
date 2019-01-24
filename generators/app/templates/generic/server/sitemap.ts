@@ -48,7 +48,7 @@ module.exports = (app: any, prismicApi: any, path: any) => {
       null,
       '*',
       'page',
-      'de',
+      langs[0],
       data => {
         sitemapXML = perPage(SITE_ROOT, data.results, sitemapXML)
       },

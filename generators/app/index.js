@@ -52,21 +52,46 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'websiteFullName',
-        message: 'What is the full name of the company/product?'
+        message: `Full name of the company/product?`
       },
       {
         type: 'input',
         name: 'websiteDescription',
-        message: `What is the default description of the company/product? ${chalk.gray(
-          chalk.italic('(can be changed later in constants)')
+        message: `Default description of the company/product? ${chalk.gray(
+          chalk.italic('(It can be changed later in constants)')
         )}`
       },
       {
         type: 'input',
         name: 'websiteURL',
-        message: `What will be the url of the site? ${chalk.gray(
-          chalk.italic('(can be changed later in constants)')
-        )}`
+        message: `Site root url? ${chalk.gray(
+          chalk.italic('(It can be changed later in constants)')
+        )}`,
+        validate: input => {
+          if (input && input.length >= 1) {
+            return true
+          }
+          return 'Site root url is required'
+        }
+      },
+      {
+        type: 'input',
+        name: 'githubRepoUrl',
+        message: `Github repository url of the project? ${chalk.gray(
+          chalk.italic(
+            '(It can be changed later in read.me under Installation)'
+          )
+        )}`,
+        validate: input => {
+          if (
+            input &&
+            input.length >= 1 &&
+            input.indexOf('https://github.com/') >= 0
+          ) {
+            return true
+          }
+          return 'Add a proper Github repository url'
+        }
       },
       {
         type: 'checkbox',
@@ -126,14 +151,26 @@ module.exports = class extends Generator {
         name: 'prismicApiURL',
         message: `What is the Prismic API URL for this project? ${chalk.gray(
           chalk.italic('(can be changed later in .env)')
-        )}`
+        )}`,
+        validate: input => {
+          if (input && input.length >= 1) {
+            return true
+          }
+          return 'Prismic API URL is required'
+        }
       },
       {
         type: 'input',
         name: 'prismicApiToken',
         message: `What is the Prismic API Token for this project? ${chalk.gray(
           chalk.italic('(can be changed later in .env)')
-        )}`
+        )}`,
+        validate: input => {
+          if (input && input.length >= 1) {
+            return true
+          }
+          return 'Prismic API Token is required'
+        }
       }
     ]
 
