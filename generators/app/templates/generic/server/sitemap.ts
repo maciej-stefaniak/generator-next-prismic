@@ -51,6 +51,13 @@ module.exports = (app: any, prismicApi: any, path: any) => {
       langs[0],
       data => {
         sitemapXML = perPage(SITE_ROOT, data.results, sitemapXML)
+        const sitemapString = sitemapXML.end({ pretty: true })
+        fs.writeFile(DESTINATION, sitemapString, (err, data) => {
+          if (err) {
+            console.log('Error updating sitemap', err)
+          }
+          console.log(`Sitemap updated`)
+        })
       },
       (error, dataFallback) => {
         console.log('Error fetching data to update sitemap')
