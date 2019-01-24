@@ -5,16 +5,16 @@ export { langFromPath }
 
 export const adjustPath = (path, req) => {
   if (!path || path.length < 1) {
-    path = `/${languages[0]}/home`
+    path = `/home`
     if (req) {
-      req.url = `/${languages[0]}/home`
+      req.url = path
     }
   }
 
   if (path === '' || languages.map(lang => `/${lang}`).includes(path)) {
     path += '/home'
     if (req) {
-      req.url = '/home'
+      req.url = path
     }
   }
 
