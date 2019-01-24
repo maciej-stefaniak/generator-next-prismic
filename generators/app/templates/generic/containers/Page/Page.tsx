@@ -1,13 +1,13 @@
 import * as React from 'react'
 import withRedux from 'next-redux-wrapper'
 
-import { websiteURL, logoURL, languages } from '../../constants'
+import { logoURL } from '../../constants'
 
-import { isNode } from '../../utils'
+import { getPathAndLangForPage } from '../../utils'
 
 import { Layout, MetaData, ContentBlock } from '../../components'
 
-import { getPage, getAllDocumentsOfType } from '../../store/actions/content'
+import { getPage } from '../../store/actions/content'
 import { menuClose } from '../../store/actions/ui'
 import initStore from '../../store/store'
 
@@ -85,22 +85,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
 Page.getInitialProps = async options => {
   const { store, req, asPath, query } = options
   try {
-    let path = adjustPath(asPath || (req ? req.url : '/'), req)
-    // Get lang from request url
-    const lang = req
-      ? langFromPath(path, req)
-      : query && query.lang
-      ? query.lang
-      : languages[0]
-    path = adjustPathReqWithLang(path, req, lang)
-
-    let pathId = path
-    let type = 'page'
-    const pathParts = path.split('/')
-    if (pathParts.length > 1) {
-      type = pathParts[0]
-      pathId = pathParts[1]
-    }
+    const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
 
     await store.dispatch(getPage(req, pathId, type, lang))
 

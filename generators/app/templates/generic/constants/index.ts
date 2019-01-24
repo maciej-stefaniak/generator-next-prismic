@@ -1,7 +1,6 @@
 const websiteURL = '<%= websiteURL %>'
 const logoURL = ''
 const companyName = '<%= websiteFullName %>'
-const languages = [<%- languages.map(lang => `'${lang}'`) %>]
 const metadataDefaults = {
   title: companyName,
   description: '',
@@ -30,6 +29,6 @@ module.exports = {
   websiteURL,
   logoURL,
   companyName,
-  languages,
+  languages: [<%- languages.map(lang => `'${lang}'`) %>],
   metadataDefaults
 }

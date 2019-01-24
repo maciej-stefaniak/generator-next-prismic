@@ -71,6 +71,8 @@ const bootstrap = async () => {
       })
     })
 
+    // Serve next static files
+    expressApp.use(express.static(path.join(__dirname, './_next/static')))
     // Handler for the rest of request that are NOT to the API
     expressApp.get(/^\/(?!api).*/, (req, res) => {
       /**
@@ -90,7 +92,7 @@ const bootstrap = async () => {
       }
       // ---------------
 
-      return handler(req, res)
+      return handler(req, res, parse(req.url, true))
     })
 
     // Api router

@@ -1,10 +1,6 @@
-import * as React from 'react'
-import Parser from 'html-react-parser'
-import PrismicDOM from 'prismic-dom'
-
-import { languages } from '../constants'
-const { getLangFromPathHelper } = require('./../server/utils')
-export { getLangFromPathHelper as langFromPath }
+export * from './content'
+export * from './meta'
+export * from './paths'
 
 export const isNode: boolean = !(
   typeof window !== 'undefined' && window !== null
@@ -57,66 +53,6 @@ export const isRetina = (): boolean => {
   return retina
 }
 
-export const c = (element: any, fallback?: any) =>
-  element && element[0] ? element[0] : fallback || element
-
-export const ct = (element: any, fallback?: any) => {
-  try {
-    const e = c(element)
-    if (e && e.text) {
-      return e.text
-    }
-    if (fallback) {
-      return fallback
-    }
-    if (
-      element != null &&
-      (typeof element === 'object' || typeof element === 'function')
-    ) {
-      return null
-    }
-    return element
-  } catch (e) {
-    return element
-  }
-}
-
-export const cta = (
-  element: any[],
-  unwrapParagraphs: boolean = true,
-  addListDecorator: boolean = false
-) => {
-  if (!element || !element[0] || !element[0].type) {
-    return null
-  }
-  try {
-    let richText = PrismicDOM.RichText.asHtml(element)
-    if (unwrapParagraphs) {
-      richText = richText.replace(
-        new RegExp('<p>', 'g'),
-        '<span style="display: block;">'
-      )
-      richText = richText.replace(new RegExp('</p>', 'g'), '</span>')
-    }
-
-    richText = richText.replace(new RegExp('https:///', 'g'), '/')
-    richText = richText.replace(new RegExp('http:///', 'g'), '/')
-
-    // Add decorators to list items
-    if (addListDecorator) {
-      const listItemDecorator = '<span class="list-item-decorator" />'
-      richText = richText.replace(
-        new RegExp('<li>', 'g'),
-        `<li>${listItemDecorator}`
-      )
-    }
-    return <span className="richtext">{Parser(richText)}</span>
-  } catch (e) {
-    console.log(e)
-    return null
-  }
-}
-
 export const replaceLast = (
   text: string,
   what: string,
@@ -136,97 +72,6 @@ export const countMtextChar = (element: any[], fallback?: any): number => {
     })
   }
   return charNumber
-}
-
-export const renderMeta = (meta_tags: any[]) => {
-  if (!meta_tags) return null
-  try {
-    let tags = ''
-    meta_tags.map(tag => {
-      tags += tag.text
-    })
-    return tags ? Parser(tags) : null
-  } catch (e) {
-    console.log(e)
-    return null
-  }
-}
-
-export const renderMetaOpenGraph = (
-  title: string,
-  pageId: string,
-  meta_open_graph_image: { url: string }
-) =>
-  Parser(`
-    <meta property="og:title" content="${title}" />
-    <meta property="og:url" content="${
-      !isNode ? window.location.href : `/${pageId}`
-    }" />
-    <meta property="og:type" content="website" />
-    ${meta_open_graph_image &&
-      meta_open_graph_image.url &&
-      meta_open_graph_image.url.length > 0 &&
-      `<meta property="og:image" content="${meta_open_graph_image.url}" />`}
-  `)
-
-export const adjustPath = (path, req) => {
-  if (!path || path.length < 1) {
-    path = `/${languages[0]}/home`
-    if (req) {
-      req.url = `/${languages[0]}/home`
-    }
-  }
-
-  if (path === '' || languages.map(lang => `/${lang}`).includes(path)) {
-    path += '/home'
-    if (req) {
-      req.url = '/home'
-    }
-  }
-
-  return path
-}
-
-export const checkIfGlobalVars = (text: string): string => {
-  const variable = text.substring(
-    text.lastIndexOf('${') + 2,
-    text.lastIndexOf('}')
-  )
-  return variable
-}
-
-export const getVarValueOnText = (
-  text: string,
-  variable: string,
-  value: string
-): string => {
-  if (variable && variable.length > 0) {
-    return text.replace(`\${${variable}}`, value)
-  }
-  return text
-}
-
-export const adjustPathReqWithLang = (path, req, lang) => {
-  const pathParts = path.trim().split('/') // Divide the path by /
-  // If the path is something like /pathname we make sure we add the lang to the req and remove the / from the path
-  if (pathParts.length === 2) {
-    pathParts.shift() // remove the space on the left
-    const firstPart = pathParts.shift()
-    if (!languages.includes(firstPart)) {
-      path = firstPart
-      if (req) {
-        req.url = lang + firstPart
-      }
-    }
-  } else {
-    pathParts.shift() // remove the space on the left
-    if (languages.includes(pathParts[0])) {
-      pathParts.shift() // remove the lang part
-    }
-    path = pathParts.join('/') // Join the rest
-  }
-
-  return path
 }
 
 export const scrollToSection = (url: string) => () => {
