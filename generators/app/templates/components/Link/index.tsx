@@ -8,26 +8,28 @@ interface ILinkProps {
   type: 'internal' | 'external' | 'mailto'
   url: string
   title: string
+  prefetch?: boolean
   onClick?: OnClick
   className?: string
 }
 
 const InternalComponent = props => {
-  if (props.type === 'internal') {
+  const { children, type, className, url, prefetch = false, onClick } = props
+  if (type === 'internal') {
     return (
-      <InternalLink route={props.url}>
-        <a className={props.className} onClick={props.onClick}>
-          {props.children}
+      <InternalLink route={url} prefetch={prefetch}>
+        <a className={className} onClick={onClick}>
+          {children}
         </a>
       </InternalLink>
     )
   }
 
-  if (props.type === 'mailto') {
-    return <a href={props.url} {...props} />
+  if (type === 'mailto') {
+    return <a href={url} {...props} />
   }
 
-  return <a href={props.url} target="_blank" rel="noopener" {...props} />
+  return <a href={url} target="_blank" rel="noopener" {...props} />
 }
 
 const Link: React.SFC<ILinkProps> = ({
