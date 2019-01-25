@@ -8,7 +8,13 @@ const { config } = require('dotenv')
 // Get enviroment variables into process.env
 config()
 
-const { getLangFromPathHelper, addLangIfNotInUrl } = require('./utils')
+const {
+  getLangFromPathHelper,
+  addLangIfNotInUrl,
+  log,
+  logError
+} = require('./utils')
+
 const api = require('./api')
 const prismicApi = require('./prismic')
 const sitemap = require('./sitemap')
@@ -101,7 +107,7 @@ const bootstrap = async () => {
     // Listen Port
     expressApp.listen(PORT, err => {
       if (err) throw err
-      console.log(`> App running on port ${PORT}`)
+      log(`> App running on port ${PORT}`)
     })
 
     // Sitemap
@@ -113,5 +119,5 @@ const bootstrap = async () => {
 try {
   bootstrap()
 } catch (e) {
-  console.log(e)
+  logError(e)
 }

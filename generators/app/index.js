@@ -181,10 +181,8 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    const websiteName =
-      !this.options.websiteName || this.options.websiteName.length < 1
-        ? this.props.websiteName
-        : this.options.websiteName
+    let websiteName = !this.options.websiteName || this.options.websiteName.length < 1 ? this.props.websiteName : this.options.websiteName;
+    websiteName = websiteName.toLowerCase().trim().split(' ').join('-')
     this.destinationRoot(websiteName)
 
     const props = { ...this.props, websiteName }

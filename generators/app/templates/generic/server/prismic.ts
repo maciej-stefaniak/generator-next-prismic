@@ -1,16 +1,21 @@
+export {} // Avoid typescript issue with "Cannot redeclare block-scoped variable"
+
 const Prismic = require('prismic-javascript')
 const NodeCache = require('node-cache')
-const { getLangFromPathHelper: getLang } = require('./utils')
+const { getLangFromPathHelper: getLang, log, logError } = require('./utils')
 
 const COMMON_DOCUMENTS = ['navbar', 'footer', 'page_404']
 const COMMON_REPEATABLE_DOCUMENTS = ['page']
 const COMMON_DOCUMENTS_TYPE_MAP = {}
 
+// Here is the map to the proper language key in Prismic
+// If using a different language from the ones below, add also here the Prismic lang version to its small one as a key
 const LANGS_PRISMIC = {
   de: 'de-de',
   en: 'en-us'
 }
 
+// Check if we have the proper data to connect to prismic
 let prismicAPI
 if (!process.env.CONTENT_API_URL || !process.env.CONTENT_API_TOKEN) {
   throw new Error(
@@ -44,7 +49,11 @@ const clearCache = () => {
   )
 }
 
-// Get document from Prismic.io
+/**
+ * GET DOCUMENT
+ * First check if the document is in the local cache
+ * If not in cache, it will fetch it from Prismic.io and save it in the cache afterwards
+ */
 const getDocument = (
   req: any,
   documentId: string,
@@ -65,21 +74,15 @@ const getDocument = (
     documentIdF = 'home'
   }
 
-  /*
-    if (!lang && req) {
-      lang = getLang(req.url, req)
-    }
-  */
-
   cache.get(`${documentIdF}-${lang}`, (err, value) => {
     const error = err || !value || value === undefined
     if (error || toResetCache) {
-      // Key not found
-      // So we fetch data from Prismic
+      // Cache key not found OR cache has been reset
+      // So we're gonna fetch data from Prismic.io
 
       const onErrorQuery = e => {
         cache.set(`${documentIdF}-${lang}`, null)
-        console.log(`Prismic: ${documentIdF}: something went wrong: ${e}`)
+        logError(`Prismic: ${documentIdF}: something went wrong: ${e}`)
         if (toResetCache) {
           onSuccess(value)
         } else {
@@ -88,7 +91,7 @@ const getDocument = (
       }
 
       const onErrorInit = error => {
-        console.log(
+        logError(
           `Prismic: ${documentIdF}: something went wrong when initializing the Prismic api: ${error}`
         )
         onError(error, value)
@@ -132,7 +135,7 @@ const getDocument = (
                     }
                     cache.set(`${documentIdF}-${lang}`, data)
                     onSuccess(data)
-                    console.log(`Prismic: document: ${documentIdF} : ${lang}`)
+                    log(`Prismic: document: ${documentIdF} : ${lang}`)
                   } else {
                     onErrorQuery(
                       `Prismic: No results: ${documentIdF} : ${lang}`
@@ -146,20 +149,24 @@ const getDocument = (
           })
           .catch(onErrorInit)
       } catch (err) {
-        console.log(
+        logError(
           `Prismic: something went wrong when initializing the Prismic api: ${err}`
         )
         onError(err, value)
       }
     } else {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log(`Prismic: cache: document: ${documentIdF} : ${lang}`)
-      }
+      log(`Prismic: cache: document: ${documentIdF} : ${lang}`)
       onSuccess(value)
     }
   })
 }
 
+/**
+ * GET DOCUMENTS PAGE
+ * First check if the Page content is in the local cache
+ * If not in cache, it will fetch all content associated with a Page inside Prismic.io
+ * Includes all the common elements needed in the page like 'navbar', 'footer' or 'page_404'
+ */
 const getDocumentsPage = (
   req: any,
   page: string,
@@ -190,55 +197,65 @@ const getDocumentsPage = (
   cache.get(`content-result-${page}`, (err, value) => {
     const error = err || !value || value === undefined
     if (error || toResetCache) {
-      // Get Content for page
+      // Cache key not found OR cache has been reset
+      // So we're gonna fetch data from Prismic.io
+
+      // Create the promise to get the page document
       const ePromises = []
       ePromises.push(
         new Promise((resolve, reject) => {
           try {
             getDocument(req, page, type, lang, resolve, reject)
           } catch (e) {
-            console.log(`Error document: ${page} : ${type} : ${lang}`)
+            logError(`Error document: ${page} : ${type} : ${lang}`)
           }
         })
       )
+
+      // Add the promises to get the all the common documents
       COMMON_DOCUMENTS.map(doc => {
         ePromises.push(
           new Promise((resolve, reject) => {
             try {
               getDocument(req, doc, doc, lang, resolve, reject)
             } catch (e) {
-              console.log(`Error document: ${doc} : ${lang}`)
+              logError(`Error document: ${doc} : ${lang}`)
             }
           })
         )
         return doc
       })
 
+      // Run all the promises to get the needed content
       Promise.all(ePromises)
         .then(values => {
+          // No results error
           if (!values || values.length <= 0) {
             onErrorFn('Prismic: No results: All Promises')
             return
           }
+          // We have results, lets order them
           try {
-            const contentRes = {
-              ...values[0]
-            }
+            const contentRes = { ...values[0] }
+            // Map the results with their names
             COMMON_DOCUMENTS.map((doc, index) => {
               contentRes[doc] = values[index + 1]
               return doc
             })
-            console.log(`GET: ${page.toUpperCase()} page content`)
+            log(`GET: ${page.toUpperCase()} page content`)
+            // Save into cache with the key
             cache.set(`content-result-${page}-${lang}`, contentRes)
+            // Return result
             if (onSuccess) onSuccess(contentRes)
           } catch (e) {
-            console.log('Error getting Content', e)
+            log('Error getting Content', e)
+            // There was some error
             onErrorFn('Error getting Content: All Promises')
           }
         })
         .catch(onErrorFn)
     } else {
-      console.log('content from cache')
+      log('content from cache')
       if (onSuccess) onSuccess(value)
     }
   })

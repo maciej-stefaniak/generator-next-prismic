@@ -38,9 +38,9 @@ The app is set as a PWA (Progressive Web App) providing:
 - A manifest and robots.txt files
 - Linting & code formatting with Eslint, Prettier, Airbnb rules ...
 - Styling with SCSS files and with Autoprefixer. Also allows to add custom PostCSS config.
-- A small Node.js Express server with gzip compression
-- In the server an example small API has been defined to deliver content to the client
-- A Redux store to get the content from the API, with examples of querying the content on start
+- A Node.js Express server with gzip compression
+- In the server an API connected to Prismic to deliver content to the client
+- A Redux store to get the content from the API
 
 ## About the generator
 

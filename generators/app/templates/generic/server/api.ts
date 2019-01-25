@@ -1,6 +1,10 @@
+export {} // Avoid typescript issue with "Cannot redeclare block-scoped variable"
+
 const iFetch = require('isomorphic-unfetch')
 const bodyParser = require('body-parser')
 const { body, validationResult } = require('express-validator/check')
+
+const { log, logError } = require('./utils')
 
 let clearCacheTimeout = null
 
@@ -87,10 +91,10 @@ module.exports = (
   // Clear api content cache
   app.post('/api-clear-cache', (req, res) => {
     try {
-      console.log('/clear-cache - webhook')
+      log('/clear-cache - webhook', true)
       if (clearCacheTimeout) {
         clearTimeout(clearCacheTimeout)
-        console.log('/clear-cache - timeout cleared')
+        log('/clear-cache - timeout cleared', true)
       }
 
       clearCacheTimeout = setTimeout(() => {
@@ -103,7 +107,7 @@ module.exports = (
 
       res.status(200).send('Alright, cache will clear.')
     } catch (error) {
-      console.log('api-clear-cache: ', error)
+      logError('api-clear-cache: ', error)
     }
   })
 
