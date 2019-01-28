@@ -18,49 +18,53 @@ module.exports = (
 ) => {
   // Query for page
   app.get('/api-page', (req, res) => {
-    try {
-      prismicApi.getDocumentsPage(
-        req,
-        req.query.id,
-        req.query.type,
-        req.query.lang,
-        data => {
-          res.status(200).send({ ...data, dev })
-        },
-        (error, dataFallback) => {
-          if (dataFallback) {
-            res.status(200).send({ ...dataFallback, dev })
-          } else {
-            res.status(404).send({ error, dev })
+    if (req.query && req.query.id !== 'static') {
+      try {
+        prismicApi.getDocumentsPage(
+          req,
+          req.query.id,
+          req.query.type,
+          req.query.lang,
+          data => {
+            res.status(200).send({ ...data, dev })
+          },
+          (error, dataFallback) => {
+            if (dataFallback) {
+              res.status(200).send({ ...dataFallback, dev })
+            } else {
+              res.status(404).send({ error, dev })
+            }
           }
-        }
-      )
-    } catch (error) {
-      res.status(404).send({ error, dev })
+        )
+      } catch (error) {
+        res.status(404).send({ error, dev })
+      }
     }
   })
 
   // Query for document
   app.get('/api-document', (req, res) => {
-    try {
-      prismicApi.getDocument(
-        req,
-        req.query.id,
-        req.query.type,
-        req.query.lang,
-        data => {
-          res.status(200).send({ ...data, dev })
-        },
-        (error, dataFallback) => {
-          if (dataFallback) {
-            res.status(200).send({ ...dataFallback, dev })
-          } else {
-            res.status(404).send({ error, dev })
+    if (req.query && req.query.id !== 'static') {
+      try {
+        prismicApi.getDocument(
+          req,
+          req.query.id,
+          req.query.type,
+          req.query.lang,
+          data => {
+            res.status(200).send({ ...data, dev })
+          },
+          (error, dataFallback) => {
+            if (dataFallback) {
+              res.status(200).send({ ...dataFallback, dev })
+            } else {
+              res.status(404).send({ error, dev })
+            }
           }
-        }
-      )
-    } catch (error) {
-      res.status(404).send({ error, dev })
+        )
+      } catch (error) {
+        res.status(404).send({ error, dev })
+      }
     }
   })
 
