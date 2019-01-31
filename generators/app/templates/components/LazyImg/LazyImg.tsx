@@ -1,4 +1,6 @@
 import * as React from 'react'
+import classnames from 'classnames'
+
 import './styles.scss'
 
 import { isIE, isNode, isRetina, w } from '../../utils'
@@ -6,23 +8,64 @@ import { isIE, isNode, isRetina, w } from '../../utils'
 const loadingImg =
   'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
-interface ILazyImgProps {
+export interface ILazyImgProps {
   src: string
+
+  /*
+   * Aternative src for retina screens
+   */
   srcRetina?: string
-  className?: string
+
+  /*
+   * For when using isBackground property. To have children inside of this element
+   */
   children?: React.ReactNode | React.ReactNode[]
+
+  /*
+   * To use div with background-image instead of img element
+   */
   isBackground?: boolean
-  allowWebp?: boolean
+
   backgroundColor?: string
+
+  /*
+   * Use webp if supported
+   */
+  allowWebp?: boolean
+
+  /*
+   * ID of the element
+   */
   elId?: string
+
+  className?: string
   alt?: string
+
+  /*
+   * Timeout after which the image should have loaded correctly. Otherwise throw error
+   */
   timeout?: number
-  onLoad?: (error?: boolean) => void
-  onClick?: () => void
+
   spaceHolderFix?: number
   manuallyLoaded?: boolean
+
+  /*
+   * To fetch and inject the inline svg instead of an img (with svg src)
+   */
   inlineSvg?: boolean
   inlineSvgFallback?: string
+
+  /*
+   * Extra styling for the element
+   */
+  style?: any
+
+  /*
+   * Some callbacks
+   */
+  onLoad?: () => void
+  onError?: () => void
+  onClick?: () => void
 }
 
 interface ILazyImgState {
@@ -34,49 +77,39 @@ interface ILazyImgState {
 }
 
 class LazyImg extends React.Component<ILazyImgProps, ILazyImgState> {
-  private imageRef: any
   private mounted: boolean = false
   private mountedIE: boolean = false
   private loadTimeout: number
+  private useObserver: boolean = false
 
   constructor(props: ILazyImgProps) {
     super(props)
+
     this.state = {
       status: 'loading',
-      retina: false,
-      supportsWebp: false,
+      retina: isRetina(),
+      supportsWebp: this.supportsWebp(),
       src: null
     }
-
-    this.imageRef = React.createRef()
   }
 
-  componentWillMount() {
-    this.setState(
-      {
-        retina: isRetina(),
-        supportsWebp: this.supportsWebp()
-      },
-      () => {
-        if (w.requestIdleCallback) {
-          w.requestIdleCallback(this.reload)
-        } else {
-          this.reload()
-        }
-      }
-    )
-  }
   componentDidMount() {
     if (!isNode && isIE()) {
       this.mountedIE = true
     }
     this.mounted = true
+    if (w.requestIdleCallback) {
+      w.requestIdleCallback(this.reload)
+    } else {
+      this.reload()
+    }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { src, srcRetina } = this.props
-
-    if (prevProps.src !== src || prevProps.srcRetina !== srcRetina) {
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.src != this.props.src ||
+      prevProps.srcRetina !== this.props.srcRetina
+    ) {
       if (w.requestIdleCallback) {
         w.requestIdleCallback(this.reload)
       } else {
@@ -97,7 +130,10 @@ class LazyImg extends React.Component<ILazyImgProps, ILazyImgState> {
     if (onClick) onClick()
   }
 
-  loadInlineSvg = (src: string, srcFallback?: string) => {
+  /*
+   * Try to loads the svg as inline, to allow animations, style changes and such
+   */
+  loadInlineSvg = (src: string) => {
     // If SVG is supported
     if (typeof SVGRect !== 'undefined') {
       // Request the SVG file to load it inline
@@ -134,6 +170,9 @@ class LazyImg extends React.Component<ILazyImgProps, ILazyImgState> {
     }
   }
 
+  /*
+   * Starts/triggers the loading of the image source
+   */
   loadImage = () => {
     const { timeout, inlineSvg } = this.props
     const { src } = this.state
@@ -158,19 +197,25 @@ class LazyImg extends React.Component<ILazyImgProps, ILazyImgState> {
     }
   }
 
+  /*
+   * Handles the error when the image didn't load properly
+   */
   handleImageErrored = (err: any): any => {
-    const { onLoad } = this.props
+    const { onError } = this.props
     console.error('e: ', err, this.state.src)
     clearTimeout(this.loadTimeout)
     if (this.mounted) {
       this.setState({ status: 'failed' }, () => {
-        if (onLoad) {
-          onLoad(true)
+        if (onError) {
+          onError(true)
         }
       })
     }
   }
 
+  /*
+   * Handles the success when the image loads properly
+   */
   handleImageLoaded = (): void => {
     if (this.loadTimeout) {
       clearTimeout(this.loadTimeout)
@@ -188,6 +233,8 @@ class LazyImg extends React.Component<ILazyImgProps, ILazyImgState> {
   reload = (): void => {
     const { retina, supportsWebp } = this.state
     const { src, srcRetina, allowWebp } = this.props
+
+    if (!src && !srcRetina) return
 
     let finalSrc = src
     if (retina && srcRetina) {
@@ -301,9 +348,37 @@ class LazyImg extends React.Component<ILazyImgProps, ILazyImgState> {
 
     return (
       <span className="LazyImg-in LazyImg-img">
+        <span>
+          {svgInlineCode && inlineSvg ? (
+            <span
+              className={`LazyImg-el LazyImg-inline-svg ${status}`}
+              style={s}
+              dangerouslySetInnerHTML={{ __html: svgInlineCode }}
+            />
+          ) : !isNode ? (
+            <img
+              id={elId}
+              className={`LazyImg-el ${status}`}
+              src={status === 'loaded' ? src : srcNotLoaded}
+              style={s}
+              alt={altText}
+            />
+          ) : (
+            <noscript>
+              <img
+                id={elId}
+                className="LazyImg-el loaded"
+                src={srcNotLoaded}
+                style={s}
+                alt={altText}
+              />
+            </noscript>
+          )}
+        </span>
 
         {spaceHolderFix && (
           <span
+            className="spaceHolderFix"
             style={{
               position: 'relative',
               width: '100%',
@@ -312,60 +387,34 @@ class LazyImg extends React.Component<ILazyImgProps, ILazyImgState> {
             }}
           />
         )}
-
-        {svgInlineCode && inlineSvg ? (
-          <span
-            className={`LazyImg-el LazyImg-inline-svg ${status}`}
-            style={s}
-            dangerouslySetInnerHTML={{ __html: svgInlineCode }}
-          />
-        ) : !isNode ? (
-          <img
-            id={elId}
-            className={`LazyImg-el ${status}`}
-            src={status === 'loaded' ? src : srcNotLoaded}
-            style={s}
-            alt={altText}
-          />
-        ) : (
-          <noscript>
-            <img
-              id={elId}
-              className="LazyImg-el loaded"
-              src={srcNotLoaded}
-              style={s}
-              alt={altText}
-            />
-          </noscript>
-        )}
       </span>
     )
   }
 
-  getEl = () => this.imageRef.current
-
   render() {
-    const { className, isBackground, backgroundColor } = this.props
+    const { className = '', isBackground, backgroundColor } = this.props
 
-    const style = {
+    const opacityStyle = {
       opacity: this.state.status === 'loaded' || isNode ? 1 : 0
     }
 
     let el
     if (isBackground) {
-      el = this.renderBackgroundImage(style)
+      el = this.renderBackgroundImage(opacityStyle)
     } else {
-      el = this.renderImage(style)
+      el = this.renderImage(opacityStyle)
     }
 
     return (
       <span
-        ref={this.imageRef}
-        style={backgroundColor ? { background: backgroundColor } : {}}
-        className={`LazyImg ${className || ''}`}
+        style={
+          backgroundColor
+            ? { ...this.props.style, background: backgroundColor }
+            : this.props.style
+        }
+        className={classnames('LazyImg', className)}
         onClick={this.onClick}
       >
-
         {el}
       </span>
     )

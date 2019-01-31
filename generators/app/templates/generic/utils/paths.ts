@@ -1,4 +1,4 @@
-import { languages } from '../constants'
+const { languages } = require('../constants')
 
 const { getLangFromPathHelper: langFromPath } = require('./../server/utils')
 export { langFromPath }

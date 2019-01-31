@@ -40,7 +40,8 @@
     "prismic-javascript": "^1.5.0",
     "react": "^16.6.0",
     "react-dom": "^16.4.2",
-    "react-helmet": "^5.2.0",
+    "react-helmet": "^5.2.0",<% if (baseComponents.includes('LazyImg')) { %>
+    "react-intersection-observer": "^7.0.0",<% } %>
     "react-redux": "^5.0.6",<% if (addAnimLibrary === 'react-spring') { %>
     "react-spring": "^7.2.10",<% } %><% if (addAnimLibrary === 'gsap') { %>
     "gsap": "^2.0.2",<% } %>

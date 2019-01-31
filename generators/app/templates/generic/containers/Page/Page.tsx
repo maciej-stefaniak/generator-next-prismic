@@ -1,7 +1,7 @@
 import * as React from 'react'
 import withRedux from 'next-redux-wrapper'
 
-import { logoURL } from '../../constants'
+const { logoURL } = require('../../constants')
 
 import { getPathAndLangForPage } from '../../utils'
 
