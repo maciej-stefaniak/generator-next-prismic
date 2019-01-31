@@ -8,7 +8,7 @@ import { isIE, isNode, isRetina, w } from '../../utils'
 const loadingImg =
   'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
-export interface ILazyImgProps {
+export type ILazyImgProps = {
   src: string
 
   /*
@@ -68,7 +68,7 @@ export interface ILazyImgProps {
   onClick?: () => void
 }
 
-interface ILazyImgState {
+type ILazyImgState = {
   status: 'loading' | 'loaded' | 'failed'
   retina: boolean
   supportsWebp: boolean

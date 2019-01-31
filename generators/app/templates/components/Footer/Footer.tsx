@@ -5,7 +5,7 @@ import { companyName } from '../../constants'
 
 import './styles.scss'
 
-interface IFooterProps {
+type IFooterProps = {
   copyright?: string
   lang: string
   router: {

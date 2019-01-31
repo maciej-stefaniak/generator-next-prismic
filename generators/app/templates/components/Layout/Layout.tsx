@@ -6,7 +6,7 @@ import { Navbar, Footer } from '..'
 
 import './Layout.scss'
 
-interface ILayoutProps {
+type ILayoutProps = {
   children: React.ReactNode | React.ReactNode[]
 
   navbar?: any

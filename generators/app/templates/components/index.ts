@@ -1,4 +1,4 @@
-export { default as Layout } from './Layout/LazyImg'
+export { default as Layout } from './Layout/Layout'
 export { default as Footer } from './Footer/Footer'
 export { default as Navbar } from './Navbar/Navbar'
 <% if (baseComponents.includes('MetaData')) { %>export { default as MetaData } from './MetaData/MetaData'<% } %>

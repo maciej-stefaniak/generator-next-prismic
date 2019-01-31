@@ -1,7 +1,10 @@
 import NextSeo from 'next-seo'
-import { metadataDefaults } from './../../constants'
+const { metadataDefaults } = require('./../../constants')
 
-const PageMetaData = ({ seoData }) => {
+type MetaDataProps = {
+  seoData?: any
+}
+const MetaData = ({ seoData }: MetaDataProps) => {
   const seoConfig = {
     ...metadataDefaults,
     ...seoData
@@ -10,4 +13,4 @@ const PageMetaData = ({ seoData }) => {
   return <NextSeo config={seoConfig} />
 }
 
-export default PageMetaData
+export default MetaData

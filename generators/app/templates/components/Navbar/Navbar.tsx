@@ -6,11 +6,9 @@ import { withRouter } from 'next/router'
 
 import { menuOpen, menuClose } from '../../store/actions/ui'
 
-import { isNode } from '../../utils'
-
 import './styles.scss'
 
-interface INavbarProps {
+type INavbarProps = {
   router: {
     asPath: string
   }

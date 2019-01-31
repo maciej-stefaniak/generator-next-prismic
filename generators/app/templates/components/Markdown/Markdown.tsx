@@ -1,18 +1,18 @@
-import * as React from "react";
-import "./styles.scss";
+import * as React from 'react'
+import './styles.scss'
 
-import { cta } from "../../utils";
+import { cta } from '../../utils'
 
-interface IMarkdownProps {
-  input: { text: string }[];
-  unWrapParagraphs?: boolean;
-  className?: string;
+type IMarkdownProps = {
+  input: { text: string }[]
+  unWrapParagraphs?: boolean
+  className?: string
 }
 
 const Markdown: React.SFC<IMarkdownProps> = ({
   input,
   unWrapParagraphs = true,
-  className = ""
+  className = ''
 }) => (
   <div className={`Markdown ${className}`}>
     {unWrapParagraphs ? (
@@ -21,6 +21,6 @@ const Markdown: React.SFC<IMarkdownProps> = ({
       cta(input, unWrapParagraphs)
     )}
   </div>
-);
+)
 
-export default Markdown;
+export default Markdown

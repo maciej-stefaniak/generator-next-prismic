@@ -4,7 +4,7 @@ import './styles.scss'
 
 type OnClick = (event) => void
 
-interface ILinkProps {
+type ILinkProps = {
   type: 'internal' | 'external' | 'mailto'
   url: string
   title: string

@@ -1,34 +1,34 @@
-import * as React from "react";
+import * as React from 'react'
 
 const COMPONENTS = {
   /* 
     Name_component: NameComponent
   */
-};
+}
 
-interface IContentBlockProps {
+type IContentBlockProps = {
   /**
    * Name that represents the component to be used
    */
-  tag: string;
-  primary?: any;
+  tag: string
+  primary?: any
 }
 
 const ContentBlock: React.SFC<IContentBlockProps> = props => {
   const {
     tag,
-    primary: { is_hidden = "No" }
-  } = props;
+    primary: { is_hidden = 'No' }
+  } = props
 
-  if (!tag) return null;
+  if (!tag) return null
 
-  const TagName = COMPONENTS[tag];
+  const TagName = COMPONENTS[tag]
 
-  if (!TagName) return null;
+  if (!TagName) return null
 
-  if (is_hidden === "Yes") return null;
+  if (is_hidden === 'Yes') return null
 
-  return <TagName {...props} />;
-};
+  return <TagName {...props} />
+}
 
-export default ContentBlock;
+export default ContentBlock

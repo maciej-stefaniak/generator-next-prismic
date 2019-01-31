@@ -4,18 +4,18 @@ import * as ReactDOM from 'react-dom'
 import { isNode } from '../../utils'
 
 /*
-  * This element allows you to render children in a different part of the DOM
-*/
+ * This element allows you to render children in a different part of the DOM
+ */
 
-interface IPortalProps {
+type IPortalProps = {
   /*
    * Defines an doom element id in which the childreen will be render into
-  */
+   */
   rootId: string
 
   /*
    * Children of the Portal element
-  */
+   */
   children?: React.ReactNode | React.ReactNode[]
 }
 
