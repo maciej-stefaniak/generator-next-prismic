@@ -1,10 +1,10 @@
 {
   "name": "next-prismic",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Create a React/Next.js with Prismic CMS project with yo",
   "homepage": "",
   "author": {
-    "name": "Jon Ander Pérez",
+    "name": "Jon Ander Perez",
     "email": "jonanderdev@gmail.com",
     "url": ""
   },
