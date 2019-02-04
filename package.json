@@ -1,7 +1,7 @@
 {
   "name": "next-prismic",
   "version": "0.0.0",
-  "description": "Create a next-prismic project with yo",
+  "description": "Create a React/Next.js with Prismic CMS project with yo",
   "homepage": "",
   "author": {
     "name": "Jon Ander Pérez",

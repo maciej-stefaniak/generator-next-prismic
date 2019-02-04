@@ -34,8 +34,9 @@ module.exports = class extends Generator {
         {
           type: 'input',
           name: 'websiteName',
-          message:
-            'What would you like your website project (and folder) to be called?',
+          message: `What is the name of your project? ${chalk.gray(
+            "will be the folder's name"
+          )}`,
           filter: websiteName => {
             return websiteName
               .toLowerCase()
@@ -52,32 +53,32 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'websiteFullName',
-        message: `Full name of the company/product?`
+        message: `What is the full name of the company/product?`
       },
       {
         type: 'input',
         name: 'websiteDescription',
-        message: `Default description of the company/product? ${chalk.gray(
+        message: `And the default description? ${chalk.gray(
           chalk.italic('(It can be changed later in constants)')
         )}`
       },
       {
         type: 'input',
         name: 'websiteURL',
-        message: `Site root url? ${chalk.gray(
+        message: `What about the site's root URL? ${chalk.gray(
           chalk.italic('(It can be changed later in constants)')
         )}`,
         validate: input => {
           if (input && input.length >= 1) {
             return true
           }
-          return 'Site root url is required'
+          return 'Site root URL is required'
         }
       },
       {
         type: 'input',
         name: 'githubRepoUrl',
-        message: `Github repository url of the project? ${chalk.gray(
+        message: `What is the Github repository URL of the project? ${chalk.gray(
           chalk.italic(
             '(It can be changed later in read.me under Installation)'
           )
@@ -90,14 +91,14 @@ module.exports = class extends Generator {
           ) {
             return true
           }
-          return 'Add a proper Github repository url'
+          return 'Add a proper Github repository URL with HTTPS.'
         }
       },
       {
         type: 'checkbox',
         name: 'languages',
         choices: [{ name: 'de', checked: true }, { name: 'en', checked: true }],
-        message: `Select the base languages you would like to have? ${chalk.gray(
+        message: `Select the base languages for your project? ${chalk.gray(
           chalk.italic(
             '(If differents languages are needed can be changed later in constants)'
           )
@@ -120,7 +121,7 @@ module.exports = class extends Generator {
           { name: 'MetaData', checked: true },
           { name: 'ContentBlocks', checked: true }
         ],
-        message: 'Select the base components you would like to have?'
+        message: 'Which base React Components you would like to have?'
       },
       {
         type: 'list',
@@ -133,7 +134,7 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'primaryColor',
-        message: `What will be primary hexadecimal color for the site? ${chalk.gray(
+        message: `What will be Primary Color for the site? ${chalk.gray(
           chalk.italic(
             '(can be changed later in components/Layout/common/colors.scss)'
           )
@@ -181,8 +182,15 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    let websiteName = !this.options.websiteName || this.options.websiteName.length < 1 ? this.props.websiteName : this.options.websiteName;
-    websiteName = websiteName.toLowerCase().trim().split(' ').join('-')
+    let websiteName =
+      !this.options.websiteName || this.options.websiteName.length < 1
+        ? this.props.websiteName
+        : this.options.websiteName
+    websiteName = websiteName
+      .toLowerCase()
+      .trim()
+      .split(' ')
+      .join('-')
     this.destinationRoot(websiteName)
 
     const props = { ...this.props, websiteName }
