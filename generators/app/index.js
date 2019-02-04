@@ -3,6 +3,8 @@ const Generator = require('yeoman-generator')
 const chalk = require('chalk')
 const yosay = require('yosay')
 
+const fixDotfiles = require('./fixDotfiles')
+
 module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts)
@@ -220,18 +222,6 @@ module.exports = class extends Generator {
       props
     )
 
-    // Copy two config files (.env & .gitignore) that need adjustment of the file name
-    this.fs.copyTpl(
-      `${this.templatePath()}/config-files/others/enviromentfile`,
-      `${this.destinationPath()}/.env`,
-      props
-    )
-    this.fs.copyTpl(
-      `${this.templatePath()}/config-files/others/gitignorefile`,
-      `${this.destinationPath()}/.gitignore`,
-      props
-    )
-
     // Files on root. Mainly config files
     this.fs.copyTpl(
       `${this.templatePath()}/config-files/*`,
@@ -243,6 +233,8 @@ module.exports = class extends Generator {
       this.destinationPath(),
       props
     )
+
+    fixDotfiles(this)
   }
 
   install() {

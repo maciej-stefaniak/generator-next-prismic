@@ -26,7 +26,7 @@ npm run dev
 
 ### Deployment
 
-Create a file called .env, with the following contents:
+Create a file called `.env`, with the following contents:
 
 .env
 
