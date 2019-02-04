@@ -2,7 +2,7 @@
 
 > Create a next-prismic project with yo
 
-This generator will create a project with React, Typescript and Next.js to allow server side rendering and improving SEO on our site.
+This generator will create a project with React, Typescript and Next.js to allow server side rendering and improving SEO on our site. Also the result project will be connected to Prismic.io Headless CMS for retrieving data.
 
 ## Installation
 
@@ -10,15 +10,7 @@ First, install [Yeoman](http://yeoman.io) and generator-next-prismic using [npm]
 
 ```bash
 npm install -g yo
-```
-
-Then clone this repository and link the generator
-
-```bash
-git clone https://github.com/jonanderdev/generator-next-prismic
-cd generator-next-prismic
-yarn install
-npm link
+npm install -g next-prismic
 ```
 
 Then to generate your new project (in any other folder) run the following:
