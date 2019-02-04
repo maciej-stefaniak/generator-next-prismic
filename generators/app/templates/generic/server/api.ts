@@ -18,6 +18,8 @@ module.exports = (
 ) => {
   // Query for page
   app.get('/api-page', (req, res) => {
+    if (req.query && req.query.id === 'static') return
+
     try {
       prismicApi.getDocumentsPage(
         req,
@@ -42,6 +44,8 @@ module.exports = (
 
   // Query for document
   app.get('/api-document', (req, res) => {
+    if (req.query && req.query.id === 'static') return
+
     try {
       prismicApi.getDocument(
         req,
@@ -66,6 +70,8 @@ module.exports = (
 
   // Query for document
   app.get('/api-all-documents', (req, res) => {
+    if (req.query && req.query.id === 'static') return
+
     try {
       prismicApi.getDocument(
         req,

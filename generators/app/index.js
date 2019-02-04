@@ -131,12 +131,12 @@ module.exports = class extends Generator {
         message: `Which animation library do you wanna use? ${chalk.gray(
           chalk.italic('(can be changed later in package.json)')
         )}`,
-        choices: ['react-spring', 'gsap']
+        choices: ['react-spring', 'gsap', 'none']
       },
       {
         type: 'input',
         name: 'primaryColor',
-        message: `What will be Primary Color for the site? ${chalk.gray(
+        message: `Primary color for the site? ${chalk.gray(
           chalk.italic(
             '(can be changed later in components/Layout/common/colors.scss)'
           )

@@ -2,6 +2,7 @@
   "name": "<%= websiteName %>",
   "version": "0.0.1",
   "license": "UNLICENSED",
+  "repository": "<%= githubRepoUrl.replace('https://github.com/', '') %>",
   "lint-staged": {
     "*.js": [
       "eslint --fix",
@@ -39,8 +40,7 @@
     "prismic-dom": "^2.1.0",
     "prismic-javascript": "^2.0.1",
     "react": "^16.6.0",
-    "react-dom": "^16.4.2",
-    "react-helmet": "^5.2.0",<% if (baseComponents.includes('LazyImg')) { %>
+    "react-dom": "^16.4.2",<% if (baseComponents.includes('LazyImg')) { %>
     "react-intersection-observer": "^7.0.0",<% } %>
     "react-redux": "^6.0.0",<% if (addAnimLibrary === 'react-spring') { %>
     "react-spring": "^7.2.10",<% } %><% if (addAnimLibrary === 'gsap') { %>
