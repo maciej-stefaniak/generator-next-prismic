@@ -1,7 +1,7 @@
 {
   "name": "generator-next-prismic",
-  "version": "0.0.1",
-  "description": "Create a React/Next.js with Prismic CMS project with yo",
+  "version": "0.0.3",
+  "description": "Create a Next.js project connected to Prismic CMS with Yeoman",
   "author": {
     "name": "Jon Ander Perez",
     "email": "jonanderdev@gmail.com"

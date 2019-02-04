@@ -26,27 +26,25 @@ It will create a React Typescript based project using Next.js framework to allow
 The app is set as a PWA (Progressive Web App) providing:
 
 - Server-side rendering with Next.js
+- A Node.js Express server with gzip compression
+- In the server an API connected to Prismic to deliver content to the client
 - Offline support with a service worker
 - A manifest and robots.txt files
 - Linting & code formatting with Eslint, Prettier, Airbnb rules ...
 - Styling with SCSS files and with Autoprefixer. Also allows to add custom PostCSS config.
-- A Node.js Express server with gzip compression
-- In the server an API connected to Prismic to deliver content to the client
 - A Redux store to get the content from the API
 
 ## About the generator
 
-In order to stay up to date with the last version of this generator, go to the folder containing your clonned version of this repository pull the changes and link it again.
+The generator is done with Yeoman. [Learn more about Yeoman](http://yeoman.io/).
 
-To achieve that, run the following on the terminal inside your cloned folder `generator-next-prismic`:
+## Stay up to date
+
+In order to stay up to date with the last version of this generator, run the following:
 
 ```bash
-git pull origin master
-yarn install
-npm link
+npm update -g generator-next-prismic
 ```
-
-The generator is done with Yeoman. [Learn more about Yeoman](http://yeoman.io/).
 
 ## License
 

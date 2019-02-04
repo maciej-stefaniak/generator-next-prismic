@@ -1,0 +1,3 @@
+CONTENT_API_URL=<%= prismicApiURL %>
+CONTENT_API_TOKEN=<%= prismicApiToken %>
+SITE_ROOT=<%= websiteURL %>
