@@ -10,7 +10,7 @@ First, install [Yeoman](http://yeoman.io) and generator-next-prismic using [npm]
 
 ```bash
 npm install -g yo
-npm install -g next-prismic
+npm install -g generator-next-prismic
 ```
 
 Then to generate your new project (in any other folder) run the following:
