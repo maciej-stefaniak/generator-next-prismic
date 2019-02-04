@@ -2,11 +2,9 @@
   "name": "generator-next-prismic",
   "version": "0.0.1",
   "description": "Create a React/Next.js with Prismic CMS project with yo",
-  "homepage": "",
   "author": {
     "name": "Jon Ander Perez",
-    "email": "jonanderdev@gmail.com",
-    "url": ""
+    "email": "jonanderdev@gmail.com"
   },
   "files": [
     "generators"
@@ -17,7 +15,8 @@
     "prismic",
     "es6",
     "react",
-    "yeoman-generator"
+    "yeoman-generator",
+    "generator-next-prismic"
   ],
   "devDependencies": {
     "yeoman-test": "^1.7.0",
