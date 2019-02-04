@@ -43,7 +43,7 @@ The generator is done with Yeoman. [Learn more about Yeoman](http://yeoman.io/).
 In order to stay up to date with the last version of this generator, run the following:
 
 ```bash
-npm update -g generator-next-prismic
+npm install -g generator-next-prismic
 ```
 
 ## License
