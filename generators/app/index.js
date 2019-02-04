@@ -220,6 +220,18 @@ module.exports = class extends Generator {
       props
     )
 
+    // Copy two config files (.env & .gitignore) that need adjustment of the file name
+    this.fs.copyTpl(
+      `${this.templatePath()}/config-files/others/enviromentfile`,
+      `${this.destinationPath()}/.env`,
+      props
+    )
+    this.fs.copyTpl(
+      `${this.templatePath()}/config-files/others/gitignorefile`,
+      `${this.destinationPath()}/.gitignore`,
+      props
+    )
+
     // Files on root. Mainly config files
     this.fs.copyTpl(
       `${this.templatePath()}/config-files/*`,
@@ -229,18 +241,6 @@ module.exports = class extends Generator {
     this.fs.copyTpl(
       `${this.templatePath()}/config-files/.*`,
       this.destinationPath(),
-      props
-    )
-
-    // Copy two config files (.env & .gitignore) that need adjustment of the file name
-    this.fs.copyTpl(
-      `${this.templatePath()}/config-files/others/_env`,
-      `${this.destinationPath('.env')}`,
-      props
-    )
-    this.fs.copyTpl(
-      `${this.templatePath()}/config-files/others/_gitignore`,
-      `${this.destinationPath('.gitignore')}`,
       props
     )
   }
