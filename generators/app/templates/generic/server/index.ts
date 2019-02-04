@@ -26,10 +26,6 @@ const app = next({ dir: '.', dev })
 
 const PORT = process.env.PORT || 3000
 
-const swPath = path.join(__dirname, '..', 'static', 'sw.js')
-const manifestPath = path.join(__dirname, '..', 'static', 'manifest.json')
-const sitemapPath = path.join(__dirname, '..', 'static', 'sitemap.xml')
-
 const routesDef = require('./routes')
 
 const redirects = []
@@ -51,14 +47,17 @@ const bootstrap = async () => {
     // Static files
     expressApp.get('/sw.js', (req, res) => {
       res.header('Cache-Control', 'no-cache')
-      res.sendFile(swPath)
+      res.sendFile(path.join(__dirname, '..', 'static', 'sw.js'))
     })
     expressApp.get('/manifest.json', (req, res) => {
-      res.sendFile(manifestPath)
+      res.sendFile(path.join(__dirname, '..', 'static', 'manifest.json'))
     })
     expressApp.get('/sitemap.xml', (req, res) => {
       res.header('Cache-Control', 'no-cache')
-      res.sendFile(sitemapPath)
+      res.sendFile(path.join(__dirname, '..', 'static', 'sitemap.xml'))
+    })
+    expressApp.get('/favicon.ico', (req, res) => {
+      res.sendFile(path.join(__dirname, '..', 'static/favicon/', 'favicon.ico'))
     })
     expressApp.get('/robots.txt', (req, res) =>
       res
@@ -76,6 +75,9 @@ const bootstrap = async () => {
         res.redirect(301, to)
       })
     })
+
+    // Api router
+    api(expressApp, prismicApi, sitemap, path, dev || staging)
 
     // Handler for the rest of request that are NOT to the API
     expressApp.get(/^\/(?!api).*/, (req, res) => {
@@ -98,9 +100,6 @@ const bootstrap = async () => {
 
       return handler(req, res, parse(req.url, true))
     })
-
-    // Api router
-    api(expressApp, prismicApi, sitemap, path, dev || staging)
 
     // Listen Port
     expressApp.listen(PORT, err => {
