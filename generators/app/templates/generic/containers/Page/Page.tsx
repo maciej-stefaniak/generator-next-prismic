@@ -55,6 +55,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
       ]
     }
   }<% } %>
+  
   return (
     <section>
       <% if (baseComponents.includes('MetaData')) { %><MetaData seoData={seoData} /><% } %>
@@ -78,7 +79,7 @@ Page.getInitialProps = async options => {
   const { store, req, asPath, query } = options
 
   // Avoid querying data with next.js-hot-reloading
-  if (isNextHR(req.url)) return;
+  if (isNextHR(req ? req.url : asPath)) return
 
   try {
     const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)

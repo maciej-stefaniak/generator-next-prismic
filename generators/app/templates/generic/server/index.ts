@@ -89,11 +89,9 @@ const bootstrap = async () => {
         req.url.indexOf('static') < 0 &&
         req.url.indexOf('on-demand-entries-ping') < 0
       ) {
-        if (!dev) {
-          // Fix for trailing slashes issue of Next.js
-          // https://github.com/zeit/next.js/issues/1189
-          req.url = req.url ? req.url.replace(/\/$/, '') : req.url
-        }
+        // Fix for trailing slashes issue of Next.js
+        // https://github.com/zeit/next.js/issues/1189
+        req.url = req.url ? req.url.replace(/\/$/, '') : req.url
 
         // Add language to the path if needed
         const userLang = getLangFromPathHelper('/', req)
