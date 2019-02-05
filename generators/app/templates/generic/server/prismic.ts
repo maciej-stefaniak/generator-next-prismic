@@ -99,9 +99,7 @@ const getDocument = (
 
       // If not init then we init the primisAPI
       try {
-        if (!prismicAPI || toResetCache) {
-          prismicAPI = initApi(req)
-        }
+        prismicAPI = initApi(req)
 
         prismicAPI
           .then(api => {

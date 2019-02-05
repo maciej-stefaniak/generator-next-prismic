@@ -75,7 +75,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
 
         {/* To be removed when starting project */}
         <div className="generator-demo-content">
-          <img src="static/images/demo-illustration.svg" />
+          <img src="/static/images/demo-illustration.svg" />
           <p>
             Welcome to your new project with <b>React/Next.js and Prismic</b>!
             <br />

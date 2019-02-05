@@ -65,38 +65,6 @@ module.exports = class extends Generator {
         )}`
       },
       {
-        type: 'input',
-        name: 'websiteURL',
-        message: `What about the site's root URL? ${chalk.gray(
-          chalk.italic('(It can be changed later in constants)')
-        )}`,
-        validate: input => {
-          if (input && input.length >= 1) {
-            return true
-          }
-          return 'Site root URL is required'
-        }
-      },
-      {
-        type: 'input',
-        name: 'githubRepoUrl',
-        message: `What is the Github repository URL of the project? ${chalk.gray(
-          chalk.italic(
-            '(It can be changed later in read.me under Installation)'
-          )
-        )}`,
-        validate: input => {
-          if (
-            input &&
-            input.length >= 1 &&
-            input.indexOf('https://github.com/') >= 0
-          ) {
-            return true
-          }
-          return 'Add a proper Github repository URL with HTTPS.'
-        }
-      },
-      {
         type: 'checkbox',
         name: 'languages',
         choices: [{ name: 'de', checked: true }, { name: 'en', checked: true }],
@@ -173,6 +141,38 @@ module.exports = class extends Generator {
             return true
           }
           return 'Prismic API Token is required'
+        }
+      },
+      {
+        type: 'input',
+        name: 'websiteURL',
+        message: `What about the site's root URL? ${chalk.gray(
+          chalk.italic('(It can be changed later in constants)')
+        )}`,
+        validate: input => {
+          if (input && input.length >= 1) {
+            return true
+          }
+          return 'Site root URL is required'
+        }
+      },
+      {
+        type: 'input',
+        name: 'githubRepoUrl',
+        message: `And what's the Github repository URL of the project? ${chalk.gray(
+          chalk.italic(
+            '(It can be changed later in read.me under Installation)'
+          )
+        )}`,
+        validate: input => {
+          if (
+            input &&
+            input.length >= 1 &&
+            input.indexOf('https://github.com/') >= 0
+          ) {
+            return true
+          }
+          return 'Add a proper Github repository URL with HTTPS.'
         }
       }
     ]
