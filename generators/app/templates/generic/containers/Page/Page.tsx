@@ -3,7 +3,7 @@ import withRedux from 'next-redux-wrapper'
 
 const { logoURL } = require('../../constants')
 
-import { getPathAndLangForPage } from '../../utils'
+import { getPathAndLangForPage, isNextHR } from '../../utils'
 
 import { Layout, MetaData, ContentBlock } from '../../components'
 
@@ -11,15 +11,7 @@ import { getPage } from '../../store/actions/content'
 import { menuClose } from '../../store/actions/ui'
 import initStore from '../../store/store'
 
-import {
-  c,
-  ct,
-  renderMeta,
-  renderMetaOpenGraph,
-  langFromPath,
-  adjustPath,
-  adjustPathReqWithLang
-} from '../../utils'
+import { ct } from '../../utils'
 
 import ErrorPage from '../ErrorPage/ErrorPage'
 
@@ -84,6 +76,10 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
 
 Page.getInitialProps = async options => {
   const { store, req, asPath, query } = options
+
+  // Avoid querying data with next.js-hot-reloading
+  if (isNextHR(req.url)) return;
+
   try {
     const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
 

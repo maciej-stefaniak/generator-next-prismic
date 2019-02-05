@@ -83,16 +83,19 @@ const bootstrap = async () => {
     expressApp.get(/^\/(?!api).*/, (req, res) => {
       /**
        * For routing we adjust the path if needed
-       * */
+       */
       if (
         req.url.indexOf('_next') < 0 &&
         req.url.indexOf('static') < 0 &&
         req.url.indexOf('on-demand-entries-ping') < 0
       ) {
-        // Fix for trailing slashes issue of Next.js
-        // https://github.com/zeit/next.js/issues/1189
-        req.url = req.url ? req.url.replace(/\/$/, '') : req.url
+        if (!dev) {
+          // Fix for trailing slashes issue of Next.js
+          // https://github.com/zeit/next.js/issues/1189
+          req.url = req.url ? req.url.replace(/\/$/, '') : req.url
+        }
 
+        // Add language to the path if needed
         const userLang = getLangFromPathHelper('/', req)
         req.url = addLangIfNotInUrl(req.url, userLang)
       }

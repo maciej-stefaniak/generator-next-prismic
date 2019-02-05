@@ -92,3 +92,6 @@ export const getPathAndLangForPage = (req, asPath, query): {
     type
   }
 }
+
+  // Avoid querying data with next.js-hot-reloading
+export const isNextHR = url => !(url.indexOf('_next') < 0 && url.indexOf('/static/') < 0 && url.indexOf('on-demand-entries-ping') < 0)
