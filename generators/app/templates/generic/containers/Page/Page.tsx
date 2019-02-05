@@ -15,6 +15,8 @@ import { ct } from '../../utils'
 
 import ErrorPage from '../ErrorPage/ErrorPage'
 
+import './styles.scss'
+
 interface StatelessPage<P = {}> extends React.SFC<P> {
   getInitialProps?: (ctx: any) => any
 }
@@ -70,6 +72,18 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
             <ContentBlock key={slice_type + index} tag={componentName} lang={lang} {...item} />
           )
         })}<% } %>
+
+        {/* To be removed when starting project */}
+        <div className="generator-demo-content">
+          <img src="static/images/demo-illustration.svg" />
+          <p>
+            Welcome to your new project with <b>React/Next.js and Prismic</b>!
+            <br />
+            Demo content on <b>Page.tsx</b>. Let's remove it
+          </p>
+        </div>
+        {/* --- */}
+
       </Layout>
     </section>
   )

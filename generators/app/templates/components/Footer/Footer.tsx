@@ -22,7 +22,7 @@ class Footer extends React.Component<IFooterProps> {
 
     return (
       <footer>
-        <div>
+        <div className="container">
           <p>{copyright}</p>
         </div>
       </footer>

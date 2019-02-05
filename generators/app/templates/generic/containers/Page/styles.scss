@@ -1,0 +1,24 @@
+@import '../../components/Layout/common/index.scss';
+
+.generator-demo-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: #282828;
+  width: 100%;
+  height: auto;
+  padding: 40px 20px;
+  max-width: 100%;
+
+  p {
+    color: #fff;
+    margin: 30px 0 20px;
+    text-align: center;
+  }
+
+  img {
+    width: 500px;
+    max-width: 70vw;
+  }
+}

@@ -49,7 +49,7 @@ class Navbar extends React.Component<INavbarProps> {
       <div>
         <nav>
           <Link route={`/${lang}`}>
-            <a>Home page</a>
+            <a />
           </Link>
         </nav>
       </div>

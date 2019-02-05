@@ -35,7 +35,7 @@ const ErrorPage: React.SFC<IErrorPageProps> = ({
   }<% } %>
 
   return page_404 ? (
-    <section>
+    <section className="Error-page">
       <% if (baseComponents.includes('MetaData')) { %><MetaData seoData={seoData} /><% } %>
       <Layout
         navbar={{

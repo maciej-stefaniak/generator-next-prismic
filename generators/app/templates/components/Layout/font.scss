@@ -7,3 +7,12 @@
 //     url('/static/fonts/.woff2') format('woff2');
 //   font-weight: 400;
 // }
+
+// Demo font
+body {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-display: swap; // testing
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+}
