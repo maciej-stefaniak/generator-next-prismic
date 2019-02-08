@@ -30,5 +30,9 @@ exports.fixDotfiles = function(generator) {
 
 function isSubPath(dir, file) {
   const relative = path.relative(dir, file)
-  return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative)
+  return (
+    Boolean(relative) &&
+    !relative.startsWith('..') &&
+    !path.isAbsolute(relative)
+  )
 }
