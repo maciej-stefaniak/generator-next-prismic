@@ -2,6 +2,7 @@
   "name": "<%= websiteName %>",
   "version": "0.0.1",
   "license": "UNLICENSED",
+  "private": true,
   "repository": "<%= githubRepoUrl.replace('https://github.com/', '') %>",
   "lint-staged": {
     "*.js": [
