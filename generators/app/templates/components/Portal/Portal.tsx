@@ -9,9 +9,10 @@ import { isNode } from '../../utils'
  */
 type IPortalProps = {
   /*
-   * Defines an doom element id in which the childreen will be render into
+   * Defines an DOM element id in which the childreen will be render into
+   * If not specified, 'portal' will be used
    */
-  rootId: string
+  rootId?: string
 
   /*
    * Children of the Portal element
@@ -22,6 +23,10 @@ type IPortalProps = {
 export default function Portal(props: IPortalProps) {
 
   const element: HTMLDivElement = (!isNode) ? document.createElement('div') : null;
+  const rootId = props.rootId || 'portal'
+  const modalRoot = (!isNode)
+    ? document.getElementById(rootId)
+    : null;
 
   useEffect(() => {
     // The portal element is inserted in the DOM tree after
@@ -32,11 +37,6 @@ export default function Portal(props: IPortalProps) {
     // DOM node, or uses 'autoFocus' in a descendant, add
     // state to Modal and only render the children when Modal
     // is inserted in the DOM tree.
-    const { rootId } = props
-    const modalRoot = (!isNode)
-      ? document.getElementById(rootId)
-      : null;
-
     if (modalRoot) {
       modalRoot.appendChild(element)
     }
@@ -44,7 +44,6 @@ export default function Portal(props: IPortalProps) {
     return () => {
       if (modalRoot) {
         modalRoot.removeChild(element)
-
       }
     }
   });

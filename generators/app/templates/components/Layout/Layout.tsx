@@ -47,11 +47,14 @@ class Layout extends React.Component<ILayoutProps> {
       lang
     } = this.props
     return (
-      <div className="Layout">
-        {showNavbar && navbar && <Navbar lang={lang} {...navbar} />}
-        <div className="Layout-content">{children}</div>
-        {showFooter && footer && <Footer lang={lang} {...footer} />}
-      </div>
+      <>
+        <div className="Layout">
+          {showNavbar && navbar && <Navbar lang={lang} {...navbar} />}
+          <div className="Layout-content">{children}</div>
+          {showFooter && footer && <Footer lang={lang} {...footer} />}
+        </div><% if (baseComponents.includes('Portal')) { %>
+        <div id="portal"></div><% } %>
+      </>
     )
   }
 }
