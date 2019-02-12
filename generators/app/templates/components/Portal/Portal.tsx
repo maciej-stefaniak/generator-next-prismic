@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 import * as ReactDOM from 'react-dom'
 
 import { isNode } from '../../utils'
@@ -6,12 +7,12 @@ import { isNode } from '../../utils'
 /*
  * This element allows you to render children in a different part of the DOM
  */
-
 type IPortalProps = {
   /*
-   * Defines an doom element id in which the childreen will be render into
+   * Defines an DOM element id in which the childreen will be render into
+   * If not specified, 'portal' will be used
    */
-  rootId: string
+  rootId?: string
 
   /*
    * Children of the Portal element
@@ -19,18 +20,15 @@ type IPortalProps = {
   children?: React.ReactNode | React.ReactNode[]
 }
 
-class Portal extends React.Component<IPortalProps> {
-  private element: HTMLDivElement
+export default function Portal(props: IPortalProps) {
 
-  constructor(props: IPortalProps) {
-    super(props)
-    if (!isNode) {
-      this.element = document.createElement('div')
-    }
-  }
+  const element: HTMLDivElement = (!isNode) ? document.createElement('div') : null;
+  const rootId = props.rootId || 'portal'
+  const modalRoot = (!isNode)
+    ? document.getElementById(rootId)
+    : null;
 
-  componentDidMount() {
-    const { rootId } = this.props
+  useEffect(() => {
     // The portal element is inserted in the DOM tree after
     // the Modal's children are mounted, meaning that children
     // will be mounted on a detached DOM node. If a child
@@ -39,30 +37,19 @@ class Portal extends React.Component<IPortalProps> {
     // DOM node, or uses 'autoFocus' in a descendant, add
     // state to Modal and only render the children when Modal
     // is inserted in the DOM tree.
-    if (!isNode) {
-      const modalRoot = document.getElementById(rootId)
+    if (modalRoot) {
+      modalRoot.appendChild(element)
+    }
+
+    return () => {
       if (modalRoot) {
-        modalRoot.appendChild(this.element)
+        modalRoot.removeChild(element)
       }
     }
-  }
+  });
 
-  componentWillUnmount() {
-    const { rootId } = this.props
-    if (!isNode) {
-      const modalRoot = document.getElementById(rootId)
-      if (modalRoot) {
-        modalRoot.removeChild(this.element)
-      }
-    }
-  }
+  return (!isNode)
+    ? ReactDOM.createPortal(props.children, element)
+    : <>{props.children}</>
 
-  render() {
-    if (!isNode) {
-      return ReactDOM.createPortal(this.props.children, this.element)
-    }
-    return <React.Fragment>{this.props.children}</React.Fragment>
-  }
 }
-
-export default Portal
