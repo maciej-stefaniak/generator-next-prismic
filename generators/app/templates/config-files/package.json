@@ -44,7 +44,7 @@
     "react-dom": "^16.8.0",<% if (baseComponents.includes('LazyImg')) { %>
     "react-intersection-observer": "^7.0.0",<% } %>
     "react-redux": "^6.0.0",<% if (addAnimLibrary === 'react-spring') { %>
-    "react-spring": "^7.2.10",<% } %><% if (addAnimLibrary === 'gsap') { %>
+    "react-spring": "^8.0.7",<% } %><% if (addAnimLibrary === 'gsap') { %>
     "gsap": "^2.0.2",<% } %>
     "redux": "^4.0.1",
     "rxjs": "^6.3.3",
