@@ -21,7 +21,7 @@ yo next-prismic
 
 ## About the generated project
 
-It will create a React Typescript based project using Next.js framework to allow server side rendering and improving SEO on the site.
+It will create a React Typescript based project using Next.js framework to allow server side rendering and improving SEO on the site. And all content of the site is fetched from Prismic through a simple API.
 
 The app is set as a PWA (Progressive Web App) providing:
 
