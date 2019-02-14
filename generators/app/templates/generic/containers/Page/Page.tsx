@@ -1,6 +1,6 @@
 import * as React from 'react'
 import withRedux from 'next-redux-wrapper'
-
+<% if (addAnimLibrary === 'react-spring') { %>import { useSpring, animated } from 'react-spring'<% } %>
 const { logoURL } = require('../../constants')
 
 import { getPathAndLangForPage, isNextHR } from '../../utils'
@@ -58,6 +58,14 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
     }
   }<% } %>
   
+  <% if (addAnimLibrary === 'react-spring') { %>const [imgHovered, setImgHovered] = React.useState(false)
+    const imgInitialScale = 1
+    const { imgTransform, imgOpacity } = useSpring({
+      imgTransform: `scale(${imgHovered ? 1.15 : imgInitialScale})`,
+      imgOpacity: imgHovered ? 0.85 : 1,
+      config: { mass: 3, tension: 500, friction: 50 }
+    })<% } %>
+
   return (
     <section>
       <% if (baseComponents.includes('MetaData')) { %><MetaData seoData={seoData} /><% } %>
@@ -75,7 +83,12 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
 
         {/* To be removed when starting project */}
         <div className="generator-demo-content">
-          <img src="/static/images/demo-illustration.svg" alt="Demo illustration" />
+          <<% if (addAnimLibrary === 'react-spring') { %>animated.<% } %>img 
+          src="/static/images/demo-illustration.svg" alt="Demo illustration" <% if (addAnimLibrary === 'react-spring') { %>
+              onMouseOver={() => setImgHovered(true)}
+              onMouseLeave={() => setImgHovered(false)}
+              style={{ transform: imgTransform, opacity: imgOpacity }}<% } %>
+          />
           <p>
             Welcome to your new project with <b>React/Next.js and Prismic</b>!
             <br />
