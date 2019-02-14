@@ -1,11 +1,13 @@
 {
   "name": "<%= websiteFullName %>",
   "short_name": "<%= websiteName %>",
+  "description": "<%= websiteDescription %>",
   "theme_color": "<%= primaryColor %>",
   "background_color": "#ffffff",
   "display": "standalone",
+  "lang": "<%- languages[0] %>",
   "orientation": "portrait",
-  "Scope": "/",
+  "scope": "/",
   "start_url": "/",
   "icons": []
 }

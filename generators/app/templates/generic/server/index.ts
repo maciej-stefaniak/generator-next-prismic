@@ -49,8 +49,8 @@ const bootstrap = async () => {
       res.header('Cache-Control', 'no-cache')
       res.sendFile(path.join(__dirname, '..', 'static', 'sw.js'))
     })
-    expressApp.get('/manifest.json', (req, res) => {
-      res.sendFile(path.join(__dirname, '..', 'static', 'manifest.json'))
+    expressApp.get('/manifest.webmanifest', (req, res) => {
+      res.sendFile(path.join(__dirname, '..', 'static', 'manifest.webmanifest'))
     })
     expressApp.get('/sitemap.xml', (req, res) => {
       res.header('Cache-Control', 'no-cache')
