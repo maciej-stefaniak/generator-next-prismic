@@ -32,7 +32,7 @@ export default class MyDocument extends Document<any, any> {
             content="width=device-width, initial-scale=1, minimum-scale=1"
           />
           <meta name="theme-color" content="<%= primaryColor %>" />
-          <link rel="manifest" href="/static/manifest.json" />
+          <link rel="manifest" href="/static/manifest.webmanifest" />
         </Head>
         <body>
           <Main />
