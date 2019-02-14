@@ -84,6 +84,7 @@ module.exports = class extends Generator {
         type: 'checkbox',
         name: 'baseComponents',
         choices: [
+          { name: 'Demo', checked: true },
           { name: 'LazyImg', checked: true },
           { name: 'Portal', checked: true },
           { name: 'Link', checked: true },
@@ -172,7 +173,7 @@ module.exports = class extends Generator {
           ) {
             return true
           }
-          return 'Add a proper Github repository URL with HTTPS.'
+          return 'Add a proper Github repository URL. It should start with https://github.com/'
         }
       }
     ]

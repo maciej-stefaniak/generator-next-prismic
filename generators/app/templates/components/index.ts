@@ -12,3 +12,7 @@ export { default as Navbar } from './Navbar/Navbar'
 
 // Renderer of Content Blocks. Needs to be below any content-block import
 <% if (baseComponents.includes('ContentBlocks')) { %>export { default as ContentBlock } from './ContentBlocks/ContentBlocks'<% } %>
+
+
+<% if (baseComponents.includes('Demo')) { %>// TODO: To be deleted after creating the project
+export { default as Demo } from './Demo/Demo'<% } %>
