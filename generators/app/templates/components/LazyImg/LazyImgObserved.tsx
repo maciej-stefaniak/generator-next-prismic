@@ -17,11 +17,7 @@ const LazyImgObserved: React.FC<ILazyImgProps> = (props: ILazyImgProps) => {
     <InView triggerOnce>
       {({ inView, ref }) => (
         <span ref={ref}>
-          <LazyImg
-            {...props}
-            src={inView ? props.src : null}
-            srcRetina={inView ? props.srcRetina : null}
-          />
+          <LazyImg {...props} src={inView ? props.src : null} />
         </span>
       )}
     </InView>
