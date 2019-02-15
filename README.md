@@ -34,6 +34,19 @@ The app is set as a PWA (Progressive Web App) providing:
 - Styling with SCSS files and with Autoprefixer. Also allows to add custom PostCSS config.
 - A Redux store to get the content from the API
 
+## Next.js dynamic Page content with Prismic (process)
+
+1. Next-routes matches home route and passes control to Page container.
+2. Page container calls `getInitialProps` with required path as param.
+3. `getInitialProps` function makes path adjustments and dispatches getPage with `${pathId}` as page id and `${lang}` as language of the page
+4. `getPage` action makes API call `/api-page?id=...`
+   1. server `api-page` passes request to `prismicApi.getDocumentsPage`
+   2. `getDocumentsPage` searches in cache `content-result-${page}`
+   3. Assuming we don’t have `content-result-${page}` in cache, we’re calling getDocument for `${page}` with the proper language and all entries from COMMON_DOCUMENTS array. `COMMON_DOCUMENTS` entries are Prismic types keys (like `navbar`, `footer` , `page_404` , etc.)
+   4. getPage function `assembles` all returned data
+5. contentReducer consumes `FETCH_CONTENT` and change store `content`
+6. Page component renders page using Helmet, Layout -> ContentBlocks and other components.
+
 ## About the generator
 
 The generator is done with Yeoman. [Learn more about Yeoman](http://yeoman.io/).
