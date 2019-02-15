@@ -28,10 +28,8 @@ interface IPageProps {
 }
 
 const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
-  if (!content) return <ErrorPage lang={lang} />
-  const page = content[pathId]
-  if (!page) return <ErrorPage lang={lang} />
-  if (page.error) {
+  const page = content ? content[pathId] : null
+  if (!content || !page || page.error) {
     return <ErrorPage {...page} lang={lang} />
   }
 
@@ -70,12 +68,12 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
           return (
             <ContentBlock key={slice_type + index} tag={componentName} lang={lang} {...item} />
           )
-        })}<% } %>
-
+        })}
+        
+        <% } %>
         <% if (baseComponents.includes('Demo')) { %>{/* To be removed when starting project */}
         <Demo />
         {/* --- */}<% } %>
-
       </Layout>
     </section>
   )

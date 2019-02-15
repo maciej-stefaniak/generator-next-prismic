@@ -47,13 +47,11 @@ const ErrorPage: React.SFC<IErrorPageProps> = ({
         <div>
           <div>
             <h1>404</h1>
-            <h3>{ct(page_404.hero_title)}</h3>
-            <p>{cta(page_404.hero_description)}</p>
             <% if (baseComponents.includes('Link')) { %><div>
               <Link
                 type="internal"
-                url={page_404.hero_link_url}
-                title={page_404.hero_link_text}
+                url={'/'}
+                title={'Head to the home page.'}
               />
             </div><% } %>
           </div>
