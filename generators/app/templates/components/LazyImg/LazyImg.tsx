@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React from 'react'
 import classnames from 'classnames'
 
 import './styles.scss'
