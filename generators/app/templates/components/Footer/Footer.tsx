@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { companyName } from '../../constants'
+const { companyName } = require('../../constants')
 
 import './styles.scss'
 
@@ -24,7 +24,6 @@ function Footer(props: IFooterProps) {
       </div>
     </footer>
   )
-
 }
 
 export default Footer
