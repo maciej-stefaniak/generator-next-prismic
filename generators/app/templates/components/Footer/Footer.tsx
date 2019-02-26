@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { isNode } from '../../utils'
 
 import { companyName } from '../../constants'
 
@@ -13,21 +12,19 @@ type IFooterProps = {
   }
 }
 
-class Footer extends React.Component<IFooterProps> {
-  render() {
-    const {
-      copyright = `&copy ${new Date().getFullYear()} ${companyName}`,
-      lang
-    } = this.props
+function Footer(props: IFooterProps) {
+  const {
+    copyright = `&copy ${new Date().getFullYear()} ${companyName}`
+  } = props
 
-    return (
-      <footer>
-        <div className="container">
-          <p>{copyright}</p>
-        </div>
-      </footer>
-    )
-  }
+  return (
+    <footer>
+      <div className="container">
+        <p>{copyright}</p>
+      </div>
+    </footer>
+  )
+
 }
 
 export default Footer
