@@ -90,7 +90,8 @@ module.exports = class extends Generator {
           { name: 'Link', checked: true },
           { name: 'Markdown', checked: true },
           { name: 'MetaData', checked: true },
-          { name: 'ContentBlocks', checked: true }
+          { name: 'ContentBlocks', checked: true },
+          { name: 'PageTransitions', checked: false }
         ],
         message: 'Which base React Components you would like to have?'
       },
@@ -222,6 +223,10 @@ module.exports = class extends Generator {
       this.destinationPath(),
       props
     )
+    // Omit pages/_app.js file if PageTransitions component is not present
+    if (!this.props.baseComponents.includes('PageTransitions')) {
+      this.fs.delete(`${this.destinationPath()}/pages/_app.tsx`)
+    }
 
     // Files on root. Mainly config files
     this.fs.copyTpl(
