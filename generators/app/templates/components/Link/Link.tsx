@@ -7,10 +7,10 @@ type OnClick = (event) => void
 type ILinkProps = {
   type: 'internal' | 'external' | 'mailto'
   url: string
-  title: string
   prefetch?: boolean
   onClick?: OnClick
   className?: string
+  children?: React.ReactNode | React.ReactNode[]
 }
 
 const InternalComponent = props => {
@@ -35,8 +35,8 @@ const InternalComponent = props => {
 const Link: React.SFC<ILinkProps> = ({
   type,
   url,
-  title,
   onClick,
+  children,
   className = ''
 }) => {
   const handleClick: OnClick = e => {
@@ -50,7 +50,7 @@ const Link: React.SFC<ILinkProps> = ({
     <span className={`Link ${className}`}>
       <div>
         <InternalComponent type={type} url={url} onClick={handleClick}>
-          <span>{title}</span>
+          <span>{children}</span>
         </InternalComponent>
       </div>
     </span>
