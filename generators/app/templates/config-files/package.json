@@ -80,7 +80,6 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.6.0",
     "lint-staged": "^8.1.0",
-    "next-purgecss": "^3.0.0",
     "node-sass": "^4.11.0",
     "postcss-loader": "^2.0.9",
     "prettier": "^1.13.4",
