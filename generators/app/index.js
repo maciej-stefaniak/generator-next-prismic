@@ -91,7 +91,7 @@ module.exports = class extends Generator {
           { name: 'Markdown', checked: true },
           { name: 'MetaData', checked: true },
           { name: 'ContentBlocks', checked: true },
-          { name: 'PageTransitions', checked: true }
+          { name: 'PageTransitions', checked: false }
         ],
         message: 'Which base React Components you would like to have?'
       },
