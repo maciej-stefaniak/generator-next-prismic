@@ -1,0 +1,21 @@
+/* purgecss start ignore */
+.PageTransitions {
+  .page-transition-enter {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  .page-transition-enter-active, .page-transition-exit-active {
+    transition: all 500ms ease;
+  }
+  .page-transition-enter-active {
+    opacity: 1;
+    transform: none;
+  }
+  .page-transition-exit {
+    transform: none;
+  }
+  .page-transition-exit-active {
+    transform: translateX(100%);
+  }
+}
+/* purgecss end ignore */

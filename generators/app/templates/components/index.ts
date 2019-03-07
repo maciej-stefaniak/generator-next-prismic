@@ -7,12 +7,12 @@ export { default as Navbar } from './Navbar/Navbar'
 <% if (baseComponents.includes('LazyImg')) { %>export { default as LazyImgObserved } from './LazyImg/LazyImgObserved'<% } %>
 <% if (baseComponents.includes('Portal')) { %>export { default as Portal } from './Portal/Portal'<% } %>
 <% if (baseComponents.includes('Link')) { %>export { default as Link } from './Link/Link'<% } %>
+<% if (baseComponents.includes('PageTransitions')) { %>export { default as PageTransitions } from './PageTransitions/PageTransitions'<% } %>
 
 // Add here the imports of the particular content-blocks
 
 // Renderer of Content Blocks. Needs to be below any content-block import
 <% if (baseComponents.includes('ContentBlocks')) { %>export { default as ContentBlock } from './ContentBlocks/ContentBlocks'<% } %>
-
 
 <% if (baseComponents.includes('Demo')) { %>// TODO: To be deleted after creating the project
 export { default as Demo } from './Demo/Demo'<% } %>
