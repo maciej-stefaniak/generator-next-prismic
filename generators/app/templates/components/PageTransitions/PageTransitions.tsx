@@ -21,7 +21,7 @@ class PageTransitions extends App {
     return (
       <Container>
         <div className="PageTransitions">
-          <PageTransition timeout={500} classNames="page-transition">
+          <PageTransition skipInitialTransition={true} timeout={500} classNames="page-transition">
             <Component {...pageProps} />
           </PageTransition>
         </div>
