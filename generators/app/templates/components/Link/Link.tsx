@@ -5,7 +5,7 @@ import './styles.scss'
 type OnClick = (event) => void
 
 type ILinkProps = {
-  type: 'internal' | 'external' | 'mailto'
+  type?: 'internal' | 'external' | 'mailto'
   url: string
   prefetch?: boolean
   onClick?: OnClick
@@ -15,6 +15,19 @@ type ILinkProps = {
 
 const InternalComponent = props => {
   const { children, type, className, url, prefetch = false, onClick } = props
+  let typeDetected = type || 'internal'
+
+  // `type` not specified - detect it
+  if (!type) {
+    // mailto
+    if (url.match(/mailto:/i) || url.match(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)) {
+      typeDetected = 'mailto'
+    }
+
+    // external
+    if (url.match(/http(s)?:\/\//i)) typeDetected = 'external'
+  }
+  
   if (type === 'internal') {
     return (
       <InternalLink route={url} prefetch={prefetch}>
@@ -25,8 +38,9 @@ const InternalComponent = props => {
     )
   }
 
-  if (type === 'mailto') {
-    return <a href={url} {...props} />
+  if (type === 'mailto' || typeDetected === 'mailto') {
+    const mailUrl = (url.indexOf('mailto:') !== -1) ? url : `mailto:${url}`
+    return <a href={mailUrl} {...props} />
   }
 
   return <a href={url} target="_blank" rel="noopener" {...props} />
