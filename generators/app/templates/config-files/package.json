@@ -5,11 +5,6 @@
   "private": true,
   "repository": "<%= githubRepoUrl.replace('https://github.com/', '') %>",
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --single-quote --write",
-      "git add"
-    ],
     "*.scss": "stylelint --syntax scss"
   },
   "scripts": {
@@ -62,20 +57,12 @@
     "@zeit/next-typescript": "^1.1.0",
     "autoprefixer": "^7.2.2",
     "babel-core": "^6.26.3",
-    "babel-eslint": "^8.0.3",
     "babel-jest": "^23.6.0",
     "babel-plugin-module-resolver": "^3.0.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
-    "eslint": "^4.13.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-import-resolver-babel-module": "^4.0.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.6.1",
     "husky": "^0.14.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.6.0",
@@ -90,6 +77,8 @@
     "stylelint-scss": "^2.2.0",
     "sw-precache-webpack-plugin": "^0.11.4",
     "ts-jest": "^23.10.5",
+    "tslint": "^5.14.0",
+    "tslint-react-hooks": "^2.0.0",
     "webpack-bundle-analyzer": "^3.0.1"
   },
   "engines": {

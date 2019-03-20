@@ -5,7 +5,7 @@ import { ILazyImgProps, ILazyImgState } from './LazyImg'
 
 import { isIE, isNode } from '../../utils'
 
-export default (props: ILazyImgProps): ILazyImgState => {
+const useLoadImage = (props: ILazyImgProps): ILazyImgState => {
   const { src, timeout, inlineSvg } = props
   let loadTimeout
 
@@ -49,39 +49,38 @@ export default (props: ILazyImgProps): ILazyImgState => {
   /*
    * Starts/triggers the loading of the image source
    */
-  useEffect(
-    () => {
-      if (src) {
-        if (inlineSvg) {
-          loadInlineSvg(src, props, dispatch)
-        } else {
-          const imgElem = document.createElement('img')
-          imgElem.onload = () => dispatch({ type: 'LOADED' })
-          imgElem.onerror = e =>
-            dispatch({ type: 'FAILED', payload: { error: e } })
-          imgElem.src = src
+  useEffect(() => {
+    if (src) {
+      if (inlineSvg) {
+        loadInlineSvg(src, props, dispatch)
+      } else {
+        const imgElem = document.createElement('img')
+        imgElem.onload = () => dispatch({ type: 'LOADED' })
+        imgElem.onerror = e =>
+          dispatch({ type: 'FAILED', payload: { error: e } })
+        imgElem.src = src
 
-          if (timeout) {
-            loadTimeout = setTimeout(
-              () => dispatch({ type: 'FAILED', payload: { error: 'timeout' } }),
-              timeout
-            )
-          }
+        if (timeout) {
+          loadTimeout = setTimeout(
+            () => dispatch({ type: 'FAILED', payload: { error: 'timeout' } }),
+            timeout
+          )
+        }
 
-          if (!isNode && isIE()) {
-            if (imgElem.complete) {
-              dispatch({ type: 'LOADED' })
-            }
+        if (!isNode && isIE()) {
+          if (imgElem.complete) {
+            dispatch({ type: 'LOADED' })
           }
         }
       }
+    }
 
-      return () => {
-        clearTimeout(loadTimeout)
-      }
-    },
-    [src]
-  )
+    return () => {
+      clearTimeout(loadTimeout)
+    }
+  }, [src])
 
   return state as ILazyImgState
 }
+
+export default useLoadImage

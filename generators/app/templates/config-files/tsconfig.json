@@ -16,6 +16,6 @@
     "typeRoots": ["node_modules/@types", "@types"]
   },
   "compileOnSave": true,
-  "exclude": ["node_modules", "out", ".next"],
-  "include": ["**/*"]
+  "exclude": ["node_modules", "out", ".next", "dist"],
+  "include": ["**/*.ts", "**/*.tsx"]
 }

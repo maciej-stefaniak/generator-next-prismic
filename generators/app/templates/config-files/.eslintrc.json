@@ -1,6 +1,7 @@
 {
   "parser": "babel-eslint",
   "extends": ["airbnb", "prettier"],
+  "plugins": ["react-hooks"],
   "settings": {
     "import/resolver": {
       "babel-module": {}
