@@ -61,14 +61,9 @@ const mapStateToProps = state => ({
   ui: state.ui
 })
 
-const mapDispatchToProps = dispatch => ({
-  menuOpen: () => dispatch(menuOpen()),
-  menuClose: () => dispatch(menuClose())
-})
-
 export default withRouter(
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    { menuOpen, menuClose }
   )(Navbar)
 )
