@@ -77,6 +77,7 @@ module.exports = class extends Generator {
           if (input && input.length >= 1) {
             return true
           }
+
           return 'Select at least one language'
         }
       },
@@ -91,17 +92,10 @@ module.exports = class extends Generator {
           { name: 'Markdown', checked: true },
           { name: 'MetaData', checked: true },
           { name: 'ContentBlocks', checked: true },
+          { name: 'Anims', checked: true },
           { name: 'PageTransitions', checked: false }
         ],
         message: 'Which base React Components you would like to have?'
-      },
-      {
-        type: 'list',
-        name: 'addAnimLibrary',
-        message: `Which animation library do you wanna use? ${chalk.gray(
-          chalk.italic('(can be changed later in package.json)')
-        )}`,
-        choices: ['react-spring', 'gsap', 'none']
       },
       {
         type: 'input',
@@ -116,6 +110,7 @@ module.exports = class extends Generator {
           if (isValidColor) {
             return true
           }
+
           return "That's not a valid hexadecimal color"
         }
       },
@@ -129,6 +124,7 @@ module.exports = class extends Generator {
           if (input && input.length >= 1) {
             return true
           }
+
           return 'Prismic API URL is required'
         }
       },
@@ -142,6 +138,7 @@ module.exports = class extends Generator {
           if (input && input.length >= 1) {
             return true
           }
+
           return 'Prismic API Token is required'
         }
       },
@@ -155,6 +152,7 @@ module.exports = class extends Generator {
           if (input && input.length >= 1) {
             return true
           }
+
           return 'Site root URL is required'
         }
       },
@@ -174,6 +172,7 @@ module.exports = class extends Generator {
           ) {
             return true
           }
+
           return 'Add a proper Github repository URL. It should start with https://github.com/'
         }
       }

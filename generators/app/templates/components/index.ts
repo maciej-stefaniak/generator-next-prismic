@@ -1,6 +1,7 @@
 export { default as Layout } from './Layout/Layout'
 export { default as Footer } from './Footer/Footer'
 export { default as Navbar } from './Navbar/Navbar'
+
 <% if (baseComponents.includes('MetaData')) { %>export { default as MetaData } from './MetaData/MetaData'<% } %>
 <% if (baseComponents.includes('Markdown')) { %>export { default as Markdown } from './Markdown/Markdown'<% } %>
 <% if (baseComponents.includes('LazyImg')) { %>export { default as LazyImg } from './LazyImg/LazyImg'<% } %>
@@ -16,3 +17,7 @@ export { default as Navbar } from './Navbar/Navbar'
 
 <% if (baseComponents.includes('Demo')) { %>// TODO: To be deleted after creating the project
 export { default as Demo } from './Demo/Demo'<% } %>
+
+
+// Anim helpers
+export { default as Transform } from './Anims/Transform'
