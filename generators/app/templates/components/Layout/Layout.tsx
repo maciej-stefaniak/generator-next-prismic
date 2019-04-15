@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { isIE } from '../../utils'
+import { isIE, isNode } from '../../utils'
 
 import { Navbar, Footer } from '..'
 
@@ -31,10 +31,22 @@ class Layout extends React.Component<ILayoutProps> {
     isIE()
   }
 
+  componentDidMount() {
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        import('a11y-checker').then(a11yChecker => {
+          a11yChecker.default()
+        })
+      } catch (e) {
+        console.error('Failed to load a11y-checker', e)
+      }
+    }
+  }
+
   componentDidCatch(error, errorInfo) {
-    // TODO: handle javascript exceptions
+    // TODO: IF NEEDED - Handle javascript exceptions
     console.log(error)
-    // TODO: add logs to backend server
+    // TODO: IF NEEDED - Send logs to backend server
   }
 
   render() {

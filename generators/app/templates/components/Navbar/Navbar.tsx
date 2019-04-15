@@ -48,9 +48,11 @@ class Navbar extends React.Component<INavbarProps> {
     return (
       <div>
         <nav>
-          <Link route={`/${lang}`}>
-            <a />
-          </Link>
+          {/*
+            <Link route={`/${lang}`}>
+              <a />
+            </Link>
+          */}
         </nav>
       </div>
     )
