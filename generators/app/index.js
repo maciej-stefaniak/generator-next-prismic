@@ -53,6 +53,12 @@ module.exports = class extends Generator {
     prompts = [
       ...prompts,
       {
+        type: 'confirm',
+        name: 'exportStatic',
+        message: `Create a static-generated project for serverless deployment?`,
+        default: true
+      },
+      {
         type: 'input',
         name: 'websiteFullName',
         message: `What is the full name of the company/product?`
@@ -222,6 +228,12 @@ module.exports = class extends Generator {
       this.destinationPath(),
       props
     )
+    // Omit serverless config files
+    if (!this.props.exportStatic) {
+      this.fs.delete(`${this.destinationPath()}/constants/index.js`)
+      this.fs.delete(`${this.destinationPath()}/server/prismic-serverless.js`)
+      this.fs.delete(`${this.destinationPath()}/server/utils.js`)
+    }
     // Omit pages/_app.js file if PageTransitions component is not present
     if (!this.props.baseComponents.includes('PageTransitions')) {
       this.fs.delete(`${this.destinationPath()}/pages/_app.tsx`)
@@ -238,6 +250,11 @@ module.exports = class extends Generator {
       this.destinationPath(),
       props
     )
+    // Omit _.env and next.config.export.js file if not exportStatic
+    if (!this.props.exportStatic) {
+      this.fs.delete(`${this.destinationPath()}/next.config.export.js`)
+      this.fs.delete(`${this.destinationPath()}/_.env`)
+    }
 
     fixDotfiles(this)
   }

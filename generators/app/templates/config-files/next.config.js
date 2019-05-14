@@ -4,11 +4,23 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const withTs = require('@zeit/next-typescript')
 const withSass = require('@zeit/next-sass')
+<% if (exportStatic) { %>const exportMap = require('./next.config.export')<% } %>
 
 const { ANALYZE } = process.env
 
 module.exports = withSass(
   withTs({
+    <% if (exportStatic) { %>
+    /**
+     * Async function returning path mapping object for static export
+     */
+    exportPathMap: async function() {
+      const map = await exportMap.getMap()
+      if (map) {
+        return map
+      }
+    },
+    <% } %>
     webpack(config, { dev }) {
       const conf = config
       /**

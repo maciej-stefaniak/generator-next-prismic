@@ -9,17 +9,39 @@ export const getPage = (
   lang: <%- languages.map(lang => `'${lang}'`).join(' | ') %>,
 ) => async (dispatch, getState) => {
   try {
-    const protocol = req ? req.headers['x-forwarded-proto'] || 'http' : ''
-    const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
-    const res = await fetch(
-      `${baseUrl}/api-page?id=${documentId}&type=${documenType}&lang=${lang}`
-    )
-    const data = await res.json()
-    dispatch({
-      type: FETCH_CONTENT,
-      subType: documentId,
-      payload: data
-    })
+    const protocol = (req && req.headers) ? req.headers['x-forwarded-proto'] || 'http' : ''
+    const baseUrl = (req && req.headers) ? `${protocol}://${req.headers.host}` : ''
+
+    // Server is running
+    if (baseUrl) {
+      const res = await fetch(
+        `${baseUrl}/api-page?id=${documentId}&type=${documenType}&lang=${lang}`
+      )
+
+      const data = await res.json()
+      dispatch({
+        type: FETCH_CONTENT,
+        subType: documentId,
+        payload: data
+      })
+    }
+    // Server is NOT running - export mode
+    else {
+      const prismicApi = require('./../../server/prismic-serverless')
+      const data = await prismicApi.getDocumentsPage(
+        {},
+        documentId,
+        documenType,
+        lang
+      )
+      if (data) {
+        dispatch({
+          type: FETCH_CONTENT,
+          subType: documentId,
+          payload: data
+        })
+      }
+    }
   } catch (e) {
     dispatch({
       type: FETCH_CONTENT,
@@ -37,8 +59,8 @@ export const getDocument = (
   lang: 'en' | 'de'
 ) => async (dispatch, getState) => {
   try {
-    const protocol = req ? req.headers['x-forwarded-proto'] || 'http' : ''
-    const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
+    const protocol = (req && req.headers) ? req.headers['x-forwarded-proto'] || 'http' : ''
+    const baseUrl = (req && req.headers) ? `${protocol}://${req.headers.host}` : ''
     const res = await fetch(
       `${baseUrl}/api-document?id=${documentId}&type=${documenType}&lang=${lang}`
     )
@@ -64,8 +86,8 @@ export const getAllDocumentsOfType = (
   lang: 'en' | 'de'
 ) => async (dispatch, getState) => {
   try {
-    const protocol = req ? req.headers['x-forwarded-proto'] || 'http' : ''
-    const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
+    const protocol = (req && req.headers) ? req.headers['x-forwarded-proto'] || 'http' : ''
+    const baseUrl = (req && req.headers) ? `${protocol}://${req.headers.host}` : ''
     const res = await fetch(
       `${baseUrl}/api-all-documents?type=${documenType}&lang=${lang}`
     )
