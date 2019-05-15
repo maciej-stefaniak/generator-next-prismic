@@ -1,4 +1,5 @@
 const prismicApi = require('./server/prismic-serverless')
+const sitemap = require('./server/sitemap_')
 
 /**
  * Routing configuration for export
@@ -54,6 +55,13 @@ const getKeyByValue = (object, value) => {
 }
 
 /**
+ * Genrerates sitemap.xml file into static folder
+ */
+const generateSiteMap = () => {
+  sitemap(prismicApi)
+}
+
+/**
  * Module's main function which produces path mapping object for next.js 
  * export as described at https://github.com/zeit/next.js/#usage
  * 
@@ -65,6 +73,7 @@ const getKeyByValue = (object, value) => {
  * }
  */
 const getMap = () => {
+  generateSiteMap()
   return new Promise((resolve, reject) => {
     const promises = []
     let result = {}

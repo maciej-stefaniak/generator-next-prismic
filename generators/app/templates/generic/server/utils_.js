@@ -1,5 +1,5 @@
 const AcceptLanguageParser = require('accept-language-parser')
-const { languages } = require('../constants')
+const { languages } = require('../constants/index_')
 const chalk = require('chalk')
 
 /*

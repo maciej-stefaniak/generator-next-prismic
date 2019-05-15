@@ -4,7 +4,12 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const withTs = require('@zeit/next-typescript')
 const withSass = require('@zeit/next-sass')
-<% if (exportStatic) { %>const exportMap = require('./next.config.export')<% } %>
+<% if (exportStatic) { %>const exportMap = require('./next.config.export')
+const fs = require('fs')
+const { join } = require('path')
+const { promisify } = require('util')
+const copyFile = promisify(fs.copyFile)
+const { EXPORT } = process.env<% } %>
 
 const { ANALYZE } = process.env
 
@@ -14,9 +19,19 @@ module.exports = withSass(
     /**
      * Async function returning path mapping object for static export
      */
-    exportPathMap: async function() {
+    exportPathMap: async function(
+      defaultPathMap,
+      { dev, dir, outDir, distDir, buildId }
+    ) {
+      if (!EXPORT) {
+        return defaultPathMap;
+      }
       const map = await exportMap.getMap()
       if (map) {
+        await copyFile(join(dir, 'static/robots.txt'), join(outDir, 'robots.txt'))
+        await copyFile(join(dir, 'static/favicon/favicon.ico'), join(outDir, 'favicon.ico'))
+        await copyFile(join(dir, 'static/sw.js'), join(outDir, 'sw.js'))
+        await copyFile(join(dir, 'static/sitemap.xml'), join(outDir, 'sitemap.xml'))
         return map
       }
     },
