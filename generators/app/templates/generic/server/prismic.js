@@ -1,5 +1,3 @@
-export {} // Avoid typescript issue with "Cannot redeclare block-scoped variable"
-
 const Prismic = require('prismic-javascript')
 const NodeCache = require('node-cache')
 const { getLangFromPathHelper: getLang, log, logError } = require('./utils')
@@ -7,6 +5,8 @@ const { getLangFromPathHelper: getLang, log, logError } = require('./utils')
 const COMMON_DOCUMENTS = ['navbar', 'footer', 'page_404']
 const COMMON_REPEATABLE_DOCUMENTS = ['page']
 const COMMON_DOCUMENTS_TYPE_MAP = {}
+
+const EXPORT_MODE = (process.env.EXPORT) ? true : false
 
 // Here is the map to the proper language key in Prismic
 // If using a different language from the ones below, add also here the Prismic lang version to its small one as a key
@@ -25,7 +25,7 @@ if (!process.env.CONTENT_API_URL || !process.env.CONTENT_API_TOKEN) {
 // ---
 
 // Define Cache and delay
-let toResetCache = false
+let toResetCache = (EXPORT_MODE) ? true : false
 const DELAY_API_CALLS = process.env.DELAY_API_CALLS
   ? process.env.DELAY_API_CALLS
   : 1000 * 60 * 60 * 2 // 2 hours
@@ -55,12 +55,12 @@ const clearCache = () => {
  * If not in cache, it will fetch it from Prismic.io and save it in the cache afterwards
  */
 const getDocument = (
-  req: any,
-  documentId: string,
-  documentType: string,
-  lang: string,
-  onSuccess: (data: any) => void,
-  onError: (err: string, dataFallback?: any) => void
+  req, // @param req: any
+  documentId, // @param documentId: string
+  documentType, // @param documentType: string
+  lang, // @param lang: string
+  onSuccess, // @param onSuccess: (data: any) => void,
+  onError // @param onError: (err: string, dataFallback?: any) => void
 ) => {
   const documentRTypeF = COMMON_DOCUMENTS_TYPE_MAP[documentType]
     ? COMMON_DOCUMENTS_TYPE_MAP[documentType]
@@ -166,105 +166,164 @@ const getDocument = (
  * Includes all the common elements needed in the page like 'navbar', 'footer' or 'page_404'
  */
 const getDocumentsPage = (
-  req: any,
-  page: string,
-  type: string,
-  lang: string,
-  onSuccess: (data: any) => void,
-  onError: (err: string, dataFallback?: any) => void
+  req, // @param req: any
+  page, // @param page: string
+  type, // @param type: string
+  lang, // @param lang: string
+  onSuccess, // @param onSuccess: (data: any) => void
+  onError // onError: (err: string, dataFallback?: any) => void
 ) => {
-  const onErrorFn = err => {
-    const error = `Error getting cached content-result -> ${err}`
-    console.log(error)
-    if (onError) {
-      const justCachedCommonDocs = {}
-      COMMON_DOCUMENTS.map((doc, index) => {
-        justCachedCommonDocs[doc] = cache.get(`${doc}-${lang}`)
-        return doc
-      })
-      onError(
-        error,
-        cache.get(`content-result-${page}-${lang}`) || {
-          error,
-          ...justCachedCommonDocs
+
+  const fecthContent = (onSuccessFn, onErrorFn, cacheInstance) => {
+    // Create the promise to get the page document
+    const ePromises = []
+    ePromises.push(
+      new Promise((resolve, reject) => {
+        try {
+          getDocument(req, page, type, lang, resolve, reject)
+        } catch (e) {
+          logError(`Error document: ${page} : ${type} : ${lang}`)
         }
-      )
-    }
-  }
+      })
+    )
 
-  cache.get(`content-result-${page}`, (err, value) => {
-    const error = err || !value || value === undefined
-    if (error || toResetCache) {
-      // Cache key not found OR cache has been reset
-      // So we're gonna fetch data from Prismic.io
-
-      // Create the promise to get the page document
-      const ePromises = []
+    // Add the promises to get the all the common documents
+    COMMON_DOCUMENTS.map(doc => {
       ePromises.push(
         new Promise((resolve, reject) => {
           try {
-            getDocument(req, page, type, lang, resolve, reject)
+            getDocument(req, doc, doc, lang, resolve, reject)
           } catch (e) {
-            logError(`Error document: ${page} : ${type} : ${lang}`)
+            logError(`Error document: ${doc} : ${lang}`)
           }
         })
       )
+      return doc
+    })
 
-      // Add the promises to get the all the common documents
-      COMMON_DOCUMENTS.map(doc => {
-        ePromises.push(
-          new Promise((resolve, reject) => {
-            try {
-              getDocument(req, doc, doc, lang, resolve, reject)
-            } catch (e) {
-              logError(`Error document: ${doc} : ${lang}`)
-            }
+    // Run all the promises to get the needed content
+    Promise.all(ePromises)
+      .then(values => {
+        // No results error
+        if (!values || values.length <= 0) {
+          onErrorFn('Prismic: No results: All Promises')
+          return
+        }
+        // We have results, lets order them
+        try {
+          const contentRes = { ...values[0] }
+          // Map the results with their names
+          COMMON_DOCUMENTS.map((doc, index) => {
+            contentRes[doc] = values[index + 1]
+            return doc
           })
-        )
-        return doc
-      })
-
-      // Run all the promises to get the needed content
-      Promise.all(ePromises)
-        .then(values => {
-          // No results error
-          if (!values || values.length <= 0) {
-            onErrorFn('Prismic: No results: All Promises')
-            return
-          }
-          // We have results, lets order them
-          try {
-            const contentRes = { ...values[0] }
-            // Map the results with their names
-            COMMON_DOCUMENTS.map((doc, index) => {
-              contentRes[doc] = values[index + 1]
-              return doc
-            })
-            log(`GET: ${page.toUpperCase()} page content`)
+          log(`GET: ${page.toUpperCase()} page content`)
+          if (cacheInstance) {
             // Save into cache with the key
-            cache.set(`content-result-${page}-${lang}`, contentRes)
-            // Return result
-            if (onSuccess) onSuccess(contentRes)
-          } catch (e) {
-            log('Error getting Content', e)
-            // There was some error
-            onErrorFn('Error getting Content: All Promises')
+            cacheInstance.set(`content-result-${page}-${lang}`, contentRes)          
           }
+          // Return result
+          if (onSuccessFn) onSuccessFn(contentRes)
+        } catch (e) {
+          log('Error getting Content', e)
+          // There was some error
+          onErrorFn('Error getting Content: All Promises')
+        }
+      })
+      .catch(onErrorFn)
+  }
+
+  if (EXPORT_MODE) {
+    return new Promise((onSuccess, promiseReject) => {
+
+      const onErrorFn = err => {
+        const error = `Error getting cached content-result -> ${err}`
+        console.log(error)
+        promiseReject(null)
+      }
+  
+      // So we're gonna fetch data from Prismic.io
+      fecthContent(onSuccess, onErrorFn)
+    })
+  }
+  else {
+    const onErrorFn = err => {
+      const error = `Error getting cached content-result -> ${err}`
+      console.log(error)
+      if (onError) {
+        const justCachedCommonDocs = {}
+        COMMON_DOCUMENTS.map((doc, index) => {
+          justCachedCommonDocs[doc] = cache.get(`${doc}-${lang}`)
+          return doc
         })
-        .catch(onErrorFn)
-    } else {
-      log('content from cache')
-      if (onSuccess) onSuccess(value)
+        onError(
+          error,
+          cache.get(`content-result-${page}-${lang}`) || {
+            error,
+            ...justCachedCommonDocs
+          }
+        )
+      }
     }
-  })
+
+    cache.get(`content-result-${page}`, (err, value) => {
+      const error = err || !value || value === undefined
+      if (error || toResetCache) {
+        // Cache key not found OR cache has been reset
+        // So we're gonna fetch data from Prismic.io
+
+        fecthContent(onSuccess, onErrorFn, cache);
+      } else {
+        log('content from cache')
+        if (onSuccess) onSuccess(value)
+      }
+    })
+  }
+}
+
+const getAllForType = (
+  docType,
+  langCode,
+  success,
+  failure
+) => {
+  try {
+    prismicAPI = initApi(false)
+    prismicAPI.then(api => {
+      try {
+        api.query(
+          Prismic.Predicates.at('document.type', docType),
+          { 
+            lang: langCode,
+            pageSize: 100
+          }
+        ).then(function (response) {
+          success(response.results)
+        }, function(err) {
+          console.log("Something went wrong: ", err);
+        });
+      }
+      catch (e) {
+        log('getAllForType error: ', e)
+      }
+    });
+
+  }
+  catch (e) {
+    log('prismicAPI initApi error: ', e)
+  }
 }
 
 // Initialize the prismic.io api
-const initApi = req =>
-  Prismic.getApi(process.env.CONTENT_API_URL, {
-    accessToken: process.env.CONTENT_API_TOKEN,
-    req
-  })
+const initApi = req => {
+  let initApiParams = {
+    accessToken: process.env.CONTENT_API_TOKEN
+  }
+  if (req && req.length > 1) {
+    Object.assign(initApiParams, {req})
+  }
+  return Prismic.getApi(process.env.CONTENT_API_URL, initApiParams)
+  }
 
 // Initialize our Prismic content api/cache
 const init = () => {
@@ -279,8 +338,8 @@ const init = () => {
 }
 
 const refreshContent = (
-  onSuccess: (data: any) => void,
-  onError: (err: string, dataFallback?: any) => void
+  onSuccess, // @param onSuccess: (data: any) => void,
+  onError // @param onError: (err: string, dataFallback?: any) => void
 ) => {
   // TODO: IF NEEDED - in here call getDocument with content needed to be cached
 }
@@ -290,6 +349,7 @@ module.exports = {
   clearCache,
   getDocument,
   getDocumentsPage,
+  getAllForType,
   init,
   refreshContent
 }

@@ -1,4 +1,4 @@
-const prismicApi = require('./server/prismic-serverless')
+const prismicApi = require('./server/prismic')
 const sitemap = require('./server/sitemap')
 
 /**

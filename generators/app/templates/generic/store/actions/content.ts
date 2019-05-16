@@ -27,7 +27,7 @@ export const getPage = (
     }
     // Server is NOT running - export mode
     else {
-      const prismicApi = require('./../../server/prismic-serverless')
+      const prismicApi = require('./../../server/prismic')
       const data = await prismicApi.getDocumentsPage(
         {},
         documentId,
