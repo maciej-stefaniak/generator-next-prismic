@@ -109,7 +109,7 @@ const bootstrap = async () => {
     })
 
     // Sitemap
-    sitemap(expressApp, prismicApi, path)
+    sitemap(prismicApi)
   })
 }
 

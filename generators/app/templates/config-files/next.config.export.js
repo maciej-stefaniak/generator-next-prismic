@@ -1,5 +1,5 @@
 const prismicApi = require('./server/prismic-serverless')
-const sitemap = require('./server/sitemap_')
+const sitemap = require('./server/sitemap')
 
 /**
  * Routing configuration for export

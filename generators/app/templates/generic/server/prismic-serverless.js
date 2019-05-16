@@ -1,6 +1,6 @@
 const Prismic = require('prismic-javascript')
 
-const { getLangFromPathHelper: getLang, log, logError } = require('./utils_')
+const { getLangFromPathHelper: getLang, log, logError } = require('./utils')
 
 const COMMON_DOCUMENTS = ['navbar', 'footer', 'page_404']
 const COMMON_REPEATABLE_DOCUMENTS = ['page', 'news_detail']

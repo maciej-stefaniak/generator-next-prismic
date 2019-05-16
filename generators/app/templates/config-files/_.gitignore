@@ -4,3 +4,4 @@ static/sitemap.xml
 .next
 *-error.log
 .env
+build

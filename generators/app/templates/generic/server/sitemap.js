@@ -2,14 +2,15 @@ const fs = require('fs')
 const builder = require('xmlbuilder')
 const path = require('path')
 
-const { languages: langs } = require('../constants/index_')
+const { languages: langs } = require('../constants')
 
+// @return string
 const perPage = (
-  SITE_ROOT,
-  results,
-  sitemapXML,
-  subRoute
-) => {
+  SITE_ROOT, // @param: string
+  results, // @param: any[]
+  sitemapXML, // @param: any
+  subRoute // @param: string - optional
+) => { 
   for (const page of results) {
     let pageName = page.uid
     langs.map(lang => {
@@ -17,7 +18,7 @@ const perPage = (
     })
 
     if (pageName && pageName.length > 0) {
-      const page = `${SITE_ROOT}/${subRoute || ''}${pageName}`
+      const page = `${SITE_ROOT}/${subRoute}${pageName}`
       const modDate = new Date()
       const url = sitemapXML.ele('url')
       url.ele('loc', page)
@@ -51,7 +52,7 @@ module.exports = (prismicApi) => {
       'page',
       langs[0],
       data => {
-        sitemapXML = perPage(process.env.SITE_ROOT, data.results, sitemapXML)
+        sitemapXML = perPage(SITE_ROOT, data.results, sitemapXML, '')
         const sitemapString = sitemapXML.end({ pretty: true })
         fs.writeFile(DESTINATION, sitemapString, (err, data) => {
           if (err) {
