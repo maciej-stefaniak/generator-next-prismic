@@ -31,23 +31,6 @@ const TYPE_ROUTES_MAPPING = {
 }
 
 /**
- * App-to-Prismic languges mapping.
- * Key: app's language code
- * Value: Prismic's language code
- * 
- * Example object: 
- * 
- * {
- *  de: 'de-de',
- *  en: 'en-en'
- * }
- */
-const LANGS_PRISMIC = {
-  de: 'de-de',
-  en: 'en-en'
-}
-
-/**
  * Helper function for searching for a key for a given value  
  */
 const getKeyByValue = (object, value) => {
@@ -77,13 +60,13 @@ const getMap = () => {
   return new Promise((resolve, reject) => {
     const promises = []
     let result = {}
-    Object.keys(LANGS_PRISMIC).forEach((lang) => {
+    Object.keys(prismicApi.LANGS_PRISMIC).forEach((lang) => {
       Object.keys(TYPE_ROUTES_MAPPING).forEach((docType, config) => {
         promises.push(
           new Promise((success, failure) => {
             prismicApi.getAllForType(
               docType,
-              LANGS_PRISMIC[lang],
+              prismicApi.LANGS_PRISMIC[lang],
               success, 
               failure
             )
@@ -94,7 +77,7 @@ const getMap = () => {
     Promise.all(promises).then(values => {
       values.map((group) => {
         group.map((item) => {
-          const lang = getKeyByValue(LANGS_PRISMIC, item.lang)
+          const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang)
           const adjustedPath = item.uid.replace(/(-(de|en))$/, '')
           const obj = {
             [`/${lang}/${adjustedPath}`]: 

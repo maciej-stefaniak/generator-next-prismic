@@ -351,5 +351,6 @@ module.exports = {
   getDocumentsPage,
   getAllForType,
   init,
-  refreshContent
+  refreshContent,
+  LANGS_PRISMIC
 }
