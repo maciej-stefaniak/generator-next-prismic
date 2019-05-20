@@ -28,7 +28,7 @@ const InternalComponent = props => {
     if (url.match(/http(s)?:\/\//i)) typeDetected = 'external'
   }
   
-  if (type === 'internal') {
+  if (typeDetected === 'internal') {
     return (
       <InternalLink route={url} prefetch={prefetch}>
         <a className={className} onClick={onClick}>
@@ -38,7 +38,7 @@ const InternalComponent = props => {
     )
   }
 
-  if (type === 'mailto' || typeDetected === 'mailto') {
+  if (typeDetected === 'mailto') {
     const mailUrl = (url.indexOf('mailto:') !== -1) ? url : `mailto:${url}`
     return <a href={mailUrl} {...props} />
   }

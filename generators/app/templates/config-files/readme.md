@@ -50,7 +50,6 @@ npm run start
 ```
 
 App will be served on port 3000.
-<% if (exportStatic) { %>
 
 ### Static export
 
@@ -60,6 +59,6 @@ To generate static HTML version of app execute following command
 CONTENT_API_URL=<%= prismicApiURL %> CONTENT_API_TOKEN=<%= prismicApiToken %> SITE_ROOT=<%= websiteURL %> EXPORT=1 npm run export
 ```
 
-App will be built into /build folder.<% } %>
+App will be built into /build folder.
 
 

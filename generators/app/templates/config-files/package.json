@@ -9,8 +9,8 @@
   },
   "scripts": {
     "dev": "ts-node server -p $PORT",
-    "build": "next build",<% if (exportStatic) { %>
-    "export": "npm run build && next export -o build",<% } %>
+    "build": "next build",
+    "export": "npm run build && next export -o build",
     "start": "NODE_ENV=production ts-node server -p $PORT",
     "precommit": "lint-staged",
     "heroku-postbuild": "yarn build",

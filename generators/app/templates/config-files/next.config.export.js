@@ -1,5 +1,9 @@
+const fs = require('fs')
+const path = require('path')
+
 const prismicApi = require('./server/prismic')
 const sitemap = require('./server/sitemap')
+const { languages, websiteURL } = require('./constants')
 
 /**
  * Routing configuration for export
@@ -45,6 +49,47 @@ const generateSiteMap = () => {
 }
 
 /**
+ * Generates redirection files for home page and language homes
+ */
+const generateRedirectFiles = () => {
+  
+  // Iterate through languages and create redirection files
+  languages.map((lang, index) => {
+    
+    const fileString  = `<meta http-equiv="refresh" content="0; url=${websiteURL}/${lang}/home" />`
+
+    // Create export folder for given language
+    fs.mkdirSync(path.join(__dirname, `export/redirects/${lang}`), { recursive: true }, (err) => {
+      console.log(`Error generating export dir`, err)
+    })
+
+    // Write redirection HTML into file
+    fs.writeFile(
+      path.join(__dirname, `export/redirects/${lang}`, 'index.html'), 
+      fileString, 
+      (err, data) => {
+        if (err) {
+          console.log(`Error generating ${lang} redirection file`, err)
+        }
+      })
+
+    // Root file
+    if (index === 0) {
+      // Write redirection HTML into root file
+      fs.writeFile(
+        path.join(__dirname, `export/redirects`, 'index.html'), 
+        fileString, 
+        (err, data) => {
+          if (err) {
+            console.log(`Error generating root redirection file`, err)
+          }
+        })
+    }
+  });
+  console.log(`Redirection files generated`)
+}
+
+/**
  * Module's main function which produces path mapping object for next.js 
  * export as described at https://github.com/zeit/next.js/#usage
  * 
@@ -57,6 +102,7 @@ const generateSiteMap = () => {
  */
 const getMap = () => {
   generateSiteMap()
+  generateRedirectFiles()
   return new Promise((resolve, reject) => {
     const promises = []
     let result = {}

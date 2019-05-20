@@ -4,18 +4,17 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const withTs = require('@zeit/next-typescript')
 const withSass = require('@zeit/next-sass')
-<% if (exportStatic) { %>const exportMap = require('./next.config.export')
+const { languages } = require('./constants')
+const exportMap = require('./next.config.export')
 const fs = require('fs')
 const { join } = require('path')
 const { promisify } = require('util')
 const copyFile = promisify(fs.copyFile)
-const { EXPORT } = process.env<% } %>
 
-const { ANALYZE } = process.env
+const { ANALYZE, EXPORT } = process.env
 
 module.exports = withSass(
   withTs({
-    <% if (exportStatic) { %>
     /**
      * Async function returning path mapping object for static export
      */
@@ -32,10 +31,18 @@ module.exports = withSass(
         await copyFile(join(dir, 'static/favicon/favicon.ico'), join(outDir, 'favicon.ico'))
         await copyFile(join(dir, 'static/sw.js'), join(outDir, 'sw.js'))
         await copyFile(join(dir, 'static/sitemap.xml'), join(outDir, 'sitemap.xml'))
+        languages.map(async (lang, index) => {
+          fs.mkdirSync(join(outDir, lang), { recursive: true }, (err) => {
+            console.log(err)
+          })
+          await copyFile(join(dir, `export/redirects/${lang}/index.html`), join(outDir, lang, 'index.html'))
+          if (index === 0) {
+            await copyFile(join(dir, 'export/redirects/index.html'), join(outDir, 'index.html'))
+          }
+        })
         return map
       }
     },
-    <% } %>
     webpack(config, { dev }) {
       const conf = config
       /**

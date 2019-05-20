@@ -17,7 +17,7 @@ const perPage = (
       pageName = pageName.replace(`-${lang}`, '')
     })
 
-    if (pageName && pageName.length > 0) {
+    if (pageName && pageName.length > 0 && pageName !== '404') {
       const page = `${SITE_ROOT}/${subRoute}${pageName}`
       const modDate = new Date()
       const url = sitemapXML.ele('url')
