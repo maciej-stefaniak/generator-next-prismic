@@ -82,6 +82,27 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
 Page.getInitialProps = async options => {
   const { store, req, asPath, query } = options
 
+  if (!options.isServer) {
+    if (asPath) {
+      const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
+      await store.dispatch(async dispatch => {
+        try {
+          const res = await fetch(`${asPath.replace(/\/$/, '')}/content.json`)
+          const data = await res.json()
+          dispatch({
+            type: "FETCH_CONTENT",
+            subType: pathId,
+            payload: data
+          });
+        } catch (e) {
+          console.log(`Error fetching content file for ${asPath}: `, e)
+        }
+      })
+      return { pathId, lang }
+    }
+    return 
+  }
+
   // Avoid querying data with next.js-hot-reloading
   if (isNextHR(req ? req.url : asPath)) return
 

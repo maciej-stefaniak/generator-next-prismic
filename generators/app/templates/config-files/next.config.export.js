@@ -89,6 +89,20 @@ const generateRedirectFiles = () => {
   console.log(`Redirection files generated`)
 }
 
+
+const getCommonDocumentsForLang = (lang, commonDocumentsForLangs) => {
+  return new Promise((resolve, reject) => {
+      prismicApi.getDocumentsPage(null, null, null, lang).then((value) => {
+      commonDocumentsForLangs[lang] = value;
+      resolve();
+    }).catch((e) => {
+      console.log('getCommonDocumentsForLang', e)
+      reject(e); 
+    });
+  });
+}
+
+
 /**
  * Module's main function which produces path mapping object for next.js 
  * export as described at https://github.com/zeit/next.js/#usage
@@ -100,9 +114,17 @@ const generateRedirectFiles = () => {
  *   '/de/news/news-test': { page: '/news_detail', query: { news_id: 'news-test' } }
  * }
  */
-const getMap = () => {
+const getMap = async (outDir) => {
   generateSiteMap()
   generateRedirectFiles()
+
+  let commonDocumentsForLangs = {};
+
+  await Promise.all(languages.map(async lang => {
+    await getCommonDocumentsForLang(lang, commonDocumentsForLangs)
+    return lang;
+  }));
+
   return new Promise((resolve, reject) => {
     const promises = []
     let result = {}
@@ -111,6 +133,7 @@ const getMap = () => {
         promises.push(
           new Promise((success, failure) => {
             prismicApi.getAllForType(
+              null,
               docType,
               prismicApi.LANGS_PRISMIC[lang],
               success, 
@@ -125,6 +148,25 @@ const getMap = () => {
         group.map((item) => {
           const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang)
           const adjustedPath = item.uid.replace(/(-(de|en))$/, '')
+
+          //Write content file for static prefetch of pages
+          //Create export folder for given language
+          fs.mkdirSync(`${outDir}/${lang}/${adjustedPath}`, { recursive: true }, (err) => {
+            console.log(`Error generating export dir`, err)
+          })
+          try {
+            fs.writeFile(
+              path.join(`${outDir}/${lang}/${adjustedPath}`, 'content.json'), 
+              JSON.stringify({ ...commonDocumentsForLangs[lang], ...item.data } || commonDocumentsForLangs[lang]), 
+              (err, data) => {
+                if (err) {
+                  console.log(`Error generating content data file for ${lang}/${adjustedPath} file`, err)
+                }
+              })
+          } catch (e) {
+            console.log(`Error generating content data file for ${lang}/${adjustedPath} file`, e)
+          }
+
           const obj = {
             [`/${lang}/${adjustedPath}`]: 
             { 

@@ -25,7 +25,7 @@ module.exports = withSass(
       if (!EXPORT) {
         return defaultPathMap;
       }
-      const map = await exportMap.getMap()
+      const map = await exportMap.getMap(outDir)
       if (map) {
         await copyFile(join(dir, 'static/robots.txt'), join(outDir, 'robots.txt'))
         await copyFile(join(dir, 'static/favicon/favicon.ico'), join(outDir, 'favicon.ico'))

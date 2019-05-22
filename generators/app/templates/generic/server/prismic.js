@@ -12,7 +12,7 @@ const EXPORT_MODE = (process.env.EXPORT) ? true : false
 // If using a different language from the ones below, add also here the Prismic lang version to its small one as a key
 const LANGS_PRISMIC = {
   de: 'de-de',
-  en: 'en-us'
+  en: 'en-pl'
 }
 
 // Check if we have the proper data to connect to prismic
@@ -67,7 +67,7 @@ const getDocument = (
     : documentType
 
   let documentIdF = documentId
-  if (documentId === '*') {
+  if (documentId && documentId === '*') {
     documentIdF = `all-${documentType}`
   }
   if (documentId.trim() === '') {
@@ -177,15 +177,18 @@ const getDocumentsPage = (
   const fecthContent = (onSuccessFn, onErrorFn, cacheInstance) => {
     // Create the promise to get the page document
     const ePromises = []
-    ePromises.push(
-      new Promise((resolve, reject) => {
-        try {
-          getDocument(req, page, type, lang, resolve, reject)
-        } catch (e) {
-          logError(`Error document: ${page} : ${type} : ${lang}`)
-        }
-      })
-    )
+    
+    if (page) {
+      ePromises.push(
+        new Promise((resolve, reject) => {
+          try {
+            getDocument(req, page, type, lang, resolve, reject)
+          } catch (e) {
+            logError(`Error document: ${page} : ${type} : ${lang}`)
+          }
+        })
+      )
+    }
 
     // Add the promises to get the all the common documents
     COMMON_DOCUMENTS.map(doc => {
@@ -211,16 +214,18 @@ const getDocumentsPage = (
         }
         // We have results, lets order them
         try {
-          const contentRes = { ...values[0] }
+          const contentRes = page ? { ...values[0] } : {}
+
           // Map the results with their names
           COMMON_DOCUMENTS.map((doc, index) => {
-            contentRes[doc] = values[index + 1]
+            contentRes[doc] = values[index + (page ? 1 : 0)]
             return doc
           })
-          log(`GET: ${page.toUpperCase()} page content`)
+
+          log(`GET: ${page ? `${page.toUpperCase()} page content` : 'common content'} `)
           if (cacheInstance) {
             // Save into cache with the key
-            cacheInstance.set(`content-result-${page}-${lang}`, contentRes)          
+            cacheInstance.set(`content-result-${page || 'common'}-${lang}`, contentRes)          
           }
           // Return result
           if (onSuccessFn) onSuccessFn(contentRes)
@@ -237,7 +242,7 @@ const getDocumentsPage = (
     return new Promise((onSuccess, promiseReject) => {
 
       const onErrorFn = err => {
-        const error = `Error getting cached content-result -> ${err}`
+        const error = `Error getting content-result -> ${err}`
         console.log(error)
         promiseReject(null)
       }
@@ -282,13 +287,14 @@ const getDocumentsPage = (
 }
 
 const getAllForType = (
+  req,
   docType,
   langCode,
   success,
   failure
 ) => {
   try {
-    prismicAPI = initApi(false)
+    prismicAPI = initApi(req)
     prismicAPI.then(api => {
       try {
         api.query(
@@ -319,11 +325,11 @@ const initApi = req => {
   let initApiParams = {
     accessToken: process.env.CONTENT_API_TOKEN
   }
-  if (req && req.length > 1) {
+  if (!!req && req.length > 1) {
     Object.assign(initApiParams, {req})
   }
   return Prismic.getApi(process.env.CONTENT_API_URL, initApiParams)
-  }
+}
 
 // Initialize our Prismic content api/cache
 const init = () => {
