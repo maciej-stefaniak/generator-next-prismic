@@ -6,7 +6,7 @@ import { getPathAndLangForPage, isNextHR, ct, isNode } from '../../utils'
 
 import { Layout, MetaData, ContentBlock<% if (baseComponents.includes('Demo')) { %>, Demo<% } %> } from '../../components'
 
-import { getPage } from '../../store/actions/content'
+import { getPage, getStaticContent } from '../../store/actions/content'
 import { menuClose } from '../../store/actions/ui'
 import initStore from '../../store/store'
 
@@ -90,29 +90,17 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
 Page.getInitialProps = async options => {
   const { store, req, asPath, query } = options
 
-  // Static fetching next page's content
-  if (!options.isServer && process.env.EXPORT) {
-    if (asPath) {
-      const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
-      await store.dispatch(async dispatch => {
-        try {
-          const res = await fetch(`${asPath.replace(/\/$/, '')}/content.json`)
-          const data = await res.json()
-          dispatch({
-            type: "FETCH_CONTENT",
-            subType: pathId,
-            payload: data
-          });
-        } catch (e) {
-          console.log(`Error fetching content file for ${asPath}: `, e)
-        }
-      })
-      return { pathId, lang }
-    } else {
-      console.log(`Error with fecthing new page from getInitialProps on static exported: ${asPath}: `)
-      return
+    // Static fetching next page's content
+    if (!options.isServer && process.env.EXPORT) {
+      if (asPath) {
+        const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
+        await store.dispatch(getStaticContent(asPath, pathId, lang));
+        return { pathId, lang }
+      } else {
+        console.log(`Error with fecthing new page from getInitialProps on static exported: ${asPath}: `)
+        return
+      }
     }
-  }
 
   // Avoid querying data with next.js-hot-reloading
   if (isNextHR(req ? req.url : asPath)) return

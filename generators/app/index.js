@@ -97,6 +97,7 @@ module.exports = class extends Generator {
           { name: 'LazyImg', checked: true },
           { name: 'Portal', checked: true },
           { name: 'Link', checked: true },
+          { name: 'Button', checked: true },
           { name: 'Markdown', checked: true },
           { name: 'MetaData', checked: true },
           { name: 'ContentBlocks', checked: true },

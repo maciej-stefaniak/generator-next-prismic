@@ -106,3 +106,22 @@ export const getAllDocumentsOfType = (
     console.error(`GET all-documents(${documenType}) error: ${e}`)
   }
 }
+
+export const getStaticContent = (
+  asPath: string,
+  pathId: string,
+  lang: string
+) => async (dispatch) => {
+  try {
+    const requestedUrl = (asPath === '/') ? `/${lang}/home` : asPath
+    const res = await fetch(`${requestedUrl.replace(/\/$/, '')}/content.json`)
+    const data = await res.json()
+    dispatch({
+      type: FETCH_CONTENT,
+      subType: pathId,
+      payload: data
+    });
+  } catch (e) {
+    console.log(`Error fetching content file for ${asPath}: `, e)
+  }
+}

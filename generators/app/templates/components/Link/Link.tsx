@@ -1,5 +1,6 @@
 import * as React from 'react'
 import Link from 'next/link';
+import classnames from 'classnames'
 const Routes = require('../../server/routes')
 import './styles.scss'
 
@@ -11,6 +12,7 @@ type ILinkProps = {
   prefetch?: boolean
   onClick?: OnClick
   className?: string
+  asButton?: boolean
   pageComponent?: string
   children?: React.ReactNode | React.ReactNode[]
 }
@@ -65,7 +67,8 @@ const OurLink: React.SFC<ILinkProps> = ({
   children,
   pageComponent = '/main',
   prefetch = false,
-  className = ''
+  className = '',
+  asButton = false
 }) => {
   const handleClick: OnClick = e => {
     if (onClick) {
@@ -75,7 +78,13 @@ const OurLink: React.SFC<ILinkProps> = ({
   }
 
   return (
-    <span className={`Link ${className}`}>
+    <span className={classnames(
+      'Link',
+      className,
+      {
+        Button: asButton
+      }
+    )}>
       <div>
         <InternalComponent type={type} url={url} onClick={handleClick} pageComponent={pageComponent} prefetch={prefetch}>
           <span>{children}</span>

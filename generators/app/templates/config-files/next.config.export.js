@@ -56,7 +56,7 @@ const generateRedirectFiles = () => {
   // Iterate through languages and create redirection files
   languages.map((lang, index) => {
     
-    const fileString  = `<meta http-equiv="refresh" content="0; url=${websiteURL}/${lang}/home" />`
+    const fileString  = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${websiteURL}/${lang}/home" /></head><body></body></html>`
 
     // Create export folder for given language
     fs.mkdirSync(path.join(__dirname, `export/redirects/${lang}`), { recursive: true }, (err) => {
