@@ -13,7 +13,7 @@ export const getPage = (
     const baseUrl = (req && req.headers) ? `${protocol}://${req.headers.host}` : ''
 
     // Server is running
-    if (baseUrl) {
+    if (!process.env.EXPORT) {
       const res = await fetch(
         `${baseUrl}/api-page?id=${documentId}&type=${documenType}&lang=${lang}`
       )

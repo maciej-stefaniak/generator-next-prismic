@@ -1,5 +1,6 @@
 import * as React from 'react'
-const { Link: InternalLink } = require('../../server/routes')
+import Link from 'next/link';
+const Routes = require('../../server/routes')
 import './styles.scss'
 
 type OnClick = (event) => void
@@ -10,11 +11,12 @@ type ILinkProps = {
   prefetch?: boolean
   onClick?: OnClick
   className?: string
+  pageComponent?: string
   children?: React.ReactNode | React.ReactNode[]
 }
 
 const InternalComponent = props => {
-  const { children, type, className, url, prefetch = false, onClick } = props
+  const { children, type, className, url, pageComponent, prefetch = false, onClick } = props
   let typeDetected = type || 'internal'
 
   // `type` not specified - detect it
@@ -29,13 +31,23 @@ const InternalComponent = props => {
   }
   
   if (typeDetected === 'internal') {
-    return (
-      <InternalLink route={url} prefetch={prefetch}>
-        <a className={className} onClick={onClick}>
-          {children}
-        </a>
-      </InternalLink>
-    )
+    if (process.env.EXPORT || !(Routes && Routes.Link)) {
+      return (
+        <Link as={url} href={{ pathname: pageComponent }} prefetch={prefetch}>
+          <a className={className} onClick={onClick}>
+            {children}
+          </a>
+        </Link>
+      )
+    } else {
+      return (
+        <Routes.Link route={url} prefetch={prefetch}>
+          <a className={className} onClick={onClick}>
+            {children}
+          </a>
+        </Routes.Link>
+      )
+    }
   }
 
   if (typeDetected === 'mailto') {
@@ -46,11 +58,13 @@ const InternalComponent = props => {
   return <a href={url} target="_blank" rel="noopener" {...props} />
 }
 
-const Link: React.SFC<ILinkProps> = ({
+const OurLink: React.SFC<ILinkProps> = ({
   type,
   url,
   onClick,
   children,
+  pageComponent = '/main',
+  prefetch = false,
   className = ''
 }) => {
   const handleClick: OnClick = e => {
@@ -63,7 +77,7 @@ const Link: React.SFC<ILinkProps> = ({
   return (
     <span className={`Link ${className}`}>
       <div>
-        <InternalComponent type={type} url={url} onClick={handleClick}>
+        <InternalComponent type={type} url={url} onClick={handleClick} pageComponent={pageComponent} prefetch={prefetch}>
           <span>{children}</span>
         </InternalComponent>
       </div>
@@ -71,4 +85,4 @@ const Link: React.SFC<ILinkProps> = ({
   )
 }
 
-export default Link
+export default OurLink

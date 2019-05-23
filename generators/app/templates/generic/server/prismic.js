@@ -2,11 +2,9 @@ const Prismic = require('prismic-javascript')
 const NodeCache = require('node-cache')
 const { getLangFromPathHelper: getLang, log, logError } = require('./utils')
 
-const COMMON_DOCUMENTS = ['navbar', 'footer', 'page_404']
+const COMMON_DOCUMENTS = ['navbar', 'footer']
 const COMMON_REPEATABLE_DOCUMENTS = ['page']
 const COMMON_DOCUMENTS_TYPE_MAP = {}
-
-const EXPORT_MODE = (process.env.EXPORT) ? true : false
 
 // Here is the map to the proper language key in Prismic
 // If using a different language from the ones below, add also here the Prismic lang version to its small one as a key
@@ -25,7 +23,7 @@ if (!process.env.CONTENT_API_URL || !process.env.CONTENT_API_TOKEN) {
 // ---
 
 // Define Cache and delay
-let toResetCache = (EXPORT_MODE) ? true : false
+let toResetCache = (process.env.EXPORT) ? true : false
 const DELAY_API_CALLS = process.env.DELAY_API_CALLS
   ? process.env.DELAY_API_CALLS
   : 1000 * 60 * 60 * 2 // 2 hours
@@ -238,7 +236,7 @@ const getDocumentsPage = (
       .catch(onErrorFn)
   }
 
-  if (EXPORT_MODE) {
+  if (process.env.EXPORT) {
     return new Promise((onSuccess, promiseReject) => {
 
       const onErrorFn = err => {

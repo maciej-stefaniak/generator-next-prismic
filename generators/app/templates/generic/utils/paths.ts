@@ -4,7 +4,7 @@ const { getLangFromPathHelper: langFromPath } = require('./../server/utils')
 export { langFromPath }
 
 export const adjustPath = (path, req) => {
-  if (!path || path.length < 1) {
+  if (!path || path.length < 1 || path === '/') {
     path = `/home`
     if (req) {
       req.url = path
