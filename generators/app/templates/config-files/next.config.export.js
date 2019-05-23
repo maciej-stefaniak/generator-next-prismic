@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const mkdirp = require('mkdirp')
 
 const prismicApi = require('./server/prismic')
 const sitemap = require('./server/sitemap')
@@ -59,7 +60,7 @@ const generateRedirectFiles = () => {
     const fileString  = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${websiteURL}/${lang}/home" /></head><body></body></html>`
 
     // Create export folder for given language
-    fs.mkdirSync(path.join(__dirname, `export/redirects/${lang}`), { recursive: true }, (err) => {
+    mkdirp.sync(path.join(__dirname, `export/redirects/${lang}`), (err) => {
       console.log(`Error generating export dir`, err)
     })
 
@@ -151,7 +152,7 @@ const getMap = async (outDir) => {
 
           //Write content file for static prefetch of pages
           //Create export folder for given language
-          fs.mkdirSync(`${outDir}/${lang}/${adjustedPath}`, { recursive: true }, (err) => {
+          mkdirp.sync(`${outDir}/${lang}/${adjustedPath}`, (err) => {
             console.log(`Error generating export dir`, err)
           })
           try {
