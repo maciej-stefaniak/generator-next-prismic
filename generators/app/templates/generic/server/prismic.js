@@ -13,6 +13,11 @@ const LANGS_PRISMIC = {
   en: 'en-pl'
 }
 
+// Init env variables using dotenv if we don't have them in process context
+if (!(process.env.CONTENT_API_URL && process.env.CONTENT_API_TOKEN)) {
+  require('dotenv').config()
+}
+
 // Check if we have the proper data to connect to prismic
 let prismicAPI
 if (!process.env.CONTENT_API_URL || !process.env.CONTENT_API_TOKEN) {

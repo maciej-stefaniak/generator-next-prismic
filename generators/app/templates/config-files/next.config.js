@@ -11,6 +11,8 @@ const { join } = require('path')
 const mkdirp = require('mkdirp')
 const { promisify } = require('util')
 const copyFile = promisify(fs.copyFile)
+require('dotenv').config()
+const Dotenv = require('dotenv-webpack')
 
 const { ANALYZE, EXPORT } = process.env
 
@@ -94,6 +96,13 @@ module.exports = withSass(
             process.env.NODE_ENV || 'development'
           ),
           'process.env.EXPORT': process.env.EXPORT || false
+        })
+      )
+
+      conf.plugins.push(
+        new Dotenv({
+          path: path.join(__dirname, '.env'),
+          systemvars: true
         })
       )
 
