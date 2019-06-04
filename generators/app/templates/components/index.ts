@@ -8,6 +8,7 @@ export { default as Navbar } from './Navbar/Navbar'
 <% if (baseComponents.includes('LazyImg')) { %>export { default as LazyImgObserved } from './LazyImg/LazyImgObserved'<% } %>
 <% if (baseComponents.includes('Portal')) { %>export { default as Portal } from './Portal/Portal'<% } %>
 <% if (baseComponents.includes('Link')) { %>export { default as Link } from './Link/Link'<% } %>
+<% if (baseComponents.includes('Button')) { %>export { default as Button } from './Button/Button'<% } %>
 <% if (baseComponents.includes('PageTransitions')) { %>export { default as PageTransitions } from './PageTransitions/PageTransitions'<% } %>
 
 // Add here the imports of the particular content-blocks

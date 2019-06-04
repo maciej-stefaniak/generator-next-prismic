@@ -55,7 +55,7 @@ module.exports.addLangIfNotInUrl = (url, userLang) => {
 
 // Simple LOGGING when NOT in PRODUCTION enviroment
 module.exports.log = content => {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' || process.env.EXPORT) {
     console.log(content)
   }
 }

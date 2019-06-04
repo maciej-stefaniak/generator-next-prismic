@@ -1,22 +1,24 @@
 const fs = require('fs')
 const builder = require('xmlbuilder')
+const path = require('path')
 
 const { languages: langs } = require('../constants')
 
+// @return string
 const perPage = (
-  SITE_ROOT: string,
-  results: any[],
-  sitemapXML: any,
-  subRoute?: string
-): string => {
+  SITE_ROOT, // @param: string
+  results, // @param: any[]
+  sitemapXML, // @param: any
+  subRoute // @param: string - optional
+) => { 
   for (const page of results) {
     let pageName = page.uid
     langs.map(lang => {
       pageName = pageName.replace(`-${lang}`, '')
     })
 
-    if (pageName && pageName.length > 0) {
-      const page = `${SITE_ROOT}/${subRoute || ''}${pageName}`
+    if (pageName && pageName.length > 0 && pageName !== '404') {
+      const page = `${SITE_ROOT}/${subRoute}${pageName}`
       const modDate = new Date()
       const url = sitemapXML.ele('url')
       url.ele('loc', page)
@@ -35,7 +37,7 @@ const perPage = (
 }
 
 // Exports API
-module.exports = (app: any, prismicApi: any, path: any) => {
+module.exports = (prismicApi) => {
   try {
     const SITE_ROOT = process.env.SITE_ROOT
     const DESTINATION = path.join(__dirname, '..', 'static', 'sitemap.xml')
@@ -50,7 +52,7 @@ module.exports = (app: any, prismicApi: any, path: any) => {
       'page',
       langs[0],
       data => {
-        sitemapXML = perPage(SITE_ROOT, data.results, sitemapXML)
+        sitemapXML = perPage(SITE_ROOT, data.results, sitemapXML, '')
         const sitemapString = sitemapXML.end({ pretty: true })
         fs.writeFile(DESTINATION, sitemapString, (err, data) => {
           if (err) {

@@ -4,11 +4,48 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const withTs = require('@zeit/next-typescript')
 const withSass = require('@zeit/next-sass')
+const { languages } = require('./constants')
+const exportMap = require('./next.config.export')
+const fs = require('fs')
+const { join } = require('path')
+const mkdirp = require('mkdirp')
+const { promisify } = require('util')
+const copyFile = promisify(fs.copyFile)
+require('dotenv').config()
+const Dotenv = require('dotenv-webpack')
 
-const { ANALYZE } = process.env
+const { ANALYZE, EXPORT } = process.env
 
 module.exports = withSass(
   withTs({
+    /**
+     * Async function returning path mapping object for static export
+     */
+    exportPathMap: async function(
+      defaultPathMap,
+      { dev, dir, outDir, distDir, buildId }
+    ) {
+      if (!EXPORT) {
+        return defaultPathMap;
+      }
+      const map = await exportMap.getMap(outDir)
+      if (map) {
+        await copyFile(join(dir, 'static/robots.txt'), join(outDir, 'robots.txt'))
+        await copyFile(join(dir, 'static/favicon/favicon.ico'), join(outDir, 'favicon.ico'))
+        await copyFile(join(dir, 'static/sw.js'), join(outDir, 'sw.js'))
+        await copyFile(join(dir, 'static/sitemap.xml'), join(outDir, 'sitemap.xml'))
+        languages.map(async (lang, index) => {
+          mkdirp.sync(join(outDir, lang), (err) => {
+            console.log(err)
+          })
+          await copyFile(join(dir, `export/redirects/${lang}/index.html`), join(outDir, lang, 'index.html'))
+          if (index === 0) {
+            await copyFile(join(dir, 'export/redirects/index.html'), join(outDir, 'index.html'))
+          }
+        })
+        return map
+      }
+    },
     webpack(config, { dev }) {
       const conf = config
       /**
@@ -57,7 +94,15 @@ module.exports = withSass(
         new webpack.DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify(
             process.env.NODE_ENV || 'development'
-          )
+          ),
+          'process.env.EXPORT': process.env.EXPORT || false
+        })
+      )
+
+      conf.plugins.push(
+        new Dotenv({
+          path: path.join(__dirname, '.env'),
+          systemvars: true
         })
       )
 

@@ -1,5 +1,7 @@
 import * as React from 'react'
-const { Link: InternalLink } = require('../../server/routes')
+import Link from 'next/link';
+import classnames from 'classnames'
+const Routes = require('../../server/routes')
 import './styles.scss'
 
 type OnClick = (event) => void
@@ -10,11 +12,13 @@ type ILinkProps = {
   prefetch?: boolean
   onClick?: OnClick
   className?: string
+  asButton?: boolean
+  pageComponent?: string
   children?: React.ReactNode | React.ReactNode[]
 }
 
 const InternalComponent = props => {
-  const { children, type, className, url, prefetch = false, onClick } = props
+  const { children, type, className, url, pageComponent, prefetch = false, onClick } = props
   let typeDetected = type || 'internal'
 
   // `type` not specified - detect it
@@ -28,17 +32,27 @@ const InternalComponent = props => {
     if (url.match(/http(s)?:\/\//i)) typeDetected = 'external'
   }
   
-  if (type === 'internal') {
-    return (
-      <InternalLink route={url} prefetch={prefetch}>
-        <a className={className} onClick={onClick}>
-          {children}
-        </a>
-      </InternalLink>
-    )
+  if (typeDetected === 'internal') {
+    if (process.env.EXPORT || !(Routes && Routes.Link)) {
+      return (
+        <Link as={url} href={{ pathname: pageComponent }} prefetch={prefetch}>
+          <a className={className} onClick={onClick}>
+            {children}
+          </a>
+        </Link>
+      )
+    } else {
+      return (
+        <Routes.Link route={url} prefetch={prefetch}>
+          <a className={className} onClick={onClick}>
+            {children}
+          </a>
+        </Routes.Link>
+      )
+    }
   }
 
-  if (type === 'mailto' || typeDetected === 'mailto') {
+  if (typeDetected === 'mailto') {
     const mailUrl = (url.indexOf('mailto:') !== -1) ? url : `mailto:${url}`
     return <a href={mailUrl} {...props} />
   }
@@ -46,12 +60,15 @@ const InternalComponent = props => {
   return <a href={url} target="_blank" rel="noopener" {...props} />
 }
 
-const Link: React.SFC<ILinkProps> = ({
+const OurLink: React.SFC<ILinkProps> = ({
   type,
   url,
   onClick,
   children,
-  className = ''
+  pageComponent = '/main',
+  prefetch = false,
+  className = '',
+  asButton = false
 }) => {
   const handleClick: OnClick = e => {
     if (onClick) {
@@ -61,9 +78,15 @@ const Link: React.SFC<ILinkProps> = ({
   }
 
   return (
-    <span className={`Link ${className}`}>
+    <span className={classnames(
+      'Link',
+      className,
+      {
+        Button: asButton
+      }
+    )}>
       <div>
-        <InternalComponent type={type} url={url} onClick={handleClick}>
+        <InternalComponent type={type} url={url} onClick={handleClick} pageComponent={pageComponent} prefetch={prefetch}>
           <span>{children}</span>
         </InternalComponent>
       </div>
@@ -71,4 +94,4 @@ const Link: React.SFC<ILinkProps> = ({
   )
 }
 
-export default Link
+export default OurLink

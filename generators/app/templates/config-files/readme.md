@@ -15,7 +15,6 @@ Install the dependencies:
 npm run install
 ```
 
-
 ### Development
 
 Start a live-reload development server:
@@ -34,7 +33,7 @@ Create a file called `.env`, with the following contents:
 CONTENT_API_URL=<%= prismicApiURL %>
 CONTENT_API_TOKEN=<%= prismicApiToken %>
 SITE_ROOT=<%= websiteURL %>
-``` 
+```
 
 Generate a production build:
 
@@ -49,3 +48,13 @@ npm run start
 ```
 
 App will be served on port 3000.
+
+### Static export
+
+To generate static HTML version of app execute following command
+
+```sh
+npm run export
+```
+
+App will be built into /build folder.

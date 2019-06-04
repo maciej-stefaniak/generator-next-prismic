@@ -67,7 +67,7 @@ module.exports = class extends Generator {
       {
         type: 'checkbox',
         name: 'languages',
-        choices: [{ name: 'de', checked: true }, { name: 'en', checked: true }],
+        choices: [{ name: 'de', checked: true }, { name: 'en', checked: true }, { name: 'fr', checked: false }],
         message: `Select the base languages for your project? ${chalk.gray(
           chalk.italic(
             '(If differents languages are needed can be changed later in constants)'
@@ -82,6 +82,14 @@ module.exports = class extends Generator {
         }
       },
       {
+        type: 'list',
+        name: 'languageDefault',
+        choices: (answers) => {
+          return answers.languages
+        },
+        message: `Select default language for your project`
+      },
+      {
         type: 'checkbox',
         name: 'baseComponents',
         choices: [
@@ -89,6 +97,7 @@ module.exports = class extends Generator {
           { name: 'LazyImg', checked: true },
           { name: 'Portal', checked: true },
           { name: 'Link', checked: true },
+          { name: 'Button', checked: true },
           { name: 'Markdown', checked: true },
           { name: 'MetaData', checked: true },
           { name: 'ContentBlocks', checked: true },
@@ -181,6 +190,12 @@ module.exports = class extends Generator {
     return this.prompt(prompts).then(props => {
       // To access props later use this.props.someAnswer;
       this.props = props
+
+      // Reorder languages array to set default language
+      if (this.props.languages.indexOf(this.props.languageDefault) > 0) {
+        this.props.languages.splice(this.props.languages.indexOf(this.props.languageDefault), 1)
+        this.props.languages.unshift(this.props.languageDefault)
+      }
     })
   }
 
@@ -222,6 +237,7 @@ module.exports = class extends Generator {
       this.destinationPath(),
       props
     )
+
     // Omit pages/_app.js file if PageTransitions component is not present
     if (!this.props.baseComponents.includes('PageTransitions')) {
       this.fs.delete(`${this.destinationPath()}/pages/_app.tsx`)

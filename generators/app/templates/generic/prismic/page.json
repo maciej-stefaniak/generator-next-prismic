@@ -7,6 +7,13 @@
         "placeholder": "ID for the Page. Append at the end -lang (example: -en) for the language"
       }
     },
+    "url_section": {
+      "type": "Text",
+      "config": {
+        "label": "URL section",
+        "placeholder": "The section the page is in. Not required if the page doesn't belong to a section."
+      }
+    },
     "meta_tags": {
       "type": "StructuredText",
       "config": {

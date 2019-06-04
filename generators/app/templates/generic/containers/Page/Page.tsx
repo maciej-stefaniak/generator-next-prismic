@@ -2,15 +2,13 @@ import * as React from 'react'
 import withRedux from 'next-redux-wrapper'
 const { logoURL } = require('../../constants')
 
-import { getPathAndLangForPage, isNextHR } from '../../utils'
+import { getPathAndLangForPage, isNextHR, ct, isNode } from '../../utils'
 
 import { Layout, MetaData, ContentBlock<% if (baseComponents.includes('Demo')) { %>, Demo<% } %> } from '../../components'
 
-import { getPage } from '../../store/actions/content'
+import { getPage, getStaticContent } from '../../store/actions/content'
 import { menuClose } from '../../store/actions/ui'
 import initStore from '../../store/store'
-
-import { ct } from '../../utils'
 
 import ErrorPage from '../ErrorPage/ErrorPage'
 
@@ -30,7 +28,14 @@ interface IPageProps {
 const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
   const page = content ? content[pathId] : null
   if (!content || !page || page.error) {
-    return <ErrorPage {...page} lang={lang} />
+    if (pathId !== '404') {
+      if (!isNode) {
+        window.location.href = `/${lang}/404`
+      }
+      return <div />
+    } else {
+      return <ErrorPage {...page} lang={lang} />
+    }
   }
 
   const {
@@ -39,7 +44,10 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
     body: heroBlocks = [],
     body1: contentBlocks = [],
     meta_title,
-    meta_open_graph_image
+    meta_open_graph_image = {
+      url: null,
+      alt: null
+    }
   } = page
   <% if (baseComponents.includes('ContentBlocks')) { %>const blocks = heroBlocks.concat(contentBlocks)<% } %>
 
@@ -82,9 +90,22 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
 Page.getInitialProps = async options => {
   const { store, req, asPath, query } = options
 
+    // Static fetching next page's content
+    if (!options.isServer && process.env.EXPORT) {
+      if (asPath) {
+        const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
+        await store.dispatch(getStaticContent(asPath, pathId, lang));
+        return { pathId, lang }
+      } else {
+        console.log(`Error with fecthing new page from getInitialProps on static exported: ${asPath}: `)
+        return
+      }
+    }
+
   // Avoid querying data with next.js-hot-reloading
   if (isNextHR(req ? req.url : asPath)) return
 
+  // Fetching page's content
   try {
     const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
 
