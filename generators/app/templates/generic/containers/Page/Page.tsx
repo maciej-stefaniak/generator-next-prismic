@@ -32,7 +32,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
       if (!isNode) {
         window.location.href = `/${lang}/404`
       }
-      return;
+      return <div />
     } else {
       return <ErrorPage {...page} lang={lang} />
     }

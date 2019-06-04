@@ -4,7 +4,11 @@ if (!process.env.EXPORT) {
   const routes = (module.exports = nextRoutes())
 
   // Home
-  routes.add('home', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*', 'main')
+  routes.add('main', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*', 'main')
+  routes.add('home', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*/home', 'main')
+
+  // Not found
+  routes.add('not-found', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*/404', 'main')
 
   // Other pages
 

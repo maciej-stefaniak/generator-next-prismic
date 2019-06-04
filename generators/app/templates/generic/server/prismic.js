@@ -4,13 +4,17 @@ const { getLangFromPathHelper: getLang, log, logError } = require('./utils')
 
 const COMMON_DOCUMENTS = ['navbar', 'footer']
 const COMMON_REPEATABLE_DOCUMENTS = ['page']
-const COMMON_DOCUMENTS_TYPE_MAP = {}
+const COMMON_DOCUMENTS_TYPE_MAP = {
+  page: 'page'
+  //news: 'news_detail',
+  //careers: 'jobs_detail'
+}
 
 // Here is the map to the proper language key in Prismic
 // If using a different language from the ones below, add also here the Prismic lang version to its small one as a key
 const LANGS_PRISMIC = {
   de: 'de-de',
-  en: 'en-pl'
+  en: 'en-us'
 }
 
 // Init env variables using dotenv if we don't have them in process context
@@ -28,7 +32,7 @@ if (!process.env.CONTENT_API_URL || !process.env.CONTENT_API_TOKEN) {
 // ---
 
 // Define Cache and delay
-let toResetCache = (process.env.EXPORT) ? true : false
+let toResetCache = process.env.EXPORT ? true : false
 const DELAY_API_CALLS = process.env.DELAY_API_CALLS
   ? process.env.DELAY_API_CALLS
   : 1000 * 60 * 60 * 2 // 2 hours
@@ -65,9 +69,19 @@ const getDocument = (
   onSuccess, // @param onSuccess: (data: any) => void,
   onError // @param onError: (err: string, dataFallback?: any) => void
 ) => {
-  const documentRTypeF = COMMON_DOCUMENTS_TYPE_MAP[documentType]
+  let documentRTypeF = COMMON_DOCUMENTS_TYPE_MAP[documentType]
     ? COMMON_DOCUMENTS_TYPE_MAP[documentType]
     : documentType
+  let urlSectionNeeded = false
+
+  if (
+    !COMMON_DOCUMENTS_TYPE_MAP[documentType] &&
+    COMMON_DOCUMENTS.indexOf(documentType) < 0
+  ) {
+    // Example: /company/about-us
+    documentRTypeF = 'page'
+    urlSectionNeeded = true
+  }
 
   let documentIdF = documentId
   if (documentId && documentId === '*') {
@@ -107,17 +121,28 @@ const getDocument = (
         prismicAPI
           .then(api => {
             try {
-              api
-                .query(
-                  documentId !== '*' &&
-                    COMMON_REPEATABLE_DOCUMENTS.indexOf(documentRTypeF) >= 0
-                    ? Prismic.Predicates.at(
+              const query =
+                documentId !== '*' &&
+                COMMON_REPEATABLE_DOCUMENTS.indexOf(documentRTypeF) >= 0
+                  ? urlSectionNeeded
+                    ? [
+                        Prismic.Predicates.at(
+                          `my.${documentRTypeF}.uid`,
+                          `${documentId}-${lang}`
+                        ),
+                        Prismic.Predicates.at(
+                          `my.${documentRTypeF}.url_section`,
+                          documentType
+                        )
+                      ]
+                    : Prismic.Predicates.at(
                         `my.${documentRTypeF}.uid`,
                         `${documentId}-${lang}`
                       )
-                    : Prismic.Predicates.at('document.type', documentRTypeF),
-                  { lang: LANGS_PRISMIC[lang] }
-                )
+                  : Prismic.Predicates.at('document.type', documentRTypeF)
+
+              api
+                .query(query)
                 .then(res => {
                   const { results } = res
                   if (results && results.length >= 1) {
@@ -176,11 +201,10 @@ const getDocumentsPage = (
   onSuccess, // @param onSuccess: (data: any) => void
   onError // onError: (err: string, dataFallback?: any) => void
 ) => {
-
   const fecthContent = (onSuccessFn, onErrorFn, cacheInstance) => {
     // Create the promise to get the page document
     const ePromises = []
-    
+
     if (page) {
       ePromises.push(
         new Promise((resolve, reject) => {
@@ -225,10 +249,17 @@ const getDocumentsPage = (
             return doc
           })
 
-          log(`GET: ${page ? `${page.toUpperCase()} page content` : 'common content'} `)
+          log(
+            `GET: ${
+              page ? `${page.toUpperCase()} page content` : 'common content'
+            } `
+          )
           if (cacheInstance) {
             // Save into cache with the key
-            cacheInstance.set(`content-result-${page || 'common'}-${lang}`, contentRes)          
+            cacheInstance.set(
+              `content-result-${page || 'common'}-${lang}`,
+              contentRes
+            )
           }
           // Return result
           if (onSuccessFn) onSuccessFn(contentRes)
@@ -243,18 +274,16 @@ const getDocumentsPage = (
 
   if (process.env.EXPORT) {
     return new Promise((onSuccess, promiseReject) => {
-
       const onErrorFn = err => {
         const error = `Error getting content-result -> ${err}`
         console.log(error)
         promiseReject(null)
       }
-  
+
       // So we're gonna fetch data from Prismic.io
       fecthContent(onSuccess, onErrorFn)
     })
-  }
-  else {
+  } else {
     const onErrorFn = err => {
       const error = `Error getting cached content-result -> ${err}`
       console.log(error)
@@ -280,7 +309,7 @@ const getDocumentsPage = (
         // Cache key not found OR cache has been reset
         // So we're gonna fetch data from Prismic.io
 
-        fecthContent(onSuccess, onErrorFn, cache);
+        fecthContent(onSuccess, onErrorFn, cache)
       } else {
         log('content from cache')
         if (onSuccess) onSuccess(value)
@@ -289,36 +318,29 @@ const getDocumentsPage = (
   }
 }
 
-const getAllForType = (
-  req,
-  docType,
-  langCode,
-  success,
-  failure
-) => {
+const getAllForType = (req, docType, langCode, success, failure) => {
   try {
     prismicAPI = initApi(req)
     prismicAPI.then(api => {
       try {
-        api.query(
-          Prismic.Predicates.at('document.type', docType),
-          { 
+        api
+          .query(Prismic.Predicates.at('document.type', docType), {
             lang: langCode,
             pageSize: 100
-          }
-        ).then(function (response) {
-          success(response.results)
-        }, function(err) {
-          console.log("Something went wrong: ", err);
-        });
-      }
-      catch (e) {
+          })
+          .then(
+            function(response) {
+              success(response.results)
+            },
+            function(err) {
+              console.log('Something went wrong: ', err)
+            }
+          )
+      } catch (e) {
         log('getAllForType error: ', e)
       }
-    });
-
-  }
-  catch (e) {
+    })
+  } catch (e) {
     log('prismicAPI initApi error: ', e)
   }
 }
@@ -329,7 +351,7 @@ const initApi = req => {
     accessToken: process.env.CONTENT_API_TOKEN
   }
   if (!!req && req.length > 1) {
-    Object.assign(initApiParams, {req})
+    Object.assign(initApiParams, { req })
   }
   return Prismic.getApi(process.env.CONTENT_API_URL, initApiParams)
 }
