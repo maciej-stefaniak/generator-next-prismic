@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "ts-node server -p $PORT",
     "build": "next build",
-    "export": "EXPORT=true NODE_ENV=production npm run build && next export -o build",
+    "export": "NODE_ENV=production EXPORT=1 npm run build && EXPORT=1 next export -o build",
     "start": "NODE_ENV=production ts-node server -p $PORT",
     "precommit": "lint-staged",
     "heroku-postbuild": "yarn build",
