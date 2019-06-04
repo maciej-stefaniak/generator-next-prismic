@@ -14,7 +14,8 @@ const COMMON_DOCUMENTS_TYPE_MAP = {
 // If using a different language from the ones below, add also here the Prismic lang version to its small one as a key
 const LANGS_PRISMIC = {
   de: 'de-de',
-  en: 'en-us'
+  en: 'en-us',
+  fr: 'fr-fr'
 }
 
 // Init env variables using dotenv if we don't have them in process context
