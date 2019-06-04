@@ -45,9 +45,10 @@ The app is set as a PWA (Progressive Web App) providing:
    3. Assuming we don’t have `content-result-${page}` in cache, we’re calling getDocument for `${page}` with the proper language and all entries from COMMON_DOCUMENTS array. `COMMON_DOCUMENTS` entries are Prismic types keys (like `navbar`, `footer` , etc.)
    4. getPage function `assembles` all returned data
 5. contentReducer consumes `FETCH_CONTENT` and change store `content`
-6. Page component renders page using Helmet, Layout -> ContentBlocks and other components.
+6. Page component renders page using Helmet, Layout -> ContentBlocks and other components
 
-## Export (Ideal for Serverless approach)
+## Export (Ideal for Serverless approach)
+
 Now there is an option to generate static HTML version of app executing following command.
 
 ```bash
