@@ -1,7 +1,5 @@
 import React from 'react'
 import Document, { Head, Main, NextScript } from 'next/document'
-import AcceptLanguageParser from 'accept-language-parser'
-import { languages } from '../constants'
 const { getLangFromPathHelper: langFromPath } = require('./../server/utils')
 
 export default class MyDocument extends Document<any, any> {
