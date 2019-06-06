@@ -4,7 +4,7 @@ const mkdirp = require("mkdirp");
 
 const prismicApi = require("./server/prismic");
 const sitemap = require("./server/sitemap");
-const { languages, websiteURL } = require("./constants");
+const { languages } = require("./constants");
 
 /**
  * Routing configuration for export
@@ -55,7 +55,7 @@ const generateSiteMap = () => {
 const generateRedirectFiles = () => {
   // Iterate through languages and create redirection files
   languages.map((lang, index) => {
-    const fileString = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${websiteURL}/${lang}/home" /></head><body></body></html>`;
+    const fileString = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/${lang}/home" /></head><body></body></html>`;
 
     // Create export folder for given language
     mkdirp.sync(path.join(__dirname, `export/redirects/${lang}`), err => {

@@ -3,6 +3,5 @@ static/sw.js
 static/sitemap.xml
 .next
 *-error.log
-.env
 build
 export
