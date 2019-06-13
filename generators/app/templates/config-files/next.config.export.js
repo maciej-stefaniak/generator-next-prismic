@@ -23,6 +23,7 @@ const { languages } = require("./constants");
  *  },
  *  news_detail: {
  *   routePrefix: '/news/',
+ *   routeFix: "/news", // If belonging to a section simply add it here example: '/company/news'
  *   pagePath: '/news_detail',
  *   queryData: 'news_id'
  *  }
@@ -132,7 +133,7 @@ const getMap = async outDir => {
   return new Promise((resolve, reject) => {
     const promises = [];
     let result = {};
-    Object.keys(prismicApi.LANGS_PRISMIC).forEach(lang => {
+    languages.forEach(lang => {
       Object.keys(TYPE_ROUTES_MAPPING).forEach((docType, config) => {
         promises.push(
           new Promise((success, failure) => {
@@ -151,20 +152,29 @@ const getMap = async outDir => {
       values.map(group => {
         group.map(item => {
           const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang);
-          const adjustedPath = item.uid.replace(/(-(de|en))$/, "");
+          const adjustedPath = item.uid.replace(/(-(en|de))$/, "");
           const sectionUrl =
             item.data.url_section && item.data.url_section.trim().length > 0
               ? item.data.url_section
               : null;
-          const outPath = `${outDir}/${lang}/${
+          let outPath = `${outDir}/${lang}/${
             sectionUrl ? `${sectionUrl}/` : ""
           }${adjustedPath}`;
+
+          // If custom type of page, adjust the path
+          if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
+            outPath = `${outDir}/${lang}/${
+              TYPE_ROUTES_MAPPING[item.type].routeFix
+            }/${adjustedPath}`;
+          }
+          // ---
 
           //Write content file for static prefetch of pages
           //Create export folder for given language
           mkdirp.sync(outPath, err => {
             console.log(`Error generating export dir`, err);
           });
+
           try {
             fs.writeFile(
               path.join(outPath, "content.json"),
@@ -188,8 +198,20 @@ const getMap = async outDir => {
             );
           }
 
+          let pagePath = `/${lang}/${
+            sectionUrl ? `${sectionUrl}/` : ""
+          }${adjustedPath}`;
+
+          // If custom type of page, adjust the path
+          if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
+            pagePath = `/${lang}/${
+              TYPE_ROUTES_MAPPING[item.type].routeFix
+            }/${adjustedPath}`;
+          }
+          // ---
+
           const obj = {
-            [`/${lang}/${sectionUrl ? `${sectionUrl}/` : ""}${adjustedPath}`]: {
+            [pagePath]: {
               page: TYPE_ROUTES_MAPPING[item.type].pagePath,
               query: TYPE_ROUTES_MAPPING[item.type].queryData
                 ? { [TYPE_ROUTES_MAPPING[item.type].queryData]: adjustedPath }

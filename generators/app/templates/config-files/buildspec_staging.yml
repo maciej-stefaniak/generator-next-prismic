@@ -1,0 +1,23 @@
+version: 0.2
+
+env:
+  variables:
+    STAGING: true
+
+phases:
+  build:
+    commands:
+      - ls
+      - env
+      - NODE_ENV=development npm install
+      - npm run export
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'build'
+
+# cache:
+#   paths:
+#     - 'node_modules/**/*'
+#     - 'package-lock.json'

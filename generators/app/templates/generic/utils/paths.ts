@@ -82,8 +82,8 @@ export const getPathAndLangForPage = (req, asPath, query): {
   let type = 'page'
   const pathParts = path.split('/')
   if (pathParts.length > 1) {
-    type = pathParts[0]
-    pathId = pathParts[1]
+    type = pathParts[pathParts.length - 2]
+    pathId = pathParts[pathParts.length - 1]
   }
 
   return {

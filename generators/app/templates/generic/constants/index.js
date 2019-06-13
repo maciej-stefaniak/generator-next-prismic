@@ -25,10 +25,13 @@ const metadataDefaults = {
   }
 }
 
+const FORM_EMAIL_API_POINT = `${process.env.API_ENDPOINT}/contact`
+
 module.exports = {
   websiteURL,
   logoURL,
   companyName,
   languages: [<%- languages.map(lang => `'${lang}'`) %>],
-  metadataDefaults
+  metadataDefaults,
+  FORM_EMAIL_API_POINT
 }
