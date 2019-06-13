@@ -34,6 +34,11 @@ export default (
           backgroundImage: status === 'LOADED' ? `url(${src})` : bgSrcNotLoaded
         }}
       >
+        <span
+          className="background-image-alt"
+          role="img"
+          aria-label={props.alt}
+        />
         {children}
       </div>
     </noscript>
@@ -46,6 +51,11 @@ export default (
         backgroundImage: status === 'LOADED' ? `url(${src})` : bgSrcNotLoaded
       }}
     >
+      <span
+        className="background-image-alt"
+        role="img"
+        aria-label={props.alt}
+      />
       {children}
     </div>
   )
