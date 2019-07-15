@@ -50,11 +50,12 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
     body1: contentBlocks = [],
     meta_title,
     meta_description,
+    meta_tags,
     meta_open_graph_image = {
       url: null,
       alt: null
     },
-    meta_tags
+    asPath
   } = page
   <% if (baseComponents.includes('ContentBlocks')) { %>const blocks = heroBlocks.concat(contentBlocks)<% } %>
 
