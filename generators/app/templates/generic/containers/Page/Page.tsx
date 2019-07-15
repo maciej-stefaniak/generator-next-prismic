@@ -1,8 +1,11 @@
 import * as React from 'react'
 import withRedux from 'next-redux-wrapper'
-const { logoURL } = require('../../constants')
+import Router from 'next/router'
+import { Helmet } from 'react-helmet'
 
-import { getPathAndLangForPage, isNextHR, ct, isNode } from '../../utils'
+const {   websiteURL, FACEBOOK_APP_ID, openGraphDefaultImage } = require('../../constants')
+
+import { getPathAndLangForPage, isNextHR, renderMeta, ct, isNode } from '../../utils'
 
 import { Layout, MetaData, ContentBlock<% if (baseComponents.includes('Demo')) { %>, Demo<% } %> } from '../../components'
 
@@ -23,18 +26,20 @@ interface IPageProps {
   lang: string
   pathId: string
   dev: boolean
+  asPath: string
 }
 
 const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
+  let toReturnError = null
   const page = content ? content[pathId] : null
   if (!content || !page || page.error) {
     if (pathId !== '404') {
       if (!isNode) {
-        window.location.href = `/${lang}/404`
+        Router.push(`/${lang}/404`, `/${lang}/404`, { shallow: true })
       }
-      return <div />
+      toReturnError = <div />
     } else {
-      return <ErrorPage {...page} lang={lang} />
+      toReturnError = <ErrorPage {...page} lang={lang} />
     }
   }
 
@@ -44,28 +49,57 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
     body: heroBlocks = [],
     body1: contentBlocks = [],
     meta_title,
+    meta_description,
     meta_open_graph_image = {
       url: null,
       alt: null
-    }
+    },
+    meta_tags
   } = page
   <% if (baseComponents.includes('ContentBlocks')) { %>const blocks = heroBlocks.concat(contentBlocks)<% } %>
 
-  <% if (baseComponents.includes('MetaData')) { %>const seoData = {
-    title: ct(meta_title),
+  <% if (baseComponents.includes('MetaData')) { %>const seoTitle = ct(meta_title)
+    const seoCanonical = `${websiteURL}${asPath}`
+    const seoData = {
+    title: seoTitle,
+    description: meta_description,
+    canonical: seoCanonical,
+    facebook: {
+      appId: FACEBOOK_APP_ID
+    },
     openGraph: {
+      title: seoTitle,
+      description: meta_description,
+      url: seoCanonical,
+      type: 'website',
       images: [
         {
-          url: meta_open_graph_image.url || logoURL,
+          url: meta_open_graph_image.url || openGraphDefaultImage,
           alt: meta_open_graph_image.alt
         }
       ]
     }
   }<% } %>
+
+  // Some generic data for some pages (server filters them)
+  const genericItems = {
+    /*
+      blog_items: blog_detail
+        ? !!blog_detail.length
+          ? blog_detail
+          : [blog_detail]
+        : [],
+    */
+  }
   
   return (
     <section>
       <% if (baseComponents.includes('MetaData')) { %><MetaData seoData={seoData} /><% } %>
+      {meta_tags && (
+        <Helmet>
+          {renderMeta(meta_tags)}
+        </Helmet>
+      )}
       <Layout navbar={navbar} footer={footer} lang={lang}>
         <% if (baseComponents.includes('ContentBlocks')) { %>{blocks.map((item, index) => {
           const { slice_type } = item
@@ -74,7 +108,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
             : null
 
           return (
-            <ContentBlock key={slice_type + index} tag={componentName} lang={lang} {...item} />
+            <ContentBlock key={slice_type + index} tag={componentName} lang={lang} {...item} {...genericItems} />
           )
         })}
         

@@ -4,7 +4,7 @@
       "type": "UID",
       "config": {
         "label": "Page ID",
-        "placeholder": "ID for the Page. Append at the end -lang (example: -en) for the language"
+        "placeholder": "ID for the Page. Append at the end -en or -de for the language"
       }
     },
     "url_section": {
@@ -20,6 +20,14 @@
         "multi": "embed",
         "label": "Meta Tags",
         "placeholder": "Page's meta tags"
+      }
+    },
+    "meta_script": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "embed",
+        "label": "Meta Script",
+        "placeholder": "This will be added to a script tag on the HEAD"
       }
     },
     "meta_title": {
@@ -47,31 +55,5 @@
       }
     }
   },
-  "Hero": {
-    "navbar_style": {
-      "type": "Select",
-      "config": {
-        "options": ["dark", "light"],
-        "default_value": "dark",
-        "label": "Navbar style",
-        "placeholder": "Navbar style"
-      }
-    },
-    "body": {
-      "type": "Slices",
-      "fieldset": "Slice zone",
-      "config": {
-        "choices": {}
-      }
-    }
-  },
-  "Content": {
-    "body1": {
-      "type": "Slices",
-      "fieldset": "Slice zone",
-      "config": {
-        "choices": {}
-      }
-    }
-  }
+  "Content": {}
 }

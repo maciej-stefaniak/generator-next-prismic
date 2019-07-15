@@ -11,10 +11,10 @@ if (!process.env.EXPORT) {
   routes.add('not-found', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*/404', 'main')
 
   // Other pages
+  // routes.add('example', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*/example', 'main')
 
   // Example Detail page
-  // routes.add('example', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*/example', 'main')
-  // routes.add('example-detail', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*/example/:job_id', 'example_detail')
+  // routes.add('blog-detail', '/:lang(<%= languages ? languages.join('|') : 'de' %>)*/blog/:blog_id', 'blog_detail')
 } 
 
 // When EXPORT we don't define dynamic pages

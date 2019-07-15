@@ -355,10 +355,6 @@
   version "12.0.12"
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-12.0.12.tgz#45dd1d0638e8c8f153e87d296907659296873916"
 
-a11y-checker@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/a11y-checker/-/a11y-checker-2.2.1.tgz#8b2de0365e1dcc343d6beb408428218ea4a20488"
-
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"

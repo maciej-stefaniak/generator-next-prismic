@@ -2,11 +2,24 @@ const Prismic = require('prismic-javascript')
 const NodeCache = require('node-cache')
 const { getLangFromPathHelper: getLang, log, logError } = require('./utils')
 
-const COMMON_DOCUMENTS = ['navbar', 'footer']
-const COMMON_REPEATABLE_DOCUMENTS = ['page']
+const COMMON_DOCUMENTS = ['navbar', 'footer' /*, cookie_message */]
+
+// Define all the common repeatable documents that are only for some pages
+// This way we only load for pages that needs it
+const COMMON_DOCUMENTS_FOR_PAGE_LISTED = [
+  /*'blog_detail'*/
+]
+const COMMON_DOCUMENTS_FOR_PAGE = {
+  // blog_detail: ['blog_tag', 'blog_detail'],
+  // blog: ['blog_tag', 'blog_detail'],
+  all_pages: []
+}
+// ---
+
+const COMMON_REPEATABLE_DOCUMENTS = ['page' /*, blog_detail */]
 const COMMON_DOCUMENTS_TYPE_MAP = {
   page: 'page'
-  //news: 'news_detail',
+  //blog: 'blog_detail',
   //careers: 'jobs_detail'
 }
 
@@ -57,6 +70,29 @@ const clearCache = () => {
   )
 }
 
+const fixDocumentType = documentType => {
+  let documentRTypeF = COMMON_DOCUMENTS_TYPE_MAP[documentType]
+    ? COMMON_DOCUMENTS_TYPE_MAP[documentType]
+    : documentType
+  let urlSectionNeeded = false
+
+  if (
+    !COMMON_DOCUMENTS_TYPE_MAP[documentType] &&
+    COMMON_DOCUMENTS.concat(COMMON_DOCUMENTS_FOR_PAGE_LISTED).indexOf(
+      documentType
+    ) < 0
+  ) {
+    // Example: /company/about-us
+    documentRTypeF = 'page'
+    urlSectionNeeded = true
+  }
+
+  return {
+    urlSectionNeeded,
+    documentRTypeF
+  }
+}
+
 /**
  * GET DOCUMENT
  * First check if the document is in the local cache
@@ -70,19 +106,7 @@ const getDocument = (
   onSuccess, // @param onSuccess: (data: any) => void,
   onError // @param onError: (err: string, dataFallback?: any) => void
 ) => {
-  let documentRTypeF = COMMON_DOCUMENTS_TYPE_MAP[documentType]
-    ? COMMON_DOCUMENTS_TYPE_MAP[documentType]
-    : documentType
-  let urlSectionNeeded = false
-
-  if (
-    !COMMON_DOCUMENTS_TYPE_MAP[documentType] &&
-    COMMON_DOCUMENTS.indexOf(documentType) < 0
-  ) {
-    // Example: /company/about-us
-    documentRTypeF = 'page'
-    urlSectionNeeded = true
-  }
+  const { documentRTypeF, urlSectionNeeded } = fixDocumentType(documentType)
 
   let documentIdF = documentId
   if (documentId && documentId === '*') {
@@ -122,54 +146,19 @@ const getDocument = (
         prismicAPI
           .then(api => {
             try {
-              const query =
-                documentId !== '*' &&
-                COMMON_REPEATABLE_DOCUMENTS.indexOf(documentRTypeF) >= 0
-                  ? urlSectionNeeded
-                    ? [
-                        Prismic.Predicates.at(
-                          `my.${documentRTypeF}.uid`,
-                          `${documentId}-${lang}`
-                        ),
-                        Prismic.Predicates.at(
-                          `my.${documentRTypeF}.url_section`,
-                          documentType
-                        )
-                      ]
-                    : Prismic.Predicates.at(
-                        `my.${documentRTypeF}.uid`,
-                        `${documentId}-${lang}`
-                      )
-                  : Prismic.Predicates.at('document.type', documentRTypeF)
-
-              api
-                .query(query)
-                .then(res => {
-                  const { results } = res
-                  if (results && results.length >= 1) {
-                    let data
-                    if (documentId === '*') {
-                      data = {
-                        docType: documentRTypeF,
-                        results: results.map(item => ({
-                          ...item.data,
-                          uid: item.uid
-                        }))
-                      }
-                    } else {
-                      data = results[0].data
-                      data.docType = documentRTypeF
-                    }
-                    cache.set(`${documentIdF}-${lang}`, data)
-                    onSuccess(data)
-                    log(`Prismic: document: ${documentIdF} : ${lang}`)
-                  } else {
-                    onErrorQuery(
-                      `Prismic: No results: ${documentIdF} : ${lang}`
-                    )
-                  }
-                }, onErrorQuery)
-                .catch(onErrorQuery)
+              getSingleDocument(
+                cache,
+                api,
+                documentId,
+                documentIdF,
+                documentType,
+                documentRTypeF,
+                lang,
+                urlSectionNeeded,
+                onSuccess,
+                onErrorQuery,
+                1
+              )
             } catch (err) {
               onErrorInit(err)
             }
@@ -189,6 +178,107 @@ const getDocument = (
 }
 
 /**
+ * GET SINGLE DOCUMENT
+ * Fetch it from Prismic.io and save it in the cache afterwards
+ * If pagination then call itself again
+ */
+const getSingleDocument = (
+  cache, // @param cache: node-cache instance
+  api, // @param api: Prismic API instance
+  documentId, // @param documentId: string
+  documentIdF,
+  documentType, // @param documentType: string
+  documentRTypeF,
+  lang, // @param lang: string
+  urlSectionNeeded, // @param urlSectionNeeded: boolean
+  onSuccess, // @param onSuccess: (data: any) => void,
+  onErrorQuery, // @param onError: (err: string, dataFallback?: any) => void,
+  page = 1,
+  previousPageResults = []
+) => {
+  const query =
+    documentId !== '*' &&
+    COMMON_REPEATABLE_DOCUMENTS.indexOf(documentRTypeF) >= 0 &&
+    documentIdF !== documentRTypeF
+      ? urlSectionNeeded
+        ? [
+            Prismic.Predicates.at(
+              `my.${documentRTypeF}.uid`,
+              `${documentId}-${lang}`
+            ),
+            Prismic.Predicates.at(
+              `my.${documentRTypeF}.url_section`,
+              documentType
+            )
+          ]
+        : Prismic.Predicates.at(
+            `my.${documentRTypeF}.uid`,
+            `${documentId}-${lang}`
+          )
+      : Prismic.Predicates.at('document.type', documentRTypeF)
+
+  api
+    .query(query, {
+      lang: LANGS_PRISMIC[lang],
+      orderings: '[document.first_publication_date]',
+      pageSize: 100,
+      page
+    })
+    .then(res => {
+      const { results = [], total_pages = 1, total_results_size } = res
+      if (total_pages > page) {
+        getSingleDocument(
+          cache,
+          api,
+          documentId,
+          documentIdF,
+          documentType,
+          documentRTypeF,
+          lang,
+          urlSectionNeeded,
+          onSuccess,
+          onErrorQuery,
+          page + 1,
+          previousPageResults.concat(results)
+        )
+        return
+      }
+
+      if (results.length >= 1 || previousPageResults.length > 0) {
+        const resultsFix = previousPageResults.concat(results)
+        let data
+        if (documentId === '*') {
+          data = {
+            docType: documentRTypeF,
+            results: resultsFix.map(item => ({
+              ...item.data,
+              uid: item.uid
+            }))
+          }
+        } else {
+          if (resultsFix.length > 1) {
+            data = resultsFix.map(item => ({
+              ...item.data,
+              uid: item.uid,
+              docType: documentRTypeF
+            }))
+          } else {
+            data = resultsFix[0].data
+            data.docType = documentRTypeF
+            data.uid = resultsFix[0].uid
+          }
+        }
+        cache.set(`${documentIdF}-${lang}`, data)
+        onSuccess(data)
+        log(`Prismic: document: ${documentIdF} : ${lang}`)
+      } else {
+        onErrorQuery(`Prismic: No results: ${documentIdF} : ${lang}`)
+      }
+    }, onErrorQuery)
+    .catch(onErrorQuery)
+}
+
+/**
  * GET DOCUMENTS PAGE
  * First check if the Page content is in the local cache
  * If not in cache, it will fetch all content associated with a Page inside Prismic.io
@@ -205,6 +295,7 @@ const getDocumentsPage = (
   const fecthContent = (onSuccessFn, onErrorFn, cacheInstance) => {
     // Create the promise to get the page document
     const ePromises = []
+    let COMMON_DOCUMENTS_FIX
 
     if (page) {
       ePromises.push(
@@ -218,8 +309,20 @@ const getDocumentsPage = (
       )
     }
 
+    // We add some common documents for some particular pages
+    const { documentRTypeF } = fixDocumentType(type)
+    COMMON_DOCUMENTS_FIX = COMMON_DOCUMENTS.concat(
+      COMMON_DOCUMENTS_FOR_PAGE[documentRTypeF] || []
+    ).concat(COMMON_DOCUMENTS_FOR_PAGE[page] || [])
+
+    if (!page && !type) {
+      COMMON_DOCUMENTS_FIX = COMMON_DOCUMENTS_FIX.concat(
+        COMMON_DOCUMENTS_FOR_PAGE['all_pages']
+      )
+    }
+
     // Add the promises to get the all the common documents
-    COMMON_DOCUMENTS.map(doc => {
+    COMMON_DOCUMENTS_FIX.map(doc => {
       ePromises.push(
         new Promise((resolve, reject) => {
           try {
@@ -245,7 +348,7 @@ const getDocumentsPage = (
           const contentRes = page ? { ...values[0] } : {}
 
           // Map the results with their names
-          COMMON_DOCUMENTS.map((doc, index) => {
+          COMMON_DOCUMENTS_FIX.map((doc, index) => {
             contentRes[doc] = values[index + (page ? 1 : 0)]
             return doc
           })
@@ -282,7 +385,11 @@ const getDocumentsPage = (
       }
 
       // So we're gonna fetch data from Prismic.io
-      fecthContent(onSuccess, onErrorFn)
+      try {
+        fecthContent(onSuccess, onErrorFn)
+      } catch (e) {
+        onErrorFn(e)
+      }
     })
   } else {
     const onErrorFn = err => {
@@ -290,10 +397,12 @@ const getDocumentsPage = (
       console.log(error)
       if (onError) {
         const justCachedCommonDocs = {}
-        COMMON_DOCUMENTS.map((doc, index) => {
-          justCachedCommonDocs[doc] = cache.get(`${doc}-${lang}`)
-          return doc
-        })
+        if (COMMON_DOCUMENTS_FIX) {
+          COMMON_DOCUMENTS_FIX.map((doc, index) => {
+            justCachedCommonDocs[doc] = cache.get(`${doc}-${lang}`)
+            return doc
+          })
+        }
         onError(
           error,
           cache.get(`content-result-${page}-${lang}`) || {
@@ -310,7 +419,11 @@ const getDocumentsPage = (
         // Cache key not found OR cache has been reset
         // So we're gonna fetch data from Prismic.io
 
-        fecthContent(onSuccess, onErrorFn, cache)
+        try {
+          fecthContent(onSuccess, onErrorFn, cache)
+        } catch (e) {
+          onErrorFn(e)
+        }
       } else {
         log('content from cache')
         if (onSuccess) onSuccess(value)
@@ -318,7 +431,6 @@ const getDocumentsPage = (
     })
   }
 }
-
 const getAllForType = (req, docType, langCode, success, failure) => {
   try {
     prismicAPI = initApi(req)
@@ -384,5 +496,8 @@ module.exports = {
   getAllForType,
   init,
   refreshContent,
-  LANGS_PRISMIC
+  LANGS_PRISMIC,
+  COMMON_DOCUMENTS_TYPE_MAP,
+  COMMON_DOCUMENTS_FOR_PAGE,
+  COMMON_DOCUMENTS_FOR_PAGE_LISTED
 }

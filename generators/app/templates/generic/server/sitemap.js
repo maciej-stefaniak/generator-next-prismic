@@ -10,15 +10,21 @@ const perPage = (
   results, // @param: any[]
   sitemapXML, // @param: any
   subRoute // @param: string - optional
-) => { 
+) => {
   for (const page of results) {
     let pageName = page.uid
+    const pageUid = page.uid
     langs.map(lang => {
       pageName = pageName.replace(`-${lang}`, '')
     })
 
     if (pageName && pageName.length > 0 && pageName !== '404') {
-      const page = `${SITE_ROOT}/${subRoute}${pageName}`
+      const regex = new RegExp(`-(${langs.join('|')})$`)
+      const pageLangMatch = pageUid.match(regex)
+      const pageLang =
+        pageLangMatch && pageLangMatch[1] ? `${pageLangMatch[1]}/` : ''
+
+      const page = `${SITE_ROOT}/${pageLang}${subRoute}${pageName}`
       const modDate = new Date()
       const url = sitemapXML.ele('url')
       url.ele('loc', page)
@@ -37,7 +43,7 @@ const perPage = (
 }
 
 // Exports API
-module.exports = (prismicApi) => {
+module.exports = prismicApi => {
   try {
     const SITE_ROOT = process.env.SITE_ROOT
     const DESTINATION = path.join(__dirname, '..', 'static', 'sitemap.xml')

@@ -9,8 +9,7 @@ interface IErrorPageProps {
 const ErrorPage: React.SFC<IErrorPageProps> = ({
   error = '404 - Not Found'
 }) => {
-
-  return  (
+  return (
     <section className="Error-page">
       <h1>{error}</h1>
     </section>

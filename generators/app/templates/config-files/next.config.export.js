@@ -21,14 +21,15 @@ const { languages } = require("./constants");
  *   routePrefix: '/',
  *   pagePath: '/main'
  *  },
- *  news_detail: {
- *   routePrefix: '/news/',
- *   routeFix: "/news", // If belonging to a section simply add it here example: '/company/news'
- *   pagePath: '/news_detail',
- *   queryData: 'news_id'
+ *  blog_detail: {
+ *   routePrefix: '/blog/',
+ *   routeFix: 'company/blog', // If belonging to a section simply add it here example: '/company/blog'
+ *   pagePath: '/blog_detail',
+ *   queryData: 'blog_id'
  *  }
  * }
  */
+
 const TYPE_ROUTES_MAPPING = {
   page: {
     routePrefix: "/",
@@ -114,7 +115,7 @@ const getCommonDocumentsForLang = (lang, commonDocumentsForLangs) => {
  *
  * {
  *   '/de/page': { page: '/main' },
- *   '/de/news/news-test': { page: '/news_detail', query: { news_id: 'news-test' } }
+ *   '/de/blog/blog-test': { page: '/blog_detail', query: { blog_id: 'blog-test' } }
  * }
  */
 const getMap = async outDir => {
@@ -152,7 +153,10 @@ const getMap = async outDir => {
       values.map(group => {
         group.map(item => {
           const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang);
-          const adjustedPath = item.uid.replace(/(-(en|de))$/, "");
+          const adjustedPath = item.uid.replace(
+            /(-(<%- languages.map(lang => `'${lang}'`).join('|') %>))$/,
+            ""
+          );
           const sectionUrl =
             item.data.url_section && item.data.url_section.trim().length > 0
               ? item.data.url_section
@@ -176,13 +180,40 @@ const getMap = async outDir => {
           });
 
           try {
+            const data =
+              {
+                ...commonDocumentsForLangs[lang],
+                ...item.data,
+                uid: item.uid
+              } || commonDocumentsForLangs[lang];
+
+            // We remove some heavy common data from pages that don't need it
+            Object.keys(data).forEach(dataObject => {
+              if (
+                prismicApi.COMMON_DOCUMENTS_FOR_PAGE_LISTED.indexOf(
+                  dataObject
+                ) >= 0
+              ) {
+                const section = outPath.split("/")[
+                  outPath.split("/").length -
+                    (TYPE_ROUTES_MAPPING[item.type].routeFix ? 2 : 1)
+                ];
+                if (
+                  !prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section] ||
+                  prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section].indexOf(
+                    dataObject
+                  ) < 0
+                ) {
+                  delete data[dataObject];
+                }
+              }
+            });
+            // ---
+
             fs.writeFile(
               path.join(outPath, "content.json"),
-              JSON.stringify(
-                { ...commonDocumentsForLangs[lang], ...item.data } ||
-                  commonDocumentsForLangs[lang]
-              ),
-              (err, data) => {
+              JSON.stringify(data),
+              err => {
                 if (err) {
                   console.log(
                     `Error generating content data file for ${lang}/${adjustedPath} file`,
