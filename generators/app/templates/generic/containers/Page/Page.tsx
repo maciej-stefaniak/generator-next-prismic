@@ -3,7 +3,7 @@ import withRedux from 'next-redux-wrapper'
 import Router from 'next/router'
 import { Helmet } from 'react-helmet'
 
-const {   websiteURL, FACEBOOK_APP_ID, openGraphDefaultImage } = require('../../constants')
+const {   websiteURL, FACEBOOK_APP_ID, openGraphDefaultImage, languages } = require('../../constants')
 
 import { getPathAndLangForPage, isNextHR, renderMeta, ct, isNode } from '../../utils'
 
@@ -29,13 +29,22 @@ interface IPageProps {
   asPath: string
 }
 
-const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
+const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev }) => {
   let toReturnError = null
   const page = content ? content[pathId] : null
   if (!content || !page || page.error) {
     if (pathId !== '404') {
       if (!isNode) {
-        Router.push(`/${lang}/404`, `/${lang}/404`, { shallow: true })
+        let langFor404 = lang
+        if (asPath && asPath.split('/').length > 1) {
+          langFor404 = asPath.split('/')[1]
+        }
+        if (!languages.includes(langFor404)) {
+          langFor404 = lang
+        }
+        Router.push(`/${langFor404}/404`, `/${langFor404}/404`, {
+          shallow: true
+        })
       }
       toReturnError = <div />
     } else {
@@ -92,9 +101,19 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, dev }) => {
         : [],
     */
   }
+
+  if (toReturnError) {
+    return toReturnError
+  }
   
+  const pageNameParts = asPath.split('/')
+  let pageName = pageNameParts[pageNameParts.length - 1]
+  if (pageNameParts[pageNameParts.length - 1] === '') {
+    pageName = pageNameParts[pageNameParts.length - 2]
+  }
+
   return (
-    <section>
+    <section className={`Page-${pageName}`}>
       <% if (baseComponents.includes('MetaData')) { %><MetaData seoData={seoData} /><% } %>
       {meta_tags && (
         <Helmet>
@@ -130,7 +149,7 @@ Page.getInitialProps = async options => {
       if (asPath) {
         const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
         await store.dispatch(getStaticContent(asPath, pathId, lang));
-        return { pathId, lang }
+        return { pathId, lang, asPath }
       } else {
         console.log(`Error with fecthing new page from getInitialProps on static exported: ${asPath}: `)
         return
@@ -149,7 +168,7 @@ Page.getInitialProps = async options => {
     // Make sure the menu is closed
     await store.dispatch(menuClose())
 
-    return { pathId, lang }
+    return { pathId, lang, asPath }
   } catch (e) {
     console.log('getInitialProps error', e)
   }
