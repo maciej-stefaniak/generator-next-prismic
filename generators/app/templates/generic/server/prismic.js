@@ -339,7 +339,7 @@ const getDocumentsPage = (
     Promise.all(ePromises)
       .then(values => {
         // No results error
-        if (!values || values.length <= 0) {
+        if (!values || values.length <= 0 || !values[0]) {
           onErrorFn('Prismic: No results: All Promises')
           return
         }
