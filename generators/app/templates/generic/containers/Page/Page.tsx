@@ -32,12 +32,16 @@ interface IPageProps {
   isErrorFile?: boolean
   dispatch?: (any) => {}
   req?: any
+  isExport?: boolean
+  linkedToError?: boolean
 }
 
 const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev,
   isErrorFile = false,
   dispatch,
-  req }) => {
+  req, 
+  isExport = false,
+  linkedToError = false }) => {
   const [langFix, setLangFix] = useState(lang)
   useEffect(() => {
     if (isErrorFile && !isNode) {
@@ -49,7 +53,10 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev,
 
   let toReturnError = null
   const page = content ? content[pathId] : null
-  if (!content || !page || page.error) {
+  if (linkedToError && isExport) {
+    window.location.reload()
+    toReturnError = <div />
+  } else if (!content || !page || page.error) {
     if (pathId !== '404') {
       if (!isNode) {
         let langFor404 = langFix
@@ -161,17 +168,29 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev,
 Page.getInitialProps = async options => {
   const { store, req, asPath, query } = options
 
-    // Static fetching next page's content
-    if (!options.isServer && process.env.EXPORT) {
-      if (asPath) {
-        const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
-        await store.dispatch(getStaticContent(asPath, pathId, lang));
-        return { pathId, lang, asPath }
-      } else {
-        console.log(`Error with fecthing new page from getInitialProps on static exported: ${asPath}: `)
-        return
-      }
+  const reqToReturn = req ? { headers: req.headers } : null
+
+  // Static fetching next page's content
+  if (!options.isServer && process.env.EXPORT) {
+    if (asPath) {
+      const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
+      await store.dispatch(getStaticContent(asPath, pathId, lang));
+     
+      const { content } = store.getState()
+      const page = content ? content[pathId] : null
+
+      return { 
+        req: reqToReturn,
+        pathId, 
+        lang, 
+        asPath,  
+        isExport: process.env.EXPORT,
+        linkedToError: !page}
+    } else {
+      console.log(`Error with fecthing new page from getInitialProps on static exported: ${asPath}: `)
+      return
     }
+  }
 
   // Avoid querying data with next.js-hot-reloading
   if (isNextHR(req ? req.url : asPath)) return
@@ -181,17 +200,25 @@ Page.getInitialProps = async options => {
     let { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
 
     let isErrorFile = false
-    if (pathId === 'error.html' || (req && req.statusCode === 404)) {
+    if (
+      (process.env.EXPORT && pathId === 'error.html') ||
+      (req && req.statusCode === 404)
+    ) {
       pathId = '404'
       isErrorFile = true
     }
-
     await store.dispatch(getPage(req, pathId, type, lang))
 
     // Make sure the menu is closed
     await store.dispatch(menuClose())
 
-    return { pathId, lang, asPath }
+    return {       
+      req: reqToReturn,
+      pathId, 
+      lang, 
+      asPath,
+      isErrorFile,
+      isExport: process.env.EXPORT}
   } catch (e) {
     console.log('getInitialProps error', e)
   }
