@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { useEffect, useState } from 'react'
+
 import withRedux from 'next-redux-wrapper'
 import Router from 'next/router'
 import { Helmet } from 'react-helmet'
@@ -27,20 +29,35 @@ interface IPageProps {
   pathId: string
   dev: boolean
   asPath: string
+  isErrorFile?: boolean
+  dispatch?: (any) => {}
+  req?: any
 }
 
-const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev }) => {
+const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev,
+  isErrorFile = false,
+  dispatch,
+  req }) => {
+  const [langFix, setLangFix] = useState(lang)
+  useEffect(() => {
+    if (isErrorFile && !isNode) {
+      const langError = langFromPath(document.location.pathname)
+      dispatch(getPage(req, pathId, 'page', langError))
+      setLangFix(langError)
+    }
+  }, [])
+
   let toReturnError = null
   const page = content ? content[pathId] : null
   if (!content || !page || page.error) {
     if (pathId !== '404') {
       if (!isNode) {
-        let langFor404 = lang
+        let langFor404 = langFix
         if (asPath && asPath.split('/').length > 1) {
           langFor404 = asPath.split('/')[1]
         }
         if (!languages.includes(langFor404)) {
-          langFor404 = lang
+          langFor404 = langFix
         }
         Router.push(`/${langFor404}/404`, `/${langFor404}/404`, {
           shallow: true
@@ -48,7 +65,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev })
       }
       toReturnError = <div />
     } else {
-      toReturnError = <ErrorPage {...page} lang={lang} />
+      toReturnError = <ErrorPage {...page} lang={langFix} />
     }
   }
 
@@ -120,7 +137,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev })
           {renderMeta(meta_tags)}
         </Helmet>
       )}
-      <Layout navbar={navbar} footer={footer} lang={lang}>
+      <Layout navbar={navbar} footer={footer} lang={langFix}>
         <% if (baseComponents.includes('ContentBlocks')) { %>{blocks.map((item, index) => {
           const { slice_type } = item
           const componentName = slice_type
@@ -128,7 +145,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev })
             : null
 
           return (
-            <ContentBlock key={slice_type + index} tag={componentName} lang={lang} {...item} {...genericItems} />
+            <ContentBlock key={slice_type + index} tag={componentName} lang={langFix} {...item} {...genericItems} />
           )
         })}
         
@@ -161,7 +178,13 @@ Page.getInitialProps = async options => {
 
   // Fetching page's content
   try {
-    const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
+    let { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
+
+    let isErrorFile = false
+    if (pathId === 'error.html' || (req && req.statusCode === 404)) {
+      pathId = '404'
+      isErrorFile = true
+    }
 
     await store.dispatch(getPage(req, pathId, type, lang))
 
