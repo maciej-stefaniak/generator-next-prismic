@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { isIE, isNode } from '../../utils'
 
-import { Navbar, Footer } from '..'
+import { Navbar, Footer, Markdown } from '..'
 
 import './Layout.scss'
 
@@ -61,6 +61,12 @@ class Layout extends React.Component<ILayoutProps> {
     return (
       <>
         <div className="Layout">
+        <noscript>
+            <div className="No-JS-message">
+              <p>{"This site works best with JavaScript enabled"}</p>>
+            </div>
+          </noscript>
+
           {showNavbar && navbar && <Navbar lang={lang} {...navbar} />}
           <div className="Layout-content">{children}</div>
           {showFooter && footer && <Footer lang={lang} {...footer} />}

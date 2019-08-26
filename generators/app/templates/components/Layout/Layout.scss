@@ -49,3 +49,23 @@ a {
 .Layout .Layout-content {
   min-height: 560px;
 }
+
+html:not(.js) {
+  padding-top: 30px;
+  @media (max-width: $breakpoint-mobile) {
+    padding-top: 40px;
+  }
+}
+.No-JS-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 5050;
+  text-align: center;
+  font-weight: bold;
+  font-size: 120%;
+  color: #fff;
+  background-color: #ae0000;
+  padding: 5px;
+}
