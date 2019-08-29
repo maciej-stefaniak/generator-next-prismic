@@ -36,12 +36,18 @@ interface IPageProps {
   linkedToError?: boolean
 }
 
-const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev,
+const Page: StatelessPage<IPageProps> = ({ 
+  content, 
+  lang, 
+  pathId, 
+  asPath, 
+  dev,
   isErrorFile = false,
   dispatch,
   req, 
   isExport = false,
-  linkedToError = false }) => {
+  linkedToError = false 
+}) => {
   const [langFix, setLangFix] = useState(lang)
   useEffect(() => {
     if (isErrorFile && !isNode) {
@@ -87,8 +93,7 @@ const Page: StatelessPage<IPageProps> = ({ content, lang, pathId, asPath, dev,
     meta_open_graph_image = {
       url: null,
       alt: null
-    },
-    asPath
+    }
   } = page
   <% if (baseComponents.includes('ContentBlocks')) { %>const blocks = heroBlocks.concat(contentBlocks)<% } %>
 
