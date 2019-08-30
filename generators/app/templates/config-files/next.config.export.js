@@ -156,7 +156,7 @@ const getMap = async outDir => {
             group.map(item => {
               const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang);
               const adjustedPath = item.uid.replace(
-                /(-(<%- languages.map(lang => `'${lang}'`).join('|') %>))$/,
+                /(-(<%- languages.map(lang => `${lang}`).join('|') %>))$/,
                 ""
               );
               const sectionUrl =
@@ -171,9 +171,7 @@ const getMap = async outDir => {
 
               // If custom type of page, adjust the path
               if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
-                outPath = `${outDir}/${lang}/${
-                  TYPE_ROUTES_MAPPING[item.type].routeFix
-                }/${adjustedPath}`;
+                outPath = `${outDir}/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
               }
               // ---
 
@@ -239,9 +237,7 @@ const getMap = async outDir => {
 
               // If custom type of page, adjust the path
               if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
-                pagePath = `/${lang}/${
-                  TYPE_ROUTES_MAPPING[item.type].routeFix
-                }/${adjustedPath}`;
+                pagePath = `/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
               }
               // ---
 
