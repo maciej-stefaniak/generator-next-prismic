@@ -63,7 +63,7 @@ class Layout extends React.Component<ILayoutProps> {
         <div className="Layout">
         <noscript>
             <div className="No-JS-message">
-              <p>{"This site works best with JavaScript enabled"}</p>>
+              <p>{"This site works best with JavaScript enabled"}</p>
             </div>
           </noscript>
 
