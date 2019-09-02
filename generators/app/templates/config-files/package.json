@@ -54,7 +54,7 @@
     "jest": "^24.7.1",
     "lint-staged": "^8.1.0",
     "mkdirp": "^0.5.1",
-    "next": "^8.1.0",<% if (baseComponents.includes('PageTransitions')) { %>
+    "next": "^9.0.5",<% if (baseComponents.includes('PageTransitions')) { %>
     "next-page-transitions": "^1.0.0-beta.1",<% } %>
     "next-redux-wrapper": "^1.3.4",
     "next-routes": "^1.4.2",

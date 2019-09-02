@@ -35,6 +35,8 @@ export default class MyDocument extends Document<any, any> {
             content="width=device-width, initial-scale=1, minimum-scale=1"
           />
 
+          <script src="/static/js-class-fix.js" />
+
           {languages.map(langI =>
             langI === lang ? null : (
               <link

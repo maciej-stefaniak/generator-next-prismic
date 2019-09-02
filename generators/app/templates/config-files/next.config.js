@@ -41,6 +41,14 @@ module.exports = withSass(
           join(dir, "static/favicon/favicon.ico"),
           join(outDir, "favicon.ico")
         );
+        await copyFile(
+          join(dir, "static/health.html"),
+          join(outDir, "health.html")
+        );
+        await copyFile(
+          join(dir, "static/js-class-fix.js"),
+          join(outDir, "static/js-class-fix.js")
+        );
         await copyFile(join(dir, "static/sw.js"), join(outDir, "sw.js"));
         await copyFile(
           join(dir, "static/sitemap.xml"),
