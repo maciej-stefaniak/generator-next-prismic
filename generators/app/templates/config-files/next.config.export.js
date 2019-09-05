@@ -101,8 +101,7 @@ const getCommonDocumentsForLang = (lang, commonDocumentsForLangs) => {
         resolve();
       })
       .catch(e => {
-        console.log("getCommonDocumentsForLang", e);
-        reject(e);
+        reject(new Error(`Export failed while fetching common documents data. Error: ${e}`))
       });
   });
 };
@@ -149,134 +148,126 @@ const getMap = async outDir => {
         );
       });
     });
-    try {
-      Promise.all(promises)
-        .then(values => {
-          values.map(group => {
-            group.map(item => {
-              const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang);
-              const adjustedPath = item.uid.replace(
-                /(-(<%- languages.map(lang => `${lang}`).join('|') %>))$/,
-                ""
-              );
-              const sectionUrl =
-                item.data.url_section && item.data.url_section.trim().length > 0
-                  ? item.data.url_section
-                  : null;
-              let outPath = `${outDir}/${lang}/${
-                sectionUrl ? `${sectionUrl}/` : ""
+
+    Promise.all(promises)
+      .then(values => {
+        values.map(group => {
+          group.map(item => {
+            const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang);
+            const adjustedPath = item.uid.replace(
+              /(-(<%- languages.map(lang => `${lang}`).join('|') %>))$/,
+              ""
+            );
+            const sectionUrl =
+              item.data.url_section && item.data.url_section.trim().length > 0
+                ? item.data.url_section
+                : null;
+            let outPath = `${outDir}/${lang}/${
+              sectionUrl ? `${sectionUrl}/` : ""
               }${adjustedPath}`;
 
-              const fix404 = adjustedPath === "404";
+            const fix404 = adjustedPath === "404";
 
-              // If custom type of page, adjust the path
-              if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
-                outPath = `${outDir}/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
+            // If custom type of page, adjust the path
+            if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
+              outPath = `${outDir}/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
+            }
+            // ---
+
+            //Write content file for static prefetch of pages
+            //Create export folder for given language
+            mkdirp.sync(outPath, err => {
+              console.log(`Error generating export dir`, err);
+            });
+
+            const data =
+              {
+                ...commonDocumentsForLangs[lang],
+                ...item.data,
+                uid: item.uid
+              } || commonDocumentsForLangs[lang];
+
+            // We remove some heavy common data from pages that don't need it
+            Object.keys(data).forEach(dataObject => {
+              if (
+                prismicApi.COMMON_DOCUMENTS_FOR_PAGE_LISTED.indexOf(
+                  dataObject
+                ) >= 0
+              ) {
+                const section = outPath.split("/")[
+                  outPath.split("/").length -
+                  (TYPE_ROUTES_MAPPING[item.type].routeFix ? 2 : 1)
+                ];
+                if (
+                  !prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section] ||
+                  prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section].indexOf(
+                    dataObject
+                  ) < 0
+                ) {
+                  delete data[dataObject];
+                }
               }
-              // ---
+            });
+            // ---
 
-              //Write content file for static prefetch of pages
-              //Create export folder for given language
-              mkdirp.sync(outPath, err => {
-                console.log(`Error generating export dir`, err);
-              });
-
-              try {
-                const data =
-                  {
-                    ...commonDocumentsForLangs[lang],
-                    ...item.data,
-                    uid: item.uid
-                  } || commonDocumentsForLangs[lang];
-
-                // We remove some heavy common data from pages that don't need it
-                Object.keys(data).forEach(dataObject => {
-                  if (
-                    prismicApi.COMMON_DOCUMENTS_FOR_PAGE_LISTED.indexOf(
-                      dataObject
-                    ) >= 0
-                  ) {
-                    const section = outPath.split("/")[
-                      outPath.split("/").length -
-                        (TYPE_ROUTES_MAPPING[item.type].routeFix ? 2 : 1)
-                    ];
-                    if (
-                      !prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section] ||
-                      prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section].indexOf(
-                        dataObject
-                      ) < 0
-                    ) {
-                      delete data[dataObject];
-                    }
-                  }
-                });
-                // ---
-
-                fs.writeFile(
-                  path.join(outPath, "content.json"),
-                  JSON.stringify(data),
-                  err => {
-                    if (err) {
-                      console.log(
-                        `Error generating content data file for ${lang}/${adjustedPath} file`,
-                        err
-                      );
-                    }
-                  }
-                );
-              } catch (e) {
-                console.log(
-                  `Error generating content data file for ${lang}/${adjustedPath} file`,
-                  e
-                );
+            fs.writeFile(
+              path.join(outPath, "content.json"),
+              JSON.stringify(data),
+              err => {
+                if (err) {
+                  console.log(
+                    `Error generating content data file for ${lang}/${adjustedPath} file`,
+                    err
+                  );
+                }
               }
+            );
 
-              let pagePath = `/${lang}/${
-                sectionUrl ? `${sectionUrl}/` : ""
+
+            let pagePath = `/${lang}/${
+              sectionUrl ? `${sectionUrl}/` : ""
               }${adjustedPath}`;
 
-              // If custom type of page, adjust the path
-              if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
-                pagePath = `/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
-              }
-              // ---
+            // If custom type of page, adjust the path
+            if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
+              pagePath = `/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
+            }
+            // ---
 
-              const obj = {
-                [pagePath]: {
+            const obj = {
+              [pagePath]: {
+                page: TYPE_ROUTES_MAPPING[item.type].pagePath,
+                query: TYPE_ROUTES_MAPPING[item.type].queryData
+                  ? {
+                    [TYPE_ROUTES_MAPPING[item.type].queryData]: adjustedPath
+                  }
+                  : {}
+              }
+            };
+
+            if (fix404) {
+              result = Object.assign(result, {
+                ["/error.html"]: {
                   page: TYPE_ROUTES_MAPPING[item.type].pagePath,
                   query: TYPE_ROUTES_MAPPING[item.type].queryData
                     ? {
-                        [TYPE_ROUTES_MAPPING[item.type].queryData]: adjustedPath
-                      }
+                      [TYPE_ROUTES_MAPPING[item.type]
+                        .queryData]: adjustedPath
+                    }
                     : {}
                 }
-              };
+              });
+            }
 
-              if (fix404) {
-                result = Object.assign(result, {
-                  ["/error.html"]: {
-                    page: TYPE_ROUTES_MAPPING[item.type].pagePath,
-                    query: TYPE_ROUTES_MAPPING[item.type].queryData
-                      ? {
-                          [TYPE_ROUTES_MAPPING[item.type]
-                            .queryData]: adjustedPath
-                        }
-                      : {}
-                  }
-                });
-              }
-
-              result = Object.assign(result, obj);
-            });
+            result = Object.assign(result, obj);
           });
-          resolve(result);
-        })
-        .catch(e => {
-          console.log("ERROR: ", e);
         });
-    } catch (e) {
-      console.log("ERROR: ", e);
-    }
+        resolve(result);
+      })
+      .catch(e => {
+        reject(new Error(`Export failed while fetching data. Error: ${e}`))
+      });
+
   });
 };
 
