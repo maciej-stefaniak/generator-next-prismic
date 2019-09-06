@@ -1,4 +1,16 @@
 module.exports = {
-  presets: ['next/babel', '@zeit/next-typescript/babel'],
+  presets: [
+    [
+      "@babel/preset-env",
+      {
+        targets: {
+          ie: "11"
+        },
+        useBuiltIns: "entry"
+      }
+    ],
+    "next/babel",
+    "@zeit/next-typescript/babel"
+  ],
   plugins: []
-}
+};

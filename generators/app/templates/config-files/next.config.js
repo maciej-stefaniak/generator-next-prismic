@@ -84,6 +84,7 @@ module.exports = withSass(
       conf.entry = () =>
         oldEntry().then(entry => {
           if (entry["main.js"]) {
+            entry["main.js"].unshift(path.resolve("./utils/polyfills"));
             entry["main.js"].push(path.resolve("./utils/offline"));
           }
           return entry;
