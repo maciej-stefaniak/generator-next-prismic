@@ -112,7 +112,7 @@ const getDocumentsPage = (toResetCache, cache) => (
     return new Promise((onSuccess, promiseReject) => {
       const onErrorFn = err => {
         const error = `Error getting content-result -> ${err}`
-        promiseReject(error)
+        promiseReject(new Error(error))
       }
 
       // So we're gonna fetch data from Prismic.io
