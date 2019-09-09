@@ -22,9 +22,6 @@ export default class MyDocument extends Document<any, any> {
     const { pathname, acceptLanguage } = this.props
     const lang = langFromPath(pathname, null, acceptLanguage)
 
-    const urlWithoutLangParts = pathname.split('/')
-    const urlWithoutLang = urlWithoutLangParts[urlWithoutLangParts.length - 1]
-
     return (
       <html lang={lang}>
         <Head>
@@ -36,22 +33,6 @@ export default class MyDocument extends Document<any, any> {
           />
 
           <script src="/static/js-class-fix.js" />
-
-          {languages.map(langI =>
-            langI === lang ? null : (
-              <link
-                rel="alternate"
-                hrefLang={langI}
-                href={`${websiteURL}/${langI}/${urlWithoutLang}`}
-                key={lang}
-              />
-            )
-          )}
-          <link
-            rel="alternate"
-            hrefLang="x-default"
-            href={`${websiteURL}/${languages[0]}/${urlWithoutLang}`}
-          />
 
           <meta name="theme-color" content="<%= primaryColor %>" />
           <link rel="manifest" href="/static/manifest.webmanifest" />

@@ -97,8 +97,12 @@ const Page: StatelessPage<IPageProps> = ({
   } = page
   <% if (baseComponents.includes('ContentBlocks')) { %>const blocks = heroBlocks.concat(contentBlocks)<% } %>
 
+  let urlPart = asPath
+  if (urlPart[urlPart.length - 1] === '/') {
+    urlPart = urlPart.slice(0, -1)
+  }
   <% if (baseComponents.includes('MetaData')) { %>const seoTitle = ct(meta_title)
-    const seoCanonical = `${websiteURL}${asPath}`
+    const seoCanonical = `${websiteURL}${urlPart}/`
     const seoData = {
     title: seoTitle,
     description: meta_description,
@@ -119,6 +123,10 @@ const Page: StatelessPage<IPageProps> = ({
       ]
     }
   }<% } %>
+  let urlWithoutLang = urlPart
+  for (let langI = 0; langI < languages.length; langI++) {
+    urlWithoutLang = urlWithoutLang.replace(`/${languages[langI]}/`, ``)
+  }
 
   // Some generic data for some pages (server filters them)
   const genericItems = {
@@ -144,11 +152,26 @@ const Page: StatelessPage<IPageProps> = ({
   return (
     <section className={`Page-${pageName}`}>
       <% if (baseComponents.includes('MetaData')) { %><MetaData seoData={seoData} /><% } %>
-      {meta_tags && (
-        <Helmet>
-          {renderMeta(meta_tags)}
-        </Helmet>
-      )}
+      <Helmet>
+        {meta_tags && renderMeta(meta_tags)}
+
+        {languages.map(langI =>
+          langI === lang ? null : (
+            <link
+              rel="alternate"
+              hrefLang={langI}
+              href={`${websiteURL}/${langI}/${urlWithoutLang}/`}
+              key={lang}
+            />
+          )
+        )}
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href={`${websiteURL}/${languages[0]}/${urlWithoutLang}/`}
+        />
+      </Helmet>
+      
       <Layout navbar={navbar} footer={footer} lang={langFix}>
         <% if (baseComponents.includes('ContentBlocks')) { %>{blocks.map((item, index) => {
           const { slice_type } = item
