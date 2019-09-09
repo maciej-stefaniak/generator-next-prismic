@@ -58,6 +58,11 @@ class Layout extends React.Component<ILayoutProps> {
       showFooter = true,
       lang
     } = this.props
+
+    if ((showNavbar && !navbar) || (showFooter && !footer)) {
+      throw new Error('No header/footer')
+    }
+    
     return (
       <>
         <div className="Layout">
