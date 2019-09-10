@@ -1,4 +1,5 @@
 const { log, logError } = require('./../utils')
+const { COMMON_DOCUMENTS } = require('./constants')
 
 const {
   fixDocumentType,
@@ -38,6 +39,11 @@ const getDocument = (toResetCache, cache) => (
       const onErrorQuery = e => {
         cache.set(`${documentIdF}-${lang}`, null)
         logError(`Prismic: ${documentIdF}: something went wrong: ${e}`)
+
+        if (COMMON_DOCUMENTS.includes(documentIdF)) {
+          onError(new Error(`Common document ${documentIdF} not found`))
+        }
+
         if (toResetCache) {
           onSuccess(value)
         } else {
