@@ -82,6 +82,10 @@ const Page: StatelessPage<IPageProps> = ({
     }
   }
 
+  if (toReturnError) {
+    return toReturnError
+  }
+
   const {
     navbar,
     footer,
@@ -131,10 +135,6 @@ const Page: StatelessPage<IPageProps> = ({
     */
   }
 
-  if (toReturnError) {
-    return toReturnError
-  }
-  
   const pageNameParts = asPath.split('/')
   let pageName = pageNameParts[pageNameParts.length - 1]
   if (pageNameParts[pageNameParts.length - 1] === '') {
