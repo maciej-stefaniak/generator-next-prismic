@@ -21,7 +21,7 @@ module.exports = withSass(
     /**
      * Async function returning path mapping object for static export
      */
-    exportPathMap: async function(
+    exportPathMap: async function (
       defaultPathMap,
       { dev, dir, outDir, distDir, buildId }
     ) {
@@ -54,21 +54,6 @@ module.exports = withSass(
           join(dir, "static/sitemap.xml"),
           join(outDir, "sitemap.xml")
         );
-        languages.map(async (lang, index) => {
-          mkdirp.sync(join(outDir, lang), err => {
-            console.log(err);
-          });
-          await copyFile(
-            join(dir, `export/redirects/${lang}/index.html`),
-            join(outDir, lang, "index.html")
-          );
-          if (index === 0) {
-            await copyFile(
-              join(dir, "export/redirects/index.html"),
-              join(outDir, "index.html")
-            );
-          }
-        });
         return map;
       }
     },
