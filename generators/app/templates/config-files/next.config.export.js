@@ -54,23 +54,24 @@ const generateSiteMap = () => {
 /**
  * Generates redirection files for home page and language homes
  */
-const generateRedirectFiles = () => {
+const generateRedirectFiles = (outDir) => {
+
   // Iterate through languages and create redirection files
   languages.map((lang, index) => {
     const fileString = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/${lang}/home" /></head><body></body></html>`;
 
-    // Create export folder for given language
-    mkdirp.sync(path.join(__dirname, `export/redirects/${lang}`), err => {
-      console.log(`Error generating export dir`, err);
+    // Create folder for given language
+    mkdirp.sync(path.join(outDir, `${lang}`), err => {
+      console.log(`Creating dir for lang ${lang} error`, err);
     });
 
     // Write redirection HTML into file
     fs.writeFile(
-      path.join(__dirname, `export/redirects/${lang}`, "index.html"),
+      path.join(outDir, `${lang}`, "index.html"),
       fileString,
       (err, data) => {
         if (err) {
-          console.log(`Error generating ${lang} redirection file`, err);
+          console.log(`Generating ${lang} lang redirection file error`, err);
         }
       }
     );
@@ -79,11 +80,11 @@ const generateRedirectFiles = () => {
     if (index === 0) {
       // Write redirection HTML into root file
       fs.writeFile(
-        path.join(__dirname, `export/redirects`, "index.html"),
+        path.join(outDir, "index.html"),
         fileString,
         (err, data) => {
           if (err) {
-            console.log(`Error generating root redirection file`, err);
+            console.log(`Generating root redirection file error`, err);
           }
         }
       );
@@ -119,7 +120,7 @@ const getCommonDocumentsForLang = (lang, commonDocumentsForLangs) => {
  */
 const getMap = async outDir => {
   generateSiteMap();
-  generateRedirectFiles();
+  generateRedirectFiles(outDir);
 
   let commonDocumentsForLangs = {};
 
