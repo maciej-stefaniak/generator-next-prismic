@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { useSpring, animated } from 'react-spring'
+import { useSpring, animated } from 'react-spring/web.cjs'
 
 type ITransformProps = {
   children?: React.ReactNode | React.ReactNode[]
