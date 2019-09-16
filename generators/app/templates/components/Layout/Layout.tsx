@@ -27,12 +27,13 @@ type ILayoutProps = {
 }
 
 class Layout extends React.Component<ILayoutProps> {
-  componentWillMount() {
+  constructor(props) {
+    super(props)
     isIE()
   }
 
   componentDidMount() {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && ! isIE()) {
       try {
         import('a11y-checker').then(a11yChecker => {
           a11yChecker.default()
