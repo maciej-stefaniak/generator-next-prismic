@@ -91,7 +91,7 @@ const getSingleDocument = (
     .query(query, {
       lang: LANGS_PRISMIC[lang],
       orderings: '[document.first_publication_date]',
-      pageSize: 100,
+      pageSize: PRISMIC_PER_PAGE,
       page
     })
     .then(res => {
