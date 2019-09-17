@@ -56,7 +56,7 @@ export const getDocument = (
   req: any,
   documentId: string,
   documenType: string,
-  lang: 'en' | 'de'
+  lang: <%- languages.map(lang => `'${lang}'`).join(' | ') %>
 ) => async (dispatch, getState) => {
   try {
     const protocol = (req && req.headers) ? req.headers['x-forwarded-proto'] || 'http' : ''
@@ -83,7 +83,7 @@ export const getDocument = (
 export const getAllDocumentsOfType = (
   req: any,
   documenType: string,
-  lang: 'en' | 'de'
+  lang: <%- languages.map(lang => `'${lang}'`).join(' | ') %>
 ) => async (dispatch, getState) => {
   try {
     const protocol = (req && req.headers) ? req.headers['x-forwarded-proto'] || 'http' : ''

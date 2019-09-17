@@ -24,7 +24,30 @@ const COMMON_DOCUMENTS_TYPE_MAP = {
 const LANGS_PRISMIC = {
   de: 'de-de',
   en: 'en-us',
-  fr: 'fr-fr'
+  fr: 'fr-fr',
+  at: 'de-at',
+  ch: 'de-ch',
+  es: 'es-es',
+  it: 'it-it',
+  nl: 'nl-nl',
+  gr: 'el-gr',
+  pt: 'pt-pt',
+  pl: 'pl',
+  cz: 'cs-cz',
+  sk: 'sk',
+  hr: 'hr',
+  ru: 'ru',
+  hu: 'hu',
+  ro: 'ro',
+  sl: 'sl',
+  tr: 'tr',
+  jp: 'ja-jp',
+  kr: 'ko-kr',
+  cn: 'zh-cn',
+  ar: 'es-ar',
+  br: 'pt-br',
+  mx: 'es-mx',
+  au: 'en-au'
 }
 
 // Init env variables using dotenv if we don't have them in process context
