@@ -143,7 +143,8 @@ const getMap = async outDir => {
               docType,
               prismicApi.LANGS_PRISMIC[lang],
               success,
-              failure
+              failure,
+              1
             );
           })
         );

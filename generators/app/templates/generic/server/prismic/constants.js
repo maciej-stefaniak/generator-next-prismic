@@ -50,6 +50,8 @@ const LANGS_PRISMIC = {
   au: 'en-au'
 }
 
+const PRISMIC_PER_PAGE = 100
+
 // Init env variables using dotenv if we don't have them in process context
 if (!(process.env.CONTENT_API_URL && process.env.CONTENT_API_TOKEN)) {
   require('dotenv').config()
@@ -69,6 +71,7 @@ module.exports = {
   COMMON_REPEATABLE_DOCUMENTS,
   COMMON_DOCUMENTS_TYPE_MAP,
   LANGS_PRISMIC,
+  PRISMIC_PER_PAGE,
   CONTENT_API_URL: process.env.CONTENT_API_URL,
   CONTENT_API_TOKEN: process.env.CONTENT_API_TOKEN,
   DELAY_API_CALLS: process.env.DELAY_API_CALLS,
