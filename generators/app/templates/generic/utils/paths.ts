@@ -88,7 +88,10 @@ export const getPathAndLangForPage = (req, asPath, query): {
 
   return {
     lang,
-    pathId,
+    pathId:
+      pathId && pathId.trim().length > 0
+        ? pathId
+        : adjustPathReqWithLang(asPath, null, null).replace('/', ''),
     type
   }
 }
