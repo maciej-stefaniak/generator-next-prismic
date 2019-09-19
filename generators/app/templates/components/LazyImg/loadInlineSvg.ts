@@ -1,4 +1,9 @@
-const POSSIBLE_LOCAL_SVGS = []
+const POSSIBLE_LOCAL_SVGS = [
+  /* 
+    Add images names (with no extension) here from inline-svg-fallbacks files
+    Has to be same as end of Prismic file url
+  */
+]
 
 const hasSVGLocalFallback = url => {
   let newURL = url

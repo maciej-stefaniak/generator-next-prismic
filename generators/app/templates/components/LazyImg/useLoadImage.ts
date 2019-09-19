@@ -49,36 +49,46 @@ const useLoadImage = (props: ILazyImgProps): ILazyImgState => {
   /*
    * Starts/triggers the loading of the image source
    */
-  useEffect(() => {
-    if (src) {
-      if (inlineSvg) {
-        loadInlineSvg(src, props, dispatch)
-      } else {
-        const imgElem = document.createElement('img')
-        imgElem.onload = () => dispatch({ type: 'LOADED' })
-        imgElem.onerror = e =>
-          dispatch({ type: 'FAILED', payload: { error: e } })
-        imgElem.src = src
-
-        if (timeout) {
-          loadTimeout = setTimeout(
-            () => dispatch({ type: 'FAILED', payload: { error: 'timeout' } }),
-            timeout
-          )
-        }
-
-        if (!isNode && isIE()) {
-          if (imgElem.complete) {
+  useEffect(
+    () => {
+      let mounted = true
+      if (src) {
+        if (inlineSvg) {
+          loadInlineSvg(src, props, dispatch, mounted)
+        } else {
+          const imgElem = document.createElement('img')
+          imgElem.onload = () => {
+            if (!mounted) return
             dispatch({ type: 'LOADED' })
+          }
+          imgElem.onerror = e => {
+            if (!mounted) return
+            dispatch({ type: 'FAILED', payload: { error: e } })
+          }
+          imgElem.src = src
+
+          if (timeout) {
+            loadTimeout = setTimeout(
+              () => dispatch({ type: 'FAILED', payload: { error: 'timeout' } }),
+              timeout
+            )
+          }
+
+          if (!isNode && isIE()) {
+            if (imgElem.complete) {
+              dispatch({ type: 'LOADED' })
+            }
           }
         }
       }
-    }
 
-    return () => {
-      clearTimeout(loadTimeout)
-    }
-  }, [src])
+      return () => {
+        mounted = false
+        clearTimeout(loadTimeout)
+      }
+    },
+    [src]
+  )
 
   return state as ILazyImgState
 }
