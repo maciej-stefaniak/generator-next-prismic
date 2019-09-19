@@ -1,19 +1,14 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 
-import withRedux from 'next-redux-wrapper'
 import Router from 'next/router'
 import { Helmet } from 'react-helmet'
 
 const {   websiteURL, FACEBOOK_APP_ID, openGraphDefaultImage, languages } = require('../../constants')
 
-import { getPathAndLangForPage, isNextHR, renderMeta, ct, isNode } from '../../utils'
+import { getPathAndLangForPage, isNextHR, renderMeta, ct, isNode, getPage, getStaticContent } from '../../utils'
 
 import { Layout, MetaData, ContentBlock<% if (baseComponents.includes('Demo')) { %>, Demo<% } %> } from '../../components'
-
-import { getPage, getStaticContent } from '../../store/actions/content'
-import { menuClose } from '../../store/actions/ui'
-import initStore from '../../store/store'
 
 import ErrorPage from '../ErrorPage/ErrorPage'
 
@@ -194,20 +189,19 @@ const Page: StatelessPage<IPageProps> = ({
 }
 
 Page.getInitialProps = async options => {
-  const { store, req, asPath, query } = options
+  const { req, asPath, query } = options
 
   const reqToReturn = req ? { headers: req.headers } : null
 
   // Static fetching next page's content
-  if (!options.isServer && process.env.EXPORT) {
+  if (!isNode && process.env.EXPORT) {
     if (asPath) {
       const { lang, pathId, type } = getPathAndLangForPage(req, asPath, query)
-      await store.dispatch(getStaticContent(asPath, pathId, lang));
-     
-      const { content } = store.getState()
+      const content = await getStaticContent(asPath, pathId, lang)
       const page = content ? content[pathId] : null
 
-      return { 
+      return {
+        content,
         req: reqToReturn,
         pathId, 
         lang, 
@@ -235,26 +229,20 @@ Page.getInitialProps = async options => {
       pathId = '404'
       isErrorFile = true
     }
-    await store.dispatch(getPage(req, pathId, type, lang))
+    const content = await getPage(req, pathId, type, lang)
 
-    // Make sure the menu is closed
-    await store.dispatch(menuClose())
-
-    return {       
+    return {
+      content,       
       req: reqToReturn,
       pathId, 
       lang, 
       asPath,
       isErrorFile,
-      isExport: process.env.EXPORT}
+      isExport: process.env.EXPORT
+    }
   } catch (e) {
     console.log('getInitialProps error', e)
   }
 }
 
-const mapStateToProps = state => ({
-  content: state.content,
-  dev: state.dev
-})
-
-export default withRedux(initStore, mapStateToProps)(Page)
+export default Page
