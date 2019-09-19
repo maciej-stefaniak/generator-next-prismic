@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet'
 
 const {   websiteURL, FACEBOOK_APP_ID, openGraphDefaultImage, languages } = require('../../constants')
 
-import { getPathAndLangForPage, isNextHR, renderMeta, ct, isNode, getPage, getStaticContent } from '../../utils'
+import { getPathAndLangForPage, langFromPath, isNextHR, renderMeta, ct, isNode, getPage, getStaticContent } from '../../utils'
 
 import { Layout, MetaData, ContentBlock<% if (baseComponents.includes('Demo')) { %>, Demo<% } %> } from '../../components'
 
@@ -25,30 +25,31 @@ interface IPageProps {
   dev: boolean
   asPath: string
   isErrorFile?: boolean
-  dispatch?: (any) => {}
   req?: any
   isExport?: boolean
   linkedToError?: boolean
 }
 
 const Page: StatelessPage<IPageProps> = ({ 
-  content, 
+  content: defaultContent,
   lang, 
   pathId, 
   asPath, 
   dev,
   isErrorFile = false,
-  dispatch,
   req, 
   isExport = false,
   linkedToError = false 
 }) => {
   const [langFix, setLangFix] = useState(lang)
+  const [content, setContent] = useState(defaultContent)
   useEffect(() => {
     if (isErrorFile && !isNode) {
       const langError = langFromPath(document.location.pathname)
-      dispatch(getPage(req, pathId, 'page', langError))
-      setLangFix(langError)
+      getPage(req, pathId, 'page', langError).then(response => {
+        setContent(response)
+        setLangFix(langError)
+      })
     }
   }, [])
 
