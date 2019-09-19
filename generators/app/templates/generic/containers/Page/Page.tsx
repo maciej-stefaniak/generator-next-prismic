@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet'
 
 const {   websiteURL, FACEBOOK_APP_ID, openGraphDefaultImage, languages } = require('../../constants')
 
-import { getPathAndLangForPage, isNextHR, renderMeta, ct, isNode } from '../../utils'
+import { getPathAndLangForPage, langFromPath, isNextHR, renderMeta, ct, isNode } from '../../utils'
 
 import { Layout, MetaData, ContentBlock<% if (baseComponents.includes('Demo')) { %>, Demo<% } %> } from '../../components'
 
