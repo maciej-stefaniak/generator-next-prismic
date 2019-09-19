@@ -7,11 +7,12 @@ const {
   COMMON_REPEATABLE_DOCUMENTS,
   COMMON_DOCUMENTS_TYPE_MAP,
   LANGS_PRISMIC,
+  PRISMIC_PER_PAGE,
   CONTENT_API_URL,
   CONTENT_API_TOKEN
 } = require('./constants')
 
-const getAllForType = (req, docType, langCode, success, failure) => {
+const getAllForType = (req, docType, langCode, success, failure, page = 1, previousPageResults = []) => {
   try {
     let prismicAPI = initApi(req)
     prismicAPI.then(api => {
@@ -19,11 +20,19 @@ const getAllForType = (req, docType, langCode, success, failure) => {
         api
           .query(Prismic.Predicates.at('document.type', docType), {
             lang: langCode,
-            pageSize: 100
+            pageSize: PRISMIC_PER_PAGE,
+            page: page
           })
           .then(
             function (response) {
-              success(response.results)
+              const { results = [], total_pages = 1 } = response
+              const resultData = previousPageResults.concat(results)
+              if (total_pages > page) {
+                getAllForType(req, docType, langCode, success, failure, page + 1, resultData)
+              }
+              else {
+                success(resultData)
+              }
             },
             function (err) {
               console.log('Something went wrong: ', err)
@@ -82,7 +91,7 @@ const getSingleDocument = (
     .query(query, {
       lang: LANGS_PRISMIC[lang],
       orderings: '[document.first_publication_date]',
-      pageSize: 100,
+      pageSize: PRISMIC_PER_PAGE,
       page
     })
     .then(res => {

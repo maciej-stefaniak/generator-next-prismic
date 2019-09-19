@@ -22,10 +22,10 @@ module.exports = class extends Generator {
       new ${
         this.options.websiteName
           ? chalk.green(
-              this.options.websiteName.replace(/\b\w/g, l => l.toUpperCase())
-            )
+            this.options.websiteName.replace(/\b\w/g, l => l.toUpperCase())
+          )
           : ''
-      } project`)
+        } project`)
     )
 
     let prompts = []
@@ -67,7 +67,7 @@ module.exports = class extends Generator {
       {
         type: 'checkbox',
         name: 'languages',
-        choices: [{ name: 'de', checked: true }, { name: 'en', checked: true }, { name: 'fr', checked: false }],
+        choices: [{ name: 'de', checked: true }, { name: 'en', checked: true }, { name: 'fr', checked: false }, { name: 'at', checked: false }, { name: 'ch', checked: false }, { name: 'es', checked: false }, { name: 'it', checked: false }, { name: 'nl', checked: false }, { name: 'gr', checked: false }, { name: 'pl', checked: false }, { name: 'cz', checked: false }, { name: 'sk', checked: false }, { name: 'hr', checked: false }, { name: 'ru', checked: false }, { name: 'hu', checked: false }, { name: 'ru', checked: false }, { name: 'sl', checked: false }, { name: 'tr', checked: false }, { name: 'jp', checked: false }, { name: 'kr', checked: false }, { name: 'cn', checked: false }, { name: 'ar', checked: false }, { name: 'br', checked: false }, { name: 'mx', checked: false }, { name: 'au', checked: false }],
         message: `Select the base languages for your project? ${chalk.gray(
           chalk.italic(
             '(If differents languages are needed can be changed later in constants)'
