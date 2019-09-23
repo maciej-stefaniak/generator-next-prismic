@@ -1,7 +1,6 @@
 export * from './content'
 export * from './meta'
 export * from './paths'
-export * from './data-fetch'
 
 export const isNode: boolean = !(
   typeof window !== 'undefined' && window !== null
