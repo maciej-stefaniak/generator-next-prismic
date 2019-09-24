@@ -36,8 +36,8 @@ export default (
 
     // Request the SVG file to load it inline
     const ajax = new XMLHttpRequest()
-    ajax.timeout = 2500 // time in milliseconds
     ajax.open('GET', `${prefixURL}${imageURL}`, true)
+    ajax.timeout = 2500 // time in milliseconds
     // ajax.overrideMimeType('image/svg+xml')
     ajax.onreadystatechange = (e: any) => {
       if (!mounted) return
