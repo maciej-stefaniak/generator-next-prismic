@@ -54,16 +54,19 @@ const AnimOnScroll = ({
   const [useObserver, setUseObserver] = useState(!isIE())
 
   const forceNoAnim = isNode || isIE()
-  useEffect(() => {
-    setUseObserver(
-      !isNode &&
-        !isIE() &&
-        ('IntersectionObserver' in w &&
-          'IntersectionObserverEntry' in w &&
-          'intersectionRatio' in w.IntersectionObserverEntry.prototype &&
-          'isIntersecting' in w.IntersectionObserverEntry.prototype)
-    )
-  }, [forceNoAnim])
+  useEffect(
+    () => {
+      setUseObserver(
+        !isNode &&
+          !isIE() &&
+          ('IntersectionObserver' in w &&
+            'IntersectionObserverEntry' in w &&
+            'intersectionRatio' in w.IntersectionObserverEntry.prototype &&
+            'isIntersecting' in w.IntersectionObserverEntry.prototype)
+      )
+    },
+    [forceNoAnim]
+  )
 
   const [isNodeComponent, setIsNodeComponent] = useState(true)
   useEffect(() => {
@@ -97,6 +100,7 @@ const AnimOnScroll = ({
   })
 
   const Anim = animated[node]
+  const NodeTag = node
 
   return useObserver ? (
     <NoSSR
@@ -127,7 +131,7 @@ const AnimOnScroll = ({
       </Anim>
     </NoSSR>
   ) : (
-    <>{children}</>
+    <NodeTag>{children}</NodeTag>
   )
 }
 

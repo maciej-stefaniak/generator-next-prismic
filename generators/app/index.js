@@ -222,6 +222,13 @@ module.exports = class extends Generator {
           `${this.destinationPath()}/components/${component}`,
           props
         )
+        if (component === 'Anims') {
+          this.fs.copyTpl(
+            `${this.templatePath()}/components/AnimOnScroll/**/*`,
+            `${this.destinationPath()}/components/AnimOnScroll`,
+            props
+          )
+        }
         return component
       })
     this.fs.copyTpl(
