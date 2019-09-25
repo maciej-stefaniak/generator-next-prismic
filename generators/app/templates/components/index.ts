@@ -19,6 +19,7 @@ export { default as Navbar } from './Navbar/Navbar'
 <% if (baseComponents.includes('Demo')) { %>// TODO: To be deleted after creating the project
 export { default as Demo } from './Demo/Demo'<% } %>
 
-
+<% if (baseComponents.includes('Anims')) { %>
 // Anim helpers
 export { default as Transform } from './Anims/Transform'
+export { default as AnimOnScroll } from './AnimOnScroll/AnimOnScroll'<% } %>
