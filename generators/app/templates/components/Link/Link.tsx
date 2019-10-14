@@ -21,40 +21,42 @@ const InternalComponent = props => {
   const { children, type, className, url, pageComponent, prefetch = false, onClick } = props
   let typeDetected = type || 'internal'
 
-  // `type` not specified - detect it
-  if (!type) {
-    // mailto
-    if (url.match(/mailto:/i) || url.match(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)) {
-      typeDetected = 'mailto'
+  if (url) {
+    // `type` not specified - detect it
+    if (!type) {
+      // mailto
+      if (url.match(/mailto:/i) || url.match(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)) {
+        typeDetected = 'mailto'
+      }
+
+      // external
+      if (url.match(/http(s)?:\/\//i)) typeDetected = 'external'
+    }
+    
+    if (typeDetected === 'internal') {
+      if (process.env.EXPORT || !(Routes && Routes.Link)) {
+        return (
+          <Link as={url} href={{ pathname: pageComponent }} prefetch={prefetch}>
+            <a className={className} onClick={onClick}>
+              {children}
+            </a>
+          </Link>
+        )
+      } else {
+        return (
+          <Routes.Link route={url} prefetch={prefetch}>
+            <a className={className} onClick={onClick}>
+              {children}
+            </a>
+          </Routes.Link>
+        )
+      }
     }
 
-    // external
-    if (url.match(/http(s)?:\/\//i)) typeDetected = 'external'
-  }
-  
-  if (typeDetected === 'internal') {
-    if (process.env.EXPORT || !(Routes && Routes.Link)) {
-      return (
-        <Link as={url} href={{ pathname: pageComponent }} prefetch={prefetch}>
-          <a className={className} onClick={onClick}>
-            {children}
-          </a>
-        </Link>
-      )
-    } else {
-      return (
-        <Routes.Link route={url} prefetch={prefetch}>
-          <a className={className} onClick={onClick}>
-            {children}
-          </a>
-        </Routes.Link>
-      )
+    if (typeDetected === 'mailto') {
+      const mailUrl = (url.indexOf('mailto:') !== -1) ? url : `mailto:${url}`
+      return <a href={mailUrl} {...props} />
     }
-  }
-
-  if (typeDetected === 'mailto') {
-    const mailUrl = (url.indexOf('mailto:') !== -1) ? url : `mailto:${url}`
-    return <a href={mailUrl} {...props} />
   }
 
   return <a href={url} target="_blank" rel="noopener" {...props} />
