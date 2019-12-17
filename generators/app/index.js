@@ -215,7 +215,7 @@ module.exports = class extends Generator {
 
     // Components
     this.props.baseComponents
-      .concat(['Navbar', 'Footer', 'Layout'])
+      .concat(['Navbar', 'Footer', 'Layout', 'CookieMessage'])
       .map(component => {
         this.fs.copyTpl(
           `${this.templatePath()}/components/${component}/**/*`,

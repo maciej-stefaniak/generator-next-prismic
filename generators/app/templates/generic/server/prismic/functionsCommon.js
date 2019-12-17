@@ -2,17 +2,23 @@ const Prismic = require('prismic-javascript')
 const { log } = require('./../utils')
 
 const {
-  COMMON_DOCUMENTS,
-  COMMON_DOCUMENTS_FOR_PAGE_LISTED,
-  COMMON_REPEATABLE_DOCUMENTS,
-  COMMON_DOCUMENTS_TYPE_MAP,
+  ALL_COMMON_DOCUMENTS,
   LANGS_PRISMIC,
   PRISMIC_PER_PAGE,
   CONTENT_API_URL,
-  CONTENT_API_TOKEN
+  CONTENT_API_TOKEN,
+  EXPORT
 } = require('./constants')
 
-const getAllForType = (req, docType, langCode, success, failure, page = 1, previousPageResults = []) => {
+const getAllForType = (
+  req,
+  docType,
+  langCode,
+  success,
+  failure,
+  page = 1,
+  previousPageResults = []
+) => {
   try {
     let prismicAPI = initApi(req)
     prismicAPI.then(api => {
@@ -24,17 +30,24 @@ const getAllForType = (req, docType, langCode, success, failure, page = 1, previ
             page: page
           })
           .then(
-            function (response) {
+            function(response) {
               const { results = [], total_pages = 1 } = response
               const resultData = previousPageResults.concat(results)
               if (total_pages > page) {
-                getAllForType(req, docType, langCode, success, failure, page + 1, resultData)
-              }
-              else {
+                getAllForType(
+                  req,
+                  docType,
+                  langCode,
+                  success,
+                  failure,
+                  page + 1,
+                  resultData
+                )
+              } else {
                 success(resultData)
               }
             },
-            function (err) {
+            function(err) {
               console.log('Something went wrong: ', err)
             }
           )
@@ -47,6 +60,17 @@ const getAllForType = (req, docType, langCode, success, failure, page = 1, previ
   }
 }
 
+const getPathAndProps = path => {
+  const hasSpecificProps = path.indexOf('[') > 0
+  const pathParts = hasSpecificProps ? path.split('[') : [path, null]
+  return {
+    pathNoProps: pathParts[0],
+    pathProps: hasSpecificProps
+      ? JSON.parse(`[${pathParts[1].replace(']', '')}]`)
+      : null
+  }
+}
+
 /**
  * GET SINGLE DOCUMENT
  * Fetch it from Prismic.io and save it in the cache afterwards
@@ -55,37 +79,28 @@ const getAllForType = (req, docType, langCode, success, failure, page = 1, previ
 const getSingleDocument = (
   cache, // @param cache: node-cache instance
   api, // @param api: Prismic API instance
-  documentId, // @param documentId: string
-  documentIdF,
-  documentType, // @param documentType: string
-  documentRTypeF,
+  path, // @param path: string
   lang, // @param lang: string
-  urlSectionNeeded, // @param urlSectionNeeded: boolean
   onSuccess, // @param onSuccess: (data: any) => void,
   onErrorQuery, // @param onError: (err: string, dataFallback?: any) => void,
   page = 1,
-  previousPageResults = []
+  previousPageResults = [],
+  EXPORT_SIMULATED_CACHE = {}
 ) => {
-  const query =
-    documentId !== '*' &&
-      COMMON_REPEATABLE_DOCUMENTS.indexOf(documentRTypeF) >= 0 &&
-      documentIdF !== documentRTypeF
-      ? urlSectionNeeded
-        ? [
-          Prismic.Predicates.at(
-            `my.${documentRTypeF}.uid`,
-            `${documentId}-${lang}`
-          ),
-          Prismic.Predicates.at(
-            `my.${documentRTypeF}.url_section`,
-            documentType
-          )
-        ]
-        : Prismic.Predicates.at(
-          `my.${documentRTypeF}.uid`,
-          `${documentId}-${lang}`
-        )
-      : Prismic.Predicates.at('document.type', documentRTypeF)
+  let query,
+    pathProps,
+    pathNoProps = path
+  if (path && path !== '*' && ALL_COMMON_DOCUMENTS.indexOf(path) < 0) {
+    query = Prismic.Predicates.any('document.tags', [path])
+  } else {
+    const pathfix = getPathAndProps(path)
+    pathNoProps = pathfix.pathNoProps
+    pathProps = pathfix.pathProps
+    /*if (pathProps) {
+      console.log('Page with pathProps', pathProps)
+    }*/
+    query = Prismic.Predicates.at('document.type', pathNoProps)
+  }
 
   api
     .query(query, {
@@ -100,12 +115,8 @@ const getSingleDocument = (
         getSingleDocument(
           cache,
           api,
-          documentId,
-          documentIdF,
-          documentType,
-          documentRTypeF,
+          path,
           lang,
-          urlSectionNeeded,
           onSuccess,
           onErrorQuery,
           page + 1,
@@ -117,58 +128,60 @@ const getSingleDocument = (
       if (results.length >= 1 || previousPageResults.length > 0) {
         const resultsFix = previousPageResults.concat(results)
         let data
-        if (documentId === '*') {
+        if (path === '*') {
           data = {
-            docType: documentRTypeF,
-            results: resultsFix.map(item => ({
-              ...item.data,
-              uid: item.uid
-            }))
+            docType: path,
+            results: resultsFix.map(item => {
+              return {
+                ...item.data,
+                uid: item.uid,
+                tags: item.tags,
+                docType: item.type
+              }
+            })
           }
         } else {
           if (resultsFix.length > 1) {
-            data = resultsFix.map(item => ({
-              ...item.data,
-              uid: item.uid,
-              docType: documentRTypeF
-            }))
+            data = resultsFix.map(item => {
+              let resultData = {}
+              if (pathProps) {
+                pathProps.map(prop => {
+                  resultData[prop] = item.data[prop]
+                })
+              } else {
+                resultData = { ...item.data }
+              }
+              return {
+                ...resultData,
+                uid: item.uid,
+                tags: item.tags,
+                docType: item.type
+              }
+            })
           } else {
-            data = resultsFix[0].data
-            data.docType = documentRTypeF
+            let resultData = {}
+            if (pathProps) {
+              pathProps.map(prop => {
+                resultData[prop] = resultsFix[0].data[prop]
+              })
+            } else {
+              resultData = { ...resultsFix[0].data }
+            }
+            data = resultData
+            data.docType = resultsFix[0].type
             data.uid = resultsFix[0].uid
+            data.tags = resultsFix[0].tags
           }
         }
-        cache.set(`${documentIdF}-${lang}`, data)
+        cache.set(`${path}-${lang}`, data)
+        if (EXPORT) EXPORT_SIMULATED_CACHE[`${path}-${lang}`] = data
         onSuccess(data)
-        log(`Prismic: document: ${documentIdF} : ${lang}`)
+        log(`Prismic: document: ${path} : ${lang}`)
       } else {
-        onErrorQuery(`Prismic: No results: ${documentIdF} : ${lang}`)
+        onErrorQuery(`Prismic: No results: ${path} : ${lang}`)
       }
     }, onErrorQuery)
     .catch(onErrorQuery)
-}
-
-const fixDocumentType = documentType => {
-  let documentRTypeF = COMMON_DOCUMENTS_TYPE_MAP[documentType]
-    ? COMMON_DOCUMENTS_TYPE_MAP[documentType]
-    : documentType
-  let urlSectionNeeded = false
-
-  if (
-    !COMMON_DOCUMENTS_TYPE_MAP[documentType] &&
-    COMMON_DOCUMENTS.concat(COMMON_DOCUMENTS_FOR_PAGE_LISTED).indexOf(
-      documentType
-    ) < 0
-  ) {
-    // Example: /company/about-us
-    documentRTypeF = 'page'
-    urlSectionNeeded = true
-  }
-
-  return {
-    urlSectionNeeded,
-    documentRTypeF
-  }
 }
 
 const refreshContent = (
@@ -190,7 +203,6 @@ const initApi = req => {
 }
 
 module.exports = {
-  fixDocumentType,
   refreshContent,
   getAllForType,
   getSingleDocument,

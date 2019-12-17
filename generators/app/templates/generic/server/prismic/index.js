@@ -3,9 +3,8 @@ const NodeCache = require('node-cache')
 
 // Constants
 const {
-  COMMON_DOCUMENTS_FOR_PAGE_LISTED,
-  COMMON_DOCUMENTS_FOR_PAGE,
-  COMMON_DOCUMENTS_TYPE_MAP,
+  COMMON_DOCUMENTS_FOR_BLOCK_LISTED,
+  COMMON_REPEATABLE_DOCUMENTS,
   LANGS_PRISMIC,
   DELAY_API_CALLS,
   EXPORT
@@ -19,9 +18,7 @@ const { getDocumentsPage } = require('./functionGetDocumentsPage')
 // Global variables
 let toResetCache = EXPORT ? true : false
 const cache = new NodeCache({
-  stdTTL: DELAY_API_CALLS
-    ? DELAY_API_CALLS
-    : 1000 * 60 * 60 * 2,
+  stdTTL: DELAY_API_CALLS ? DELAY_API_CALLS : 1000 * 60 * 60 * 2,
   checkperiod: 10000
 })
 
@@ -60,7 +57,6 @@ module.exports = {
   init,
   refreshContent,
   LANGS_PRISMIC,
-  COMMON_DOCUMENTS_TYPE_MAP,
-  COMMON_DOCUMENTS_FOR_PAGE,
-  COMMON_DOCUMENTS_FOR_PAGE_LISTED
+  COMMON_REPEATABLE_DOCUMENTS,
+  COMMON_DOCUMENTS_FOR_BLOCK_LISTED
 }

@@ -29,13 +29,18 @@ export const ct = (element: any, fallback?: any) => {
 export const cta = (
   element: any[],
   unwrapParagraphs: boolean = true,
-  addListDecorator: boolean = false
+  addListDecorator: boolean = false,
+  linkResolver?: any
 ) => {
   if (!element || !element[0] || !element[0].type) {
     return null
   }
   try {
-    let richText = PrismicDOM.RichText.asHtml(element)
+    let richText = PrismicDOM.RichText.asHtml(
+      element,
+      null,
+      linkResolver || null
+    )
     if (unwrapParagraphs) {
       richText = richText.replace(
         new RegExp('<p>', 'g'),
@@ -60,4 +65,23 @@ export const cta = (
     console.log(e)
     return null
   }
+}
+
+export const cu = (tags, lang) => {
+  let url = ''
+  if (tags && tags.length > 0) {
+    const urlTag = tags[0]
+    if (urlTag.slice(0, 1) === '/') {
+      url = `/${lang}${tags[0]}`
+    } else {
+      url = `/${lang}/${tags[0]}`
+    }
+  }
+  return url
+}
+
+export const formatDate = (date: string) => {
+  return date
+    ? `${date.substr(8, 2)}.${date.substr(5, 2)}.${date.substr(0, 4)}`
+    : date
 }

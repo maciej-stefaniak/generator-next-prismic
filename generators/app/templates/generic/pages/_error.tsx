@@ -1,4 +1,4 @@
-import Page from '../containers/Page/Page'
+import Page from './main'
 
 // We export the Page component
 export default Page

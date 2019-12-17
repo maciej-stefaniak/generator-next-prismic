@@ -1,64 +1,45 @@
 const { log, logError } = require('./../utils')
 
-const {
-  COMMON_DOCUMENTS,
-  COMMON_DOCUMENTS_FOR_PAGE,
-  EXPORT
-} = require('./constants')
+const { ALL_COMMON_DOCUMENTS, EXPORT } = require('./constants')
 
-const { fixDocumentType } = require('./functionsCommon')
+const { removeUnnecessaryData } = require('./utils')
 const { getDocument } = require('./functionGetDocument')
 
 /**
- * GET DOCUMENTS PAGE
- * First check if the Page content is in the local cache
- * If not in cache, it will fetch all content associated with a Page inside Prismic.io
- * Includes all the common elements needed in the page like 'navbar', 'footer' or 'page_404'
+ * GET DOCUMENTS Page
+ * First check if the path content is in the local cache
+ * If not in cache, it will fetch all content associated with a path inside Prismic.io
+ * Includes all the common elements needed in the path like 'navbar', 'footer' or 'path_404'
  */
 const getDocumentsPage = (toResetCache, cache) => (
   req, // @param req: any
-  page, // @param page: string
-  type, // @param type: string
+  path, // @param path: string
   lang, // @param lang: string
   onSuccess, // @param onSuccess: (data: any) => void
   onError // onError: (err: string, dataFallback?: any) => void
 ) => {
-  let COMMON_DOCUMENTS_FIX
-
   const fecthContent = (onSuccessFn, onErrorFn, cacheInstance) => {
-    // Create the promise to get the page document
+    // Create the promise to get the path document
     const ePromises = []
 
-    if (page) {
+    if (path) {
       ePromises.push(
         new Promise((resolve, reject) => {
           try {
-            getDocument(toResetCache, cache)(req, page, type, lang, resolve, reject)
+            getDocument(toResetCache, cache)(req, path, lang, resolve, reject)
           } catch (e) {
-            logError(`Error document: ${page} : ${type} : ${lang}`)
+            logError(`Error document: ${path} : ${lang}`)
           }
         })
       )
     }
 
-    // We add some common documents for some particular pages
-    const { documentRTypeF } = fixDocumentType(type)
-    COMMON_DOCUMENTS_FIX = COMMON_DOCUMENTS.concat(
-      COMMON_DOCUMENTS_FOR_PAGE[documentRTypeF] || []
-    ).concat(COMMON_DOCUMENTS_FOR_PAGE[page] || [])
-
-    if (!page && !type) {
-      COMMON_DOCUMENTS_FIX = COMMON_DOCUMENTS_FIX.concat(
-        COMMON_DOCUMENTS_FOR_PAGE['all_pages']
-      )
-    }
-
     // Add the promises to get the all the common documents
-    COMMON_DOCUMENTS_FIX.map(doc => {
+    ALL_COMMON_DOCUMENTS.map(doc => {
       ePromises.push(
         new Promise((resolve, reject) => {
           try {
-            getDocument(toResetCache, cache)(req, doc, doc, lang, resolve, reject)
+            getDocument(toResetCache, cache)(req, doc, lang, resolve, reject)
           } catch (e) {
             logError(`Error document: ${doc} : ${lang}`)
           }
@@ -77,23 +58,30 @@ const getDocumentsPage = (toResetCache, cache) => (
         }
         // We have results, lets order them
         try {
-          const contentRes = page ? { ...values[0] } : {}
+          let contentRes = path ? { ...values[0] } : {}
 
           // Map the results with their names
-          COMMON_DOCUMENTS_FIX.map((doc, index) => {
-            contentRes[doc] = values[index + (page ? 1 : 0)]
+          ALL_COMMON_DOCUMENTS.map((doc, index) => {
+            contentRes[doc] = values[index + (path ? 1 : 0)]
             return doc
           })
 
+          if (path) {
+            const pageObj = values[0]
+            if (pageObj) {
+              removeUnnecessaryData(pageObj.docType, pageObj.body, contentRes)
+            }
+          }
+
           log(
             `GET: ${
-            page ? `${page.toUpperCase()} page content` : 'common content'
+              path ? `${path.toUpperCase()} path content` : 'common content'
             } `
           )
           if (cacheInstance) {
             // Save into cache with the key
             cacheInstance.set(
-              `content-result-${page || 'common'}-${lang}`,
+              `content-result-${path || 'common'}-${lang}`,
               contentRes
             )
           }
@@ -128,15 +116,15 @@ const getDocumentsPage = (toResetCache, cache) => (
       console.log(error)
       if (onError) {
         const justCachedCommonDocs = {}
-        if (COMMON_DOCUMENTS_FIX) {
-          COMMON_DOCUMENTS_FIX.map((doc, index) => {
+        if (ALL_COMMON_DOCUMENTS) {
+          ALL_COMMON_DOCUMENTS.map((doc, index) => {
             justCachedCommonDocs[doc] = cache.get(`${doc}-${lang}`)
             return doc
           })
         }
         onError(
           error,
-          cache.get(`content-result-${page}-${lang}`) || {
+          cache.get(`content-result-${path}-${lang}`) || {
             error,
             ...justCachedCommonDocs
           }
@@ -144,7 +132,7 @@ const getDocumentsPage = (toResetCache, cache) => (
       }
     }
 
-    cache.get(`content-result-${page}`, (err, value) => {
+    cache.get(`content-result-${path}-${lang}`, (err, value) => {
       const error = err || !value || value === undefined
       if (error || toResetCache) {
         // Cache key not found OR cache has been reset
@@ -156,7 +144,6 @@ const getDocumentsPage = (toResetCache, cache) => (
           onErrorFn(e)
         }
       } else {
-        log('content from cache')
         if (onSuccess) onSuccess(value)
       }
     })

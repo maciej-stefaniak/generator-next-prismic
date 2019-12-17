@@ -1,6 +1,7 @@
 export { default as Layout } from './Layout/Layout'
 export { default as Footer } from './Footer/Footer'
 export { default as Navbar } from './Navbar/Navbar'
+export { default as CookieMessage } from './CookieMessage/CookieMessage'
 
 <% if (baseComponents.includes('MetaData')) { %>export { default as MetaData } from './MetaData/MetaData'<% } %>
 <% if (baseComponents.includes('Markdown')) { %>export { default as Markdown } from './Markdown/Markdown'<% } %>

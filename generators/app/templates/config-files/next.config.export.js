@@ -1,111 +1,80 @@
-const fs = require("fs");
-const path = require("path");
-const mkdirp = require("mkdirp");
+const fs = require('fs')
+const path = require('path')
+const mkdirp = require('mkdirp')
 
-const prismicApi = require("./server/prismic");
-const sitemap = require("./server/sitemap");
-const { languages } = require("./constants");
-
-/**
- * Routing configuration for export
- * Key: Prismic's type
- * Value: {
- *  routePrefix: prefix to be appended before Prismic's object ID
- *  pagePath: name of file in /pages folder
- *  queryData: name of variable to be passed to container with value of Prismic's object ID
- * }
- *
- * Example config object:
- * {
- *  page: {
- *   routePrefix: '/',
- *   pagePath: '/main'
- *  },
- *  blog_detail: {
- *   routePrefix: '/blog/',
- *   routeFix: 'company/blog', // If belonging to a section simply add it here example: '/company/blog'
- *   pagePath: '/blog_detail',
- *   queryData: 'blog_id'
- *  }
- * }
- */
-
-const TYPE_ROUTES_MAPPING = {
-  page: {
-    routePrefix: "/",
-    pagePath: "/main"
-  }
-};
+const prismicApi = require('./server/prismic')
+const sitemap = require('./server/sitemap')
+const { removeUnnecessaryData } = require('./server/prismic/utils')
+const { languages } = require('./constants')
 
 /**
  * Helper function for searching for a key for a given value
  */
 const getKeyByValue = (object, value) => {
-  return Object.keys(object).find(key => object[key] === value);
-};
+  return Object.keys(object).find(key => object[key] === value)
+}
 
 /**
  * Genrerates sitemap.xml file into static folder
  */
 const generateSiteMap = () => {
-  sitemap(prismicApi);
-};
+  sitemap(prismicApi)
+}
 
 /**
  * Generates redirection files for home page and language homes
  */
-const generateRedirectFiles = (outDir) => {
-
+const generateRedirectFiles = outDir => {
   // Iterate through languages and create redirection files
   languages.map((lang, index) => {
-    const fileString = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/${lang}/home" /></head><body></body></html>`;
+    const fileString = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/${lang}/home" /></head><body></body></html>`
 
     // Create folder for given language
     mkdirp.sync(path.join(outDir, `${lang}`), err => {
-      console.log(`Creating dir for lang ${lang} error`, err);
-    });
+      console.log(`Creating dir for lang ${lang} error`, err)
+    })
 
     // Write redirection HTML into file
     fs.writeFile(
-      path.join(outDir, `${lang}`, "index.html"),
+      path.join(outDir, `${lang}`, 'index.html'),
       fileString,
       (err, data) => {
         if (err) {
-          console.log(`Generating ${lang} lang redirection file error`, err);
+          console.log(`Generating ${lang} lang redirection file error`, err)
         }
       }
-    );
+    )
 
     // Root file
     if (index === 0) {
       // Write redirection HTML into root file
-      fs.writeFile(
-        path.join(outDir, "index.html"),
-        fileString,
-        (err, data) => {
-          if (err) {
-            console.log(`Generating root redirection file error`, err);
-          }
+      fs.writeFile(path.join(outDir, 'index.html'), fileString, (err, data) => {
+        if (err) {
+          console.log(`Generating root redirection file error`, err)
         }
-      );
+      })
     }
-  });
-  console.log(`Redirection files generated`);
-};
+  })
+  console.log(`Redirection files generated`)
+}
 
 const getCommonDocumentsForLang = (lang, commonDocumentsForLangs) => {
   return new Promise((resolve, reject) => {
     prismicApi
-      .getDocumentsPage(null, null, null, lang)
+      .getDocumentsPage(null, null, lang)
       .then(value => {
-        commonDocumentsForLangs[lang] = value;
-        resolve();
+        commonDocumentsForLangs[lang] = value
+        resolve()
       })
       .catch(e => {
-        reject(new Error(`Export failed while fetching common documents data. Error: ${e}`))
-      });
-  });
-};
+        reject(
+          new Error(
+            `Export failed while fetching common documents data. Error: ${e}`
+          )
+        )
+      })
+  })
+}
 
 /**
  * Module's main function which produces path mapping object for next.js
@@ -119,23 +88,23 @@ const getCommonDocumentsForLang = (lang, commonDocumentsForLangs) => {
  * }
  */
 const getMap = async outDir => {
-  generateSiteMap();
-  generateRedirectFiles(outDir);
+  generateSiteMap()
+  generateRedirectFiles(outDir)
 
-  let commonDocumentsForLangs = {};
+  let commonDocumentsForLangs = {}
 
   await Promise.all(
     languages.map(async lang => {
-      await getCommonDocumentsForLang(lang, commonDocumentsForLangs);
-      return lang;
+      await getCommonDocumentsForLang(lang, commonDocumentsForLangs)
+      return lang
     })
-  );
+  )
 
   return new Promise((resolve, reject) => {
-    const promises = [];
-    let result = {};
+    const promises = []
+    let result = {}
     languages.forEach(lang => {
-      Object.keys(TYPE_ROUTES_MAPPING).forEach((docType, config) => {
+      prismicApi.COMMON_REPEATABLE_DOCUMENTS.forEach(docType => {
         promises.push(
           new Promise((success, failure) => {
             prismicApi.getAllForType(
@@ -145,137 +114,86 @@ const getMap = async outDir => {
               success,
               failure,
               1
-            );
+            )
           })
-        );
-      });
-    });
+        )
+      })
+    })
 
     Promise.all(promises)
       .then(values => {
         values.map(group => {
           group.map(item => {
-            const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang);
-            const adjustedPath = item.uid.replace(
-              /(-(<%- languages.map(lang => `${lang}`).join('|') %>))$/,
-              ""
-            );
-            const sectionUrl =
-              item.data.url_section && item.data.url_section.trim().length > 0
-                ? item.data.url_section
-                : null;
-            let outPath = `${outDir}/${lang}/${
-              sectionUrl ? `${sectionUrl}/` : ""
-              }${adjustedPath}`;
+            if (!item.tags || item.tags.length < 1) return {}
 
-            const fix404 = adjustedPath === "404";
+            const lang = getKeyByValue(prismicApi.LANGS_PRISMIC, item.lang)
+            const pathPage = item.tags ? item.tags[0] : ''
+            const adjustedUID = item.uid
+              ? item.uid.replace(/(-(<%- languages.map(lang => `${lang}`).join('|') %>))$/, '')
+              : null
+            let outPath = `${outDir}/${lang}${pathPage}`
 
-            // If custom type of page, adjust the path
-            if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
-              outPath = `${outDir}/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
-            }
-            // ---
+            const fix404 = adjustedUID === '404'
 
             //Write content file for static prefetch of pages
             //Create export folder for given language
             mkdirp.sync(outPath, err => {
-              console.log(`Error generating export dir`, err);
-            });
+              console.log(`Error generating export dir`, err)
+            })
 
-            const data =
-              {
-                ...commonDocumentsForLangs[lang],
-                ...item.data,
-                uid: item.uid
-              } || commonDocumentsForLangs[lang];
+            let data = {
+              ...commonDocumentsForLangs[lang],
+              ...item.data,
+              uid: item.uid,
+              docType: item.type,
+              tags: item.tags
+            }
 
-            // We remove some heavy common data from pages that don't need it
-            Object.keys(data).forEach(dataObject => {
-              if (
-                prismicApi.COMMON_DOCUMENTS_FOR_PAGE_LISTED.indexOf(
-                  dataObject
-                ) >= 0
-              ) {
-                const section = outPath.split("/")[
-                  outPath.split("/").length -
-                  (TYPE_ROUTES_MAPPING[item.type].routeFix ? 2 : 1)
-                ];
-                if (
-                  !prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section] ||
-                  prismicApi.COMMON_DOCUMENTS_FOR_PAGE[section].indexOf(
-                    dataObject
-                  ) < 0
-                ) {
-                  delete data[dataObject];
-                }
-              }
-            });
-            // ---
+            removeUnnecessaryData(item.type, item.data.body, data)
 
             fs.writeFile(
-              path.join(outPath, "content.json"),
+              path.join(outPath, 'content.json'),
               JSON.stringify(data),
               err => {
                 if (err) {
                   console.log(
-                    `Error generating content data file for ${lang}/${adjustedPath} file`,
+                    `Error generating content data file for ${outPath} file`,
                     err
-                  );
+                  )
                 }
               }
-            );
+            )
 
-
-            let pagePath = `/${lang}/${
-              sectionUrl ? `${sectionUrl}/` : ""
-              }${adjustedPath}`;
-
-            // If custom type of page, adjust the path
-            if (TYPE_ROUTES_MAPPING[item.type] && item.type !== "page") {
-              pagePath = `/${lang}/${TYPE_ROUTES_MAPPING[item.type].routeFix}/${adjustedPath}`;
-            }
-            // ---
+            const adjustedPath = `/${lang}${pathPage}`
 
             const obj = {
-              [pagePath]: {
-                page: TYPE_ROUTES_MAPPING[item.type].pagePath,
-                query: TYPE_ROUTES_MAPPING[item.type].queryData
-                  ? {
-                    [TYPE_ROUTES_MAPPING[item.type].queryData]: adjustedPath
-                  }
-                  : {}
+              [adjustedPath]: {
+                page: '/main'
               }
-            };
+            }
 
             if (fix404) {
               result = Object.assign(result, {
-                ["/error.html"]: {
-                  page: TYPE_ROUTES_MAPPING[item.type].pagePath,
-                  query: TYPE_ROUTES_MAPPING[item.type].queryData
-                    ? {
-                      [TYPE_ROUTES_MAPPING[item.type]
-                        .queryData]: adjustedPath
-                    }
-                    : {}
+                ['/error.html']: {
+                  page: '/main'
                 }
-              });
+              })
             }
 
-            result = Object.assign(result, obj);
-          });
-        });
-        resolve(result);
+            result = Object.assign(result, obj)
+          })
+        })
+        resolve(result)
       })
       .catch(e => {
         reject(new Error(`Export failed while fetching data. Error: ${e}`))
-      });
-
-  });
-};
+      })
+  })
+}
 
 /**
  * Module exported functions
  */
 module.exports = {
   getMap
-};
+}
