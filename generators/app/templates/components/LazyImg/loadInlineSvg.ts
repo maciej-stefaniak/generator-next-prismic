@@ -63,7 +63,9 @@ export default (
               inlineSvgFallback
             }
           })
-          console.log(`Error fetching svg for inline: ${ajax.statusText}`)
+          console.log(
+            `Error fetching svg for inline: ${ajax.statusText} for: ${imageURL}`
+          )
         }
       }
     }
