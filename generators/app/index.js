@@ -98,6 +98,8 @@ module.exports = class extends Generator {
           { name: 'Portal', checked: true },
           { name: 'Link', checked: true },
           { name: 'Button', checked: true },
+          { name: 'Form', checked: true },
+          { name: 'ProgressButton', checked: true },
           { name: 'Markdown', checked: true },
           { name: 'MetaData', checked: true },
           { name: 'ContentBlocks', checked: true },
@@ -226,6 +228,18 @@ module.exports = class extends Generator {
           this.fs.copyTpl(
             `${this.templatePath()}/components/AnimOnScroll/**/*`,
             `${this.destinationPath()}/components/AnimOnScroll`,
+            props
+          )
+        }
+        if (component === 'Form') {
+          this.fs.copyTpl(
+            `${this.templatePath()}/components/Form/*`,
+            `${this.destinationPath()}/components/Form`,
+            props
+          )
+          this.fs.copyTpl(
+            `${this.templatePath()}/components/InlineIcons/*`,
+            `${this.destinationPath()}/components/InlineIcons`,
             props
           )
         }

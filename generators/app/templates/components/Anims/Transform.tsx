@@ -17,7 +17,7 @@ type ITransformProps = {
   }
 }
 
-export default ({
+const Transform = ({
   children,
   className = '',
   from,
@@ -53,3 +53,5 @@ export default ({
     </animated.span>
   )
 }
+
+export default Transform

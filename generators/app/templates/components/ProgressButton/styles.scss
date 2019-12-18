@@ -1,0 +1,134 @@
+@import '../Layout/common/breakpoints';
+@import '../Layout/common/colors';
+
+.ProgressButton-wrapper {
+  width: 100%;
+}
+
+.ProgressButton {
+  width: auto;
+  min-width: 184px;
+  margin-bottom: 0;
+  position: relative;
+  min-height: 62px;
+  overflow: hidden;
+  transition: background 225ms, color 225ms, opacity 200ms;
+  background-color: $primaryColor;
+
+  .button-state {
+    width: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 250ms;
+    transform: translate3d(-50%, -50%, 0);
+    &.loading,
+    &.success,
+    &.error {
+      transform: translate3d(-50%, 250%, 0);
+    }
+
+    &.success,
+    &.error {
+      font-size: 16px;
+    }
+  }
+}
+
+.ProgressButton.loading .button-state {
+  &.normal {
+    transform: translate3d(-50%, -250%, 0);
+  }
+  &.loading {
+    transform: translate3d(-50%, -50%, 0);
+  }
+  &.success,
+  &.error {
+    transform: translate3d(-50%, 250%, 0);
+  }
+}
+
+//disabled
+.ProgressButton.disabled {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+// success
+.ProgressButton.success {
+  opacity: 0.8;
+  pointer-events: none;
+  .button-state {
+    &.success {
+      transform: translate3d(-50%, -50%, 0);
+    }
+    &.loading,
+    &.normal {
+      transform: translate3d(-50%, -250%, 0);
+    }
+  }
+}
+
+// error
+.ProgressButton.error .button-state {
+  &.error {
+    transform: translate3d(-50%, -50%, 0);
+  }
+  &.loading,
+  &.normal {
+    transform: translate3d(-50%, -250%, 0);
+  }
+  &.success {
+    transform: translate3d(-50%, 250%, 0);
+  }
+}
+
+// Loader
+.ProgressButton .button-state.loading svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  &.circular {
+    animation: rotate 1000ms linear infinite;
+    transform-origin: 10px 10px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  .path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 1500ms ease-in-out infinite;
+    stroke-linecap: round;
+    stroke: #fff;
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
