@@ -19,7 +19,9 @@
     "test": "jest"
   },
   "dependencies": {
-    <% if (baseComponents.includes('Anims')) { %>"@n8tb1t/use-scroll-position": "^1.0.43",<% } %>"a11y-checker": "^2.2.1",
+    <% if (baseComponents.includes('Anims')) { %>"@n8tb1t/use-scroll-position": "^1.0.43",<% } %>
+    <% if (baseComponents.includes('GoogleMap')) { %>"@react-google-maps/api": "^1.7.7",<% } %>
+    "a11y-checker": "^2.2.1",
     "accept-language-parser": "^1.5.0",
     "body-parser": "^1.18.3",
     "chalk": "^1.1.3",

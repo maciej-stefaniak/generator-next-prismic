@@ -27,6 +27,9 @@ const metadataDefaults = {
 
 const FORM_EMAIL_API_POINT = `${process.env.API_ENDPOINT}/contact`
 
+<% if (baseComponents.includes('GoogleMap')) { %>const GOOGLE_MAPS_KEY = ''
+const GOOGLE_MAPS_STYLES = `[]`<% } %>
+
 <% if (baseComponents.includes('Form') && languages.includes('de')) { %>const CALENDAR_LOCALE = {
   'de': {
     months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
@@ -44,4 +47,6 @@ module.exports = {
   metadataDefaults,
   FORM_EMAIL_API_POINT,
   <% if (baseComponents.includes('Form') && languages.includes('de')) { %>CALENDAR_LOCALE,<% } %>
+  <% if (baseComponents.includes('GoogleMap')) { %>GOOGLE_MAPS_KEY,
+GOOGLE_MAPS_STYLES,<% } %>
 }

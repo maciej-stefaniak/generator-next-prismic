@@ -67,7 +67,12 @@ const Page = ({
       <% } %>
 
       <% if (baseComponents.includes('Demo')) { %>{/* To be removed when starting project */}
-      <Demo />
+      <Demo 
+        lang={langFix}
+        <% if (baseComponents.includes('Form')) { %>addForm<% } %>
+        <% if (baseComponents.includes('Button')) { %>addButton<% } %>
+        <% if (baseComponents.includes('GoogleMap')) { %>addGMaps<% } %>
+      />
       {/* --- */}<% } %>
     </Layout>
   )

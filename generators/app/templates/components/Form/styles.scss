@@ -11,7 +11,7 @@
     position: absolute;
     left: 20px;
     right: 20px;
-    color: $primaryLightColor;
+    color: #888888;
     top: 14px;
     font-size: 13px;
     transition: all 200ms;
@@ -28,7 +28,7 @@
     display: block;
     min-width: 100%;
     min-width: calc(100% + 2px);
-    color: $primaryTextColor;
+    color: #888888;
     font-weight: normal;
     font-size: 16px;
     line-height: 21px;
@@ -43,19 +43,19 @@
   }
 
   ::-webkit-input-placeholder {
-    color: $primaryLightColor;
+    color: #888888;
     opacity: 1;
   }
   ::-moz-placeholder {
-    color: $primaryLightColor;
+    color: #888888;
     opacity: 1;
   }
   :-ms-input-placeholder {
-    color: $primaryLightColor;
+    color: #888888;
     opacity: 1;
   }
   :-moz-placeholder {
-    color: $primaryLightColor;
+    color: #888888;
     opacity: 1;
   }
 
@@ -65,7 +65,7 @@
   }
 
   select:invalid {
-    color: $primaryLightColor;
+    color: #888888;
   }
 
   .input-icon {
@@ -364,7 +364,7 @@
       padding-bottom: 20px;
 
       & + label {
-        color: $primaryLightColor;
+        color: #888888;
         transform: translateY(9px);
         font-size: 16px;
         pointer-events: none;
@@ -444,7 +444,7 @@
     font-weight: 400;
     display: block;
     line-height: 1.53;
-    color: $primaryLightColor;
+    color: #888888;
   }
 }
 
@@ -504,7 +504,7 @@
     font-weight: 400;
     display: block;
     line-height: 1.6;
-    color: $primaryLightColor;
+    color: #888888;
   }
 }
 
@@ -582,7 +582,7 @@ html.js form .InputStyled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: $primaryTextColor;
+  color: #888888;
   font-size: 20px;
 }
 .Counter-right  {

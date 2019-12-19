@@ -11,7 +11,6 @@ export { default as CookieMessage } from './CookieMessage/CookieMessage'
 <% if (baseComponents.includes('Link')) { %>export { default as Link } from './Link/Link'<% } %>
 <% if (baseComponents.includes('Button')) { %>export { default as Button } from './Button/Button'<% } %>
 <% if (baseComponents.includes('PageTransitions')) { %>export { default as PageTransitions } from './PageTransitions/PageTransitions'<% } %>
-<% if (baseComponents.includes('ProgressButton')) { %>export { default as ProgressButton } from './ProgressButton/ProgressButton'<% } %>
 
 // Add here the imports of the particular content-blocks
 
@@ -38,4 +37,9 @@ export { default as Checkbox } from './Form/Checkbox'
 export { default as Radio } from './Form/Radio'
 export { default as Counter } from './Form/Counter'
 export { default as FormError } from './Form/FormError'
+export { default as ProgressButton } from './ProgressButton/ProgressButton'
+<% } %>
+
+<% if (baseComponents.includes('GoogleMap')) { %>
+export { default as GoogleMap } from './GoogleMap/GoogleMap'
 <% } %>

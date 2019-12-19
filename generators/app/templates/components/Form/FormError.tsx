@@ -9,7 +9,6 @@ const FormError = ({
   ((formError && formError.length > 0) || singleErrors.length > 0) &&
   visible ? (
     <div className="Form-error">
-      <img src="/static/images/form-error-icon.svg" alt="Form error icon" />
       <p className="copy-small">
         {error_message}
         <span className="Form-error-single-wrapper">

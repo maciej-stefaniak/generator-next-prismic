@@ -99,7 +99,7 @@ module.exports = class extends Generator {
           { name: 'Link', checked: true },
           { name: 'Button', checked: true },
           { name: 'Form', checked: true },
-          { name: 'ProgressButton', checked: true },
+          { name: 'GoogleMap', checked: true },
           { name: 'Markdown', checked: true },
           { name: 'MetaData', checked: true },
           { name: 'ContentBlocks', checked: true },
@@ -240,6 +240,11 @@ module.exports = class extends Generator {
           this.fs.copyTpl(
             `${this.templatePath()}/components/InlineIcons/*`,
             `${this.destinationPath()}/components/InlineIcons`,
+            props
+          )
+          this.fs.copyTpl(
+            `${this.templatePath()}/components/ProgressButton/*`,
+            `${this.destinationPath()}/components/ProgressButton`,
             props
           )
         }
