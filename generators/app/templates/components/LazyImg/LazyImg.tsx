@@ -58,6 +58,8 @@ export type ILazyImgProps = {
   onLoad?: () => void
   onError?: (error: string) => void
   onClick?: () => void
+
+  f_ref?: any
 }
 
 export type ILazyImgState = {
@@ -73,7 +75,8 @@ const LazyImg: React.FC<ILazyImgProps> = props => {
     className = '',
     isBackground,
     backgroundColor,
-    style
+    style,
+    f_ref
   } = props
   const opacityStyle = {
     opacity: state.status === 'LOADED' || isNode ? 1 : 0
@@ -81,6 +84,7 @@ const LazyImg: React.FC<ILazyImgProps> = props => {
 
   return (
     <span
+      ref={f_ref}
       style={
         backgroundColor ? { ...style, background: backgroundColor } : style
       }

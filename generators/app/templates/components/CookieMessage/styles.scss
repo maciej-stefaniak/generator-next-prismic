@@ -1,0 +1,42 @@
+@import '../Layout/common/colors.scss';
+@import '../Layout/common/breakpoints.scss';
+
+.CookieMessage-in {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 16px;
+  padding: 0;
+  z-index: 99;
+  & > div {
+    padding: 40px 20px;
+    @media (max-width: $breakpoint-mobile) {
+      padding: 30px 20px;
+    }
+    & > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      @media (max-width: $breakpoint-mobile) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  }
+
+  button {
+    background: none;
+    outline: 0;
+    border: 0;
+    color: $primaryTextColor;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    @media (max-width: $breakpoint-mobile) {
+      padding: 10px 8px;
+      margin-left: -8px;
+    }
+  }
+}

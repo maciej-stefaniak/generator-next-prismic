@@ -1,23 +1,50 @@
+// For all COMMON_* sections you can define basic type names
+// like 'navbar', 'footer', 'news_detail' etc. In this situation 
+// all data for type will be fetched. You can also point only portion
+// of data to be fetched for given type. To do so define type this way:
+// 'news_detail["uid","tags","name"]'. 
+// In this case 'news_detail' type will be fetched with "uid","tags","name" only
 const COMMON_DOCUMENTS = ['navbar', 'footer' /*, cookie_message */]
 
 // Define all the common repeatable documents that are only for some pages
 // This way we only load for pages that needs it
-const COMMON_DOCUMENTS_FOR_PAGE_LISTED = [
-  /*'blog_detail'*/
+const COMMON_DOCUMENTS_FOR_BLOCK_LISTED = [
+  /*
+    'news_detail',
+    'news_detail["uid","tags","name"]'
+  */
 ]
-const COMMON_DOCUMENTS_FOR_PAGE = {
-  // blog_detail: ['blog_tag', 'blog_detail'],
-  // blog: ['blog_tag', 'blog_detail'],
-  all_pages: []
-}
-// ---
 
-const COMMON_REPEATABLE_DOCUMENTS = ['page' /*, blog_detail */]
-const COMMON_DOCUMENTS_TYPE_MAP = {
-  page: 'page'
-  //blog: 'blog_detail',
-  //careers: 'jobs_detail'
+const COMMON_DOCUMENTS_FOR_TYPE_LISTED = [
+  /*
+    'news_detail["uid","tags","name"]'
+  */
+]
+
+const COMMON_DOCUMENTS_FOR_BLOCK = {
+  /*
+    news_block: ['news_detail']
+  */
 }
+
+const COMMON_DOCUMENTS_FOR_TYPE = {
+  /*
+    news: ['news_detail']
+  */
+}
+
+// Repeatable documents that are Pages
+const COMMON_REPEATABLE_DOCUMENTS = [
+  'page'
+  /*,
+    'news_detail'
+  */
+]
+
+// Listed of all possible common documents
+const ALL_COMMON_DOCUMENTS = COMMON_DOCUMENTS.concat(
+  COMMON_DOCUMENTS_FOR_BLOCK_LISTED
+).concat(COMMON_DOCUMENTS_FOR_TYPE_LISTED)
 
 // Here is the map to the proper language key in Prismic
 // If using a different language from the ones below, add also here the Prismic lang version to its small one as a key
@@ -65,11 +92,13 @@ if (!process.env.CONTENT_API_URL || !process.env.CONTENT_API_TOKEN) {
 }
 
 module.exports = {
+  ALL_COMMON_DOCUMENTS,
   COMMON_DOCUMENTS,
-  COMMON_DOCUMENTS_FOR_PAGE_LISTED,
-  COMMON_DOCUMENTS_FOR_PAGE,
+  COMMON_DOCUMENTS_FOR_BLOCK_LISTED,
+  COMMON_DOCUMENTS_FOR_BLOCK,
+  COMMON_DOCUMENTS_FOR_TYPE_LISTED,
+  COMMON_DOCUMENTS_FOR_TYPE,
   COMMON_REPEATABLE_DOCUMENTS,
-  COMMON_DOCUMENTS_TYPE_MAP,
   LANGS_PRISMIC,
   PRISMIC_PER_PAGE,
   CONTENT_API_URL: process.env.CONTENT_API_URL,

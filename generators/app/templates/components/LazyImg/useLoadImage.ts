@@ -49,46 +49,43 @@ const useLoadImage = (props: ILazyImgProps): ILazyImgState => {
   /*
    * Starts/triggers the loading of the image source
    */
-  useEffect(
-    () => {
-      let mounted = true
-      if (src) {
-        if (inlineSvg) {
-          loadInlineSvg(src, props, dispatch, mounted)
-        } else {
-          const imgElem = document.createElement('img')
-          imgElem.onload = () => {
-            if (!mounted) return
+  useEffect(() => {
+    let mounted = true
+    if (src && src.length > 0) {
+      if (inlineSvg) {
+        loadInlineSvg(src, props, dispatch, mounted)
+      } else {
+        const imgElem = document.createElement('img')
+        imgElem.onload = () => {
+          if (!mounted) return
+          dispatch({ type: 'LOADED' })
+        }
+        imgElem.onerror = e => {
+          if (!mounted) return
+          dispatch({ type: 'FAILED', payload: { error: e } })
+        }
+        imgElem.src = src
+
+        if (timeout) {
+          loadTimeout = setTimeout(
+            () => dispatch({ type: 'FAILED', payload: { error: 'timeout' } }),
+            timeout
+          )
+        }
+
+        if (!isNode && isIE()) {
+          if (imgElem.complete) {
             dispatch({ type: 'LOADED' })
-          }
-          imgElem.onerror = e => {
-            if (!mounted) return
-            dispatch({ type: 'FAILED', payload: { error: e } })
-          }
-          imgElem.src = src
-
-          if (timeout) {
-            loadTimeout = setTimeout(
-              () => dispatch({ type: 'FAILED', payload: { error: 'timeout' } }),
-              timeout
-            )
-          }
-
-          if (!isNode && isIE()) {
-            if (imgElem.complete) {
-              dispatch({ type: 'LOADED' })
-            }
           }
         }
       }
+    }
 
-      return () => {
-        mounted = false
-        clearTimeout(loadTimeout)
-      }
-    },
-    [src]
-  )
+    return () => {
+      mounted = false
+      clearTimeout(loadTimeout)
+    }
+  }, [src])
 
   return state as ILazyImgState
 }

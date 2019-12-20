@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { isIE, isNode } from '../../utils'
 
-import { Navbar, Footer, Markdown } from '..'
+import { Navbar, Footer, CookieMessage } from '..'
 
 import './Layout.scss'
 
@@ -24,6 +24,8 @@ type ILayoutProps = {
   showFooter?: boolean
 
   lang: string
+
+  cookie_message?: any
 }
 
 class Layout extends React.Component<ILayoutProps> {
@@ -33,7 +35,7 @@ class Layout extends React.Component<ILayoutProps> {
   }
 
   componentDidMount() {
-    if (process.env.NODE_ENV !== 'production' && ! isIE()) {
+    if (process.env.NODE_ENV !== 'production' && !isIE()) {
       try {
         import('a11y-checker').then(a11yChecker => {
           a11yChecker.default()
@@ -57,7 +59,8 @@ class Layout extends React.Component<ILayoutProps> {
       showNavbar = true,
       footer,
       showFooter = true,
-      lang
+      lang,
+      cookie_message
     } = this.props
 
     if ((showNavbar && !navbar) || (showFooter && !footer)) {
@@ -76,7 +79,9 @@ class Layout extends React.Component<ILayoutProps> {
           {showNavbar && navbar && <Navbar lang={lang} {...navbar} />}
           <div className="Layout-content">{children}</div>
           {showFooter && footer && <Footer lang={lang} {...footer} />}
-        </div><% if (baseComponents.includes('Portal')) { %>
+          {cookie_message && <CookieMessage {...cookie_message} />}
+        </div>
+        <% if (baseComponents.includes('Portal')) { %>
         <div id="portal"></div><% } %>
       </>
     )

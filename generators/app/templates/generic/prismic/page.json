@@ -53,6 +53,15 @@
         "thumbnails": [],
         "label": "Meta Open Graph Image"
       }
+    },
+    "seo_exclude_from_sitemap": {
+      "type": "Select",
+      "config": {
+        "options": ["No", "Yes"],
+        "default_value": "No",
+        "label": "SEO Exclude from sitemap",
+        "placeholder": "SEO Exclude from sitemap"
+      }
     }
   },
   "Content": {}

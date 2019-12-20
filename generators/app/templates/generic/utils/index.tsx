@@ -8,6 +8,31 @@ export const isNode: boolean = !(
 
 export const w = !isNode ? (window as any) : {}
 
+export const asArray = obj => {
+  if (!obj) return []
+  if (obj && obj.length > 0) {
+    return obj
+  }
+  return [obj]
+}
+
+export const isSafari = () => {
+  if (!isNode && navigator && !w.isSafari) {
+    const ua = navigator.userAgent.toLowerCase()
+    if (ua.indexOf('safari') != -1) {
+      if (ua.indexOf('chrome') > -1) {
+        w.isSafari = false
+      } else {
+        w.isSafari = true
+        document.documentElement.classList.add('is-safari')
+      }
+    } else {
+      w.isSafari = false
+    }
+  }
+  return w.isSafari
+}
+
 export const isIE = (): boolean => {
   if (!isNode) {
     if (!w.isIE && !w.IEChecked) {
@@ -51,6 +76,50 @@ export const isRetina = (): boolean => {
     }
   }
   return retina
+}
+
+export const isDevice = (): boolean => {
+  let device: boolean = false
+  if (!isNode) {
+    if (w.isDevice) {
+      device = true
+    } else {
+      if (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        )
+      ) {
+        device = true
+        w.isDevice = true
+      }
+    }
+  }
+  return device
+}
+
+export const isIOS = (): boolean => {
+  let isIOS: boolean = false
+  if (!isNode) {
+    if (w.isIOS) {
+      isIOS = true
+    } else {
+      if (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)) {
+        isIOS = true
+        w.isIOS = true
+      }
+    }
+  }
+  return isIOS
+}
+
+export const urlParam = (name, url) => {
+  var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(
+    isNode || url ? url : window.location.href
+  )
+  if (results && results[1]) {
+    return decodeURI(results[1]) || 0
+  }
+  return null
 }
 
 export const replaceLast = (

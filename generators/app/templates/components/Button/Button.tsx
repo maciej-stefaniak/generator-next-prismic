@@ -6,11 +6,13 @@ type OnClick = (event) => void
 type IButtonProps = {
   onClick?: OnClick
   className?: string
+  type?: 'button' | 'submit' | 'reset'
   children?: React.ReactNode | React.ReactNode[]
 }
 
 const Button: React.SFC<IButtonProps> = ({
   onClick,
+  type = 'button',
   children,
   className = ''
 }) => {
@@ -22,7 +24,7 @@ const Button: React.SFC<IButtonProps> = ({
   }
 
   return (
-    <button className={`Button ${className}`} onClick={handleClick}>
+    <button type={type} className={`Button ${className}`} onClick={handleClick}>
       <span>{children}</span>
     </button>
   )

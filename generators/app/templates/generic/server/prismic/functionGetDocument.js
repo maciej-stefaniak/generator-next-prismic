@@ -1,11 +1,9 @@
 const { log, logError } = require('./../utils')
-const { COMMON_DOCUMENTS } = require('./constants')
+const { COMMON_DOCUMENTS, EXPORT } = require('./constants')
 
-const {
-  fixDocumentType,
-  getSingleDocument,
-  initApi
-} = require('./functionsCommon')
+const { getSingleDocument, initApi } = require('./functionsCommon')
+
+let EXPORT_SIMULATED_CACHE = {}
 
 /**
  * GET DOCUMENT
@@ -14,34 +12,29 @@ const {
  */
 const getDocument = (toResetCache, cache) => (
   req, // @param req: any
-  documentId, // @param documentId: string
-  documentType, // @param documentType: string
+  path, // @param path: string
   lang, // @param lang: string
   onSuccess, // @param onSuccess: (data: any) => void,
   onError // @param onError: (err: string, dataFallback?: any) => void
 ) => {
-  const { documentRTypeF, urlSectionNeeded } = fixDocumentType(documentType)
-
-  let documentIdF = documentId
-  if (documentId && documentId === '*') {
-    documentIdF = `all-${documentType}`
+  if (EXPORT) {
+    if (EXPORT_SIMULATED_CACHE[`${path}-${lang}`]) {
+      onSuccess(EXPORT_SIMULATED_CACHE[`${path}-${lang}`])
+      return
+    }
   }
-  if (documentId.trim() === '') {
-    documentIdF = 'home'
-  }
-
-  cache.get(`${documentIdF}-${lang}`, (err, value) => {
+  cache.get(`${path}-${lang}`, (err, value) => {
     const error = err || !value || value === undefined
     if (error || toResetCache) {
       // Cache key not found OR cache has been reset
       // So we're gonna fetch data from Prismic.io
 
       const onErrorQuery = e => {
-        cache.set(`${documentIdF}-${lang}`, null)
-        logError(`Prismic: ${documentIdF}: something went wrong: ${e}`)
+        cache.set(`${path}-${lang}`, null)
+        logError(`Prismic: ${path}: something went wrong: ${e}`)
 
-        if (COMMON_DOCUMENTS.includes(documentIdF)) {
-          onError(new Error(`Common document ${documentIdF} not found`))
+        if (COMMON_DOCUMENTS.includes(path)) {
+          onError(new Error(`Common document ${path} not found`))
         }
 
         if (toResetCache) {
@@ -53,7 +46,7 @@ const getDocument = (toResetCache, cache) => (
 
       const onErrorInit = error => {
         logError(
-          `Prismic: ${documentIdF}: something went wrong when initializing the Prismic api: ${error}`
+          `Prismic: ${path}: something went wrong when initializing the Prismic api: ${error}`
         )
         onError(error, value)
       }
@@ -68,15 +61,13 @@ const getDocument = (toResetCache, cache) => (
               getSingleDocument(
                 cache,
                 api,
-                documentId,
-                documentIdF,
-                documentType,
-                documentRTypeF,
+                path,
                 lang,
-                urlSectionNeeded,
                 onSuccess,
                 onErrorQuery,
-                1
+                1,
+                [],
+                EXPORT ? EXPORT_SIMULATED_CACHE : null
               )
             } catch (err) {
               onErrorInit(err)
@@ -90,7 +81,7 @@ const getDocument = (toResetCache, cache) => (
         onError(err, value)
       }
     } else {
-      log(`Prismic: cache: document: ${documentIdF} : ${lang}`)
+      log(`Prismic: cache: document: ${path} : ${lang}`)
       onSuccess(value)
     }
   })

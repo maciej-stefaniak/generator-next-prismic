@@ -16,7 +16,7 @@
 
 .LazyImg-el {
   opacity: 1;
-  transition: opacity 235ms;
+  transition: opacity 300ms;
   will-change: opacity;
   width: 100%;
   display: block;
@@ -30,6 +30,12 @@
   }
   svg {
     max-width: 100%;
+  }
+}
+
+.LazyImgObserved {
+  .LazyImg-el {
+    transition: opacity 300ms 50ms;
   }
 }
 

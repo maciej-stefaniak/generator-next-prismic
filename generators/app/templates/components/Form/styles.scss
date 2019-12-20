@@ -1,0 +1,619 @@
+@import '../Layout/common/colors';
+@import '../Layout/common/breakpoints';
+
+.InputStyled {
+  border: 1px solid $greyLineColor;
+  margin-bottom: 20px;
+  min-height: 62px;
+  position: relative;
+
+  label {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    color: #888888;
+    top: 14px;
+    font-size: 13px;
+    transition: all 200ms;
+    z-index: 1;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  select {
+    z-index: 2;
+    position: relative;
+    padding: 30px 20px 10px;
+    display: block;
+    min-width: 100%;
+    min-width: calc(100% + 2px);
+    color: #888888;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 21px;
+    margin: -1px;
+    border: 1px solid transparent;
+    outline: none;
+    appearance: none;
+    border-radius: 0;
+    background: transparent;
+    transition: border 200ms, color 200ms;
+    caret-color: $primaryTextColor;
+  }
+
+  ::-webkit-input-placeholder {
+    color: #888888;
+    opacity: 1;
+  }
+  ::-moz-placeholder {
+    color: #888888;
+    opacity: 1;
+  }
+  :-ms-input-placeholder {
+    color: #888888;
+    opacity: 1;
+  }
+  :-moz-placeholder {
+    color: #888888;
+    opacity: 1;
+  }
+
+  textarea {
+    min-height: 184px;
+    max-width: 100%;
+  }
+
+  select:invalid {
+    color: #888888;
+  }
+
+  .input-icon {
+    position: absolute;
+    right: 20px;
+    height: 18px;
+    width: 18px;
+    top: 50%;
+    margin-top: -9px;
+    svg {
+      display: block;
+      widows: 100%;
+      height: auto;
+    }
+  }
+
+  .select-arrow {
+    position: absolute;
+    right: 20px;
+    height: 6px;
+    width: 10px;
+    top: 50%;
+    margin-top: -3px;
+    svg {
+      display: block;
+      widows: 100%;
+      height: auto;
+    }
+  }
+
+  .calendar-icon {
+    position: absolute;
+    right: 20px;
+    height: 18px;
+    width: 18px;
+    top: 50%;
+    margin-top: -9px;
+    svg {
+      display: block;
+      widows: 100%;
+      height: auto;
+    }
+  }
+}
+
+/* DayPicker styles */
+.DayP .DayPicker {
+  display: inline-block;
+  font-size: 1rem;
+}
+.DayPicker-wrapper {
+  position: relative;
+  flex-direction: row;
+  padding-bottom: 1em;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.DayPicker-Months {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.DayPicker-Month {
+  display: table;
+  margin: 0 1em;
+  margin-top: 1em;
+  border-spacing: 0;
+  border-collapse: collapse;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.DayPicker-NavButton {
+  position: absolute;
+  top: 1em;
+  right: 1.5em;
+  left: auto;
+  display: inline-block;
+  margin-top: 2px;
+  width: 1.25em;
+  height: 1.25em;
+  background-position: center;
+  background-size: 50%;
+  background-repeat: no-repeat;
+  color: #8b9898;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.DayPicker-NavButton--prev {
+  position: absolute;
+  left: 20px;
+  top: 10px;
+  background: url('/static/images/arrow-dark-thin-down.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotate(90deg);
+  background-size: 12px auto;
+  transform-origin: center;
+  width: 20px;
+}
+
+.DayPicker-NavButton--next {
+  position: absolute;
+  right: 16px;
+  top: 10px;
+  background: url('/static/images/arrow-dark-thin-down.svg');
+  background-size: 12px auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotate(-90deg);
+  transform-origin: center;
+
+  width: 20px;
+}
+
+.DayPicker-NavButton--interactionDisabled {
+  display: none;
+}
+
+.DayPicker-Caption {
+  display: table-caption;
+  margin-bottom: 20px;
+  padding: 0 20px;
+  text-align: left;
+
+  > div {
+    font-weight: 500;
+    font-size: 15px;
+    text-align: center;
+  }
+}
+
+.DayPicker-Weekdays {
+  display: table-header-group;
+  margin-top: 1em;
+}
+
+.DayPicker-WeekdaysRow {
+  display: table-row;
+}
+
+.DayPicker-Weekday {
+  display: table-cell;
+  padding: 0.5em;
+  color: #4a4a4a;
+  text-align: center;
+  font-size: 13px;
+
+  abbr[title] {
+    border-bottom: none;
+    text-decoration: none;
+  }
+}
+
+.DayPicker-Body {
+  display: table-row-group;
+}
+
+.DayPicker-Week {
+  display: table-row;
+}
+
+.DayPicker-Day {
+  display: table-cell;
+  padding: 0.62em 0.5em;
+  border-radius: 50%;
+  vertical-align: middle;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+}
+
+.DayPicker-WeekNumber {
+  display: table-cell;
+  padding: 0.5em;
+  min-width: 1em;
+  border-right: 1px solid #eaecec;
+  color: #8b9898;
+  vertical-align: middle;
+  text-align: right;
+  font-size: 0.75em;
+  cursor: pointer;
+}
+
+.DayPicker--interactionDisabled .DayPicker-Day {
+  cursor: default;
+}
+
+.DayPicker-Footer {
+  padding-top: 0.5em;
+}
+
+.DayPicker-TodayButton {
+  border: none;
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  color: $primaryLightColor;
+  font-size: 0.875em;
+  cursor: pointer;
+}
+
+/* Default modifiers */
+.DayPicker-Day--today {
+  color: $primaryColor;
+  font-weight: bold;
+}
+
+.DayPicker-Day--outside {
+  color: #8b9898;
+  cursor: default;
+}
+
+.DayPicker-Day--disabled {
+  color: #dce0e0;
+  cursor: default;
+
+}
+
+/* Example modifiers */
+.DayPicker-Day--sunday {
+  background-color: #f7f8f8;
+
+  &:not(.DayPicker-Day--today) {
+    color: #dce0e0;
+  }
+}
+
+.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+  position: relative;
+  background-color: $darkLineColor;
+  color: #f0f8ff;
+
+  &:hover {
+    background-color: #000;
+  }
+}
+
+.DayPicker:not(.DayPicker--interactionDisabled)
+  .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover {
+  background-color: #f2f2f2;
+}
+
+/* DayPickerInput */
+
+.DayPickerInput {
+  display: inline-block;
+  width: 100%;
+  input {
+    caret-color: transparent !important;
+  }
+}
+
+.DayPickerInput-OverlayWrapper {
+  position: relative;
+  z-index: 999;
+}
+
+.DayPickerInput-Overlay {
+  position: absolute;
+  left: 50%;
+  margin-top: 9px;
+  transform: translateX(-50%);
+  z-index: 1;
+  background: white;
+  border: 1px solid $darkLineColor;
+  box-shadow: none;
+}
+
+.InputStyled.with-anim {
+  label {
+    top: 14px;
+    font-size: 13px;
+    transition: all 200ms;
+    z-index: 1;
+  }
+
+  input,
+  textarea,
+  select {
+    transition: transform 200ms, font-size 200ms, color 200ms, border 200ms,
+      background 200ms;
+
+    &:placeholder-shown {
+      padding-top: 20px;
+      padding-bottom: 20px;
+
+      & + label {
+        color: #888888;
+        transform: translateY(9px);
+        font-size: 16px;
+        pointer-events: none;
+      }
+    }
+  }
+  ::-webkit-input-placeholder {
+    color: transparent;
+    opacity: 0;
+  }
+  ::-moz-placeholder {
+    color: transparent;
+    opacity: 0;
+  }
+  :-ms-input-placeholder {
+    color: transparent;
+    opacity: 0;
+  }
+  :-moz-placeholder {
+    color: transparent;
+    opacity: 0;
+  }
+}
+
+.CheckboxStyled {
+  border: none;
+  min-height: 24px;
+  padding-top: 3px;
+
+  input {
+    padding: 0;
+    margin-right: 20px;
+    width: 24px;
+    min-width: 24px;
+    height: 24px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+    border: 1px solid $greyLineColor;
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      left: 50%;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      transform: translate3d(-50%, -50%, 0);
+      background: url('/static/images/check-white.svg') center no-repeat;
+      background-size: contain;
+      opacity: 0;
+    }
+
+    &:checked {
+      background: $darkLineColor;
+      &:after {
+        opacity: 1;
+      }
+    }
+
+    &:hover,
+    &:focus {
+      border: 1px solid $darkLineColor;
+    }
+  }
+
+  label {
+    top: 0;
+    left: 0;
+    right: 0;
+    padding-left: 38px;
+    position: relative;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 400;
+    display: block;
+    line-height: 1.53;
+    color: #888888;
+  }
+}
+
+.RadioStyled {
+  border: none;
+  min-height: 24px;
+  padding-top: 3px;
+  margin-bottom: 17px;
+
+  input {
+    padding: 0;
+    margin-right: 20px;
+    width: 24px;
+    min-width: 24px;
+    height: 24px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid $greyLineColor;
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      left: 50%;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      transform: translate3d(-50%, -50%, 0);
+      background: $darkLineColor;
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    &:checked {
+      &:after {
+        opacity: 1;
+      }
+    }
+
+    &:hover,
+    &:focus {
+      border: 1px solid $darkLineColor;
+    }
+  }
+
+  label {
+    top: -2px;
+    left: 0;
+    right: 0;
+    padding-left: 38px;
+    position: relative;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    display: block;
+    line-height: 1.6;
+    color: #888888;
+  }
+}
+
+form.submitted .InputStyled {
+  input,
+  textarea,
+  select {
+    &:invalid {
+      border: 1px solid $errorColor;
+    }
+  }
+  &.with-error {
+    input,
+    textarea,
+    select {
+      border: 1px solid $errorColor !important;
+      &:not(:placeholder-shown) {
+        & + label {
+          color: $errorColor;
+        }
+      }
+    }
+    label {
+      color: $errorColor;
+    }
+  }
+}
+
+html.js form .InputStyled {
+  input,
+  textarea,
+  select {
+    &:focus,
+    &:active {
+      border: 1px solid $darkLineColor;
+    }
+  }
+}
+
+.Form-error {
+  transition: height 350ms;
+  width: 100%;
+  display: flex;
+  position: relative;
+  border: 1px solid $errorColor;
+  padding: 16px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  img {
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    margin-top: 3px;
+  }
+  p {
+    flex-grow: 1;
+  }
+  span {
+    display: block;
+  }
+}
+.Form-error-single-wrapper {
+  display: block;
+}
+
+.Counter {
+  background: #f2f2f2;
+  margin-bottom: 20px;
+  min-height: 62px;
+  position: relative;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #888888;
+  font-size: 20px;
+}
+.Counter-right  {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.Counter-indicator {
+  font-size: 13px;
+  padding: 0 12px;
+  
+  @media (max-width: $breakpoint-mobile) {
+    display: none;
+  }
+}
+.Counter-number {
+  font-weight: 600;
+  font-size: 15px;
+  width: 43px;
+  text-align: center;
+  color: $darkLineColor;
+}
+.Counter-btn {
+  padding: 0 !important;
+  width: 32px;
+  height: 32px;
+  appearance: none;
+  font-size: 18px;
+  & > span > span {
+    position: relative;
+    margin-top: 3px;
+    display: block;
+  }
+}

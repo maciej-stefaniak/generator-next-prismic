@@ -9,7 +9,9 @@ const AnimOnScroll = (props: IAnimOnScrollProps) => {
   const NodeTag = props.node ? props.node : 'span'
 
   return isIE || props.disable ? (
-    <NodeTag className={props.className || ''}>{props.children}</NodeTag>
+    <NodeTag key="No-anim-on-scroll" className={props.className || ''}>
+      {props.children}
+    </NodeTag>
   ) : (
     <AnimOnScrollNoIE {...props} />
   )

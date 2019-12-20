@@ -1,4 +1,6 @@
 import Parser from 'html-react-parser'
+import { websiteURL } from '../constants'
+
 import { isNode } from '.'
 
 export const renderMeta = (meta_tags: any[]) => {
@@ -6,7 +8,7 @@ export const renderMeta = (meta_tags: any[]) => {
   try {
     let tags = ''
     meta_tags.map(tag => {
-      tags += tag.text
+      tags += (tag.text || '').replace(new RegExp('{baseUrl}', 'g'), websiteURL)
     })
     return tags ? Parser(tags) : null
   } catch (e) {

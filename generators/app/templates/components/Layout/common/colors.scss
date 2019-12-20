@@ -1,3 +1,8 @@
 $primaryTextColor: #000;
 $primaryColor: <%= primaryColor %>;
 $primaryLightColor: lighten(<%= primaryColor %>, 5%);
+
+$darkLineColor: #1a1a1a;
+$greyLineColor: #c7c7c7;
+
+$errorColor: #d82020;

@@ -1,6 +1,7 @@
 export { default as Layout } from './Layout/Layout'
 export { default as Footer } from './Footer/Footer'
 export { default as Navbar } from './Navbar/Navbar'
+export { default as CookieMessage } from './CookieMessage/CookieMessage'
 
 <% if (baseComponents.includes('MetaData')) { %>export { default as MetaData } from './MetaData/MetaData'<% } %>
 <% if (baseComponents.includes('Markdown')) { %>export { default as Markdown } from './Markdown/Markdown'<% } %>
@@ -22,4 +23,23 @@ export { default as Demo } from './Demo/Demo'<% } %>
 <% if (baseComponents.includes('Anims')) { %>
 // Anim helpers
 export { default as Transform } from './Anims/Transform'
-export { default as AnimOnScroll } from './AnimOnScroll/AnimOnScroll'<% } %>
+export { default as AnimOnScroll } from './AnimOnScroll/AnimOnScroll'
+export { default as Parallax } from './Anims/Parallax/Parallax'
+<% } %>
+
+<% if (baseComponents.includes('Form')) { %>
+export { default as InputStyled } from './Form/InputStyled'
+export { default as Select } from './Form/Select'
+export { default as Input } from './Form/Input'
+export { default as Textarea } from './Form/Textarea'
+export { default as DatePicker } from './Form/DatePicker'
+export { default as Checkbox } from './Form/Checkbox'
+export { default as Radio } from './Form/Radio'
+export { default as Counter } from './Form/Counter'
+export { default as FormError } from './Form/FormError'
+export { default as ProgressButton } from './ProgressButton/ProgressButton'
+<% } %>
+
+<% if (baseComponents.includes('GoogleMap')) { %>
+export { default as GoogleMap } from './GoogleMap/GoogleMap'
+<% } %>

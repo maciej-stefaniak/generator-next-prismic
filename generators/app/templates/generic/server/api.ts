@@ -21,8 +21,7 @@ module.exports = (
     try {
       prismicApi.getDocumentsPage(
         req,
-        req.query.id,
-        req.query.type,
+        req.query.path,
         req.query.lang,
         data => {
           res.status(200).send({ ...data, dev })
@@ -70,7 +69,6 @@ module.exports = (
       prismicApi.getDocument(
         req,
         '*',
-        req.query.type,
         req.query.lang,
         data => {
           res.status(200).send(data)
