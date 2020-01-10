@@ -3,8 +3,8 @@
   "version": "1.1.1",
   "description": "Create a Next.js project connected to Prismic CMS with Yeoman",
   "author": {
-    "name": "Jon Ander Perez",
-    "email": "jonanderdev@gmail.com"
+    "name": "Appico",
+    "email": "business@appico.com"
   },
   "files": [
     "generators"
@@ -71,6 +71,6 @@
     "pretest": "eslint .",
     "test": "jest"
   },
-  "repository": "jonanderdev/generator-next-prismic",
+  "repository": "appico/generator-next-prismic",
   "license": "MIT"
 }

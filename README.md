@@ -71,4 +71,4 @@ npm install -g generator-next-prismic
 
 ## License
 
-MIT © [Jon Ander Pérez]()
+MIT © [Appico](http://appico.com)
