@@ -29,12 +29,28 @@ body {
   color: $primaryTextColor;
 
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
-
   -webkit-text-size-adjust: 100%;
+
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  //font-display: swap; // testing
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+
+  &,
+  input,
+  button {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+  }
+}
+
+// These elements need sometimes to have the font defined to avoid browser's default one
+input,
+button {
+  font-size: 16px;
 }
 
 a {

@@ -1,8 +1,8 @@
 import * as React from 'react'
 
 import { LazyImg, Transform,
-  Button,
-  GoogleMap
+  Button<% if (baseComponents.includes('GoogleMap')) { %>,
+  GoogleMap<% } %>
 } from '../'
 
 import DemoForm from './DemoForm'

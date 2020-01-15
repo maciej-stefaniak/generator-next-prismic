@@ -44,25 +44,29 @@ const DatePicker = ({
 }) => {
   const [dateL, setDateL] = useState()
 
-  const datePickerLocalization = CALENDAR_LOCALE[lang]
-    ? {
-        locale: lang,
-        months: CALENDAR_LOCALE[lang].months,
-        weekdaysLong: CALENDAR_LOCALE[lang].weekdaysLong,
-        weekdaysShort: CALENDAR_LOCALE[lang].weekdaysShort,
-        firstDayOfWeek: 0
-      }
-    : {}
+  const datePickerLocalization =
+    CALENDAR_LOCALE && CALENDAR_LOCALE[lang]
+      ? {
+          locale: lang,
+          months: CALENDAR_LOCALE[lang].months,
+          weekdaysLong: CALENDAR_LOCALE[lang].weekdaysLong,
+          weekdaysShort: CALENDAR_LOCALE[lang].weekdaysShort,
+          firstDayOfWeek: 0
+        }
+      : {}
 
-  useEffect(() => {
-    if (minDate) {
-      const minDateO =
-        minDate.length <= 10 ? parseDate(minDate) : new Date(minDate)
-      if (minDateO && minDateO > dateL) {
-        setDateL(minDateO)
+  useEffect(
+    () => {
+      if (minDate) {
+        const minDateO =
+          minDate.length <= 10 ? parseDate(minDate) : new Date(minDate)
+        if (minDateO && minDateO > dateL) {
+          setDateL(minDateO)
+        }
       }
-    }
-  }, [minDate])
+    },
+    [minDate]
+  )
 
   return (
     <InputStyled
