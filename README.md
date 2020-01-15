@@ -6,11 +6,19 @@ This generator will create a project with React, Typescript and Next.js to allow
 
 ## Installation
 
-First, install [Yeoman](http://yeoman.io) and generator-next-prismic using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
+First, install [Yeoman](http://yeoman.io) using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
 
 ```
 npm install -g yo
-npm install -g generator-next-prismic
+```
+
+Then clone this project and after installing dependencies link it.
+
+```
+git clone https://github.com/appico/generator-next-prismic.git
+cd generator-next-prismic
+npm i
+npm link
 ```
 
 Then to generate your new project (in any other folder) run the following:
@@ -18,6 +26,8 @@ Then to generate your new project (in any other folder) run the following:
 ```
 yo next-prismic
 ```
+
+To update the generator or to simply change the branch it points to, just go to the cloned project folder and update it with git
 
 ## About the generated project
 
@@ -30,7 +40,7 @@ The app is set as a PWA (Progressive Web App) providing:
 - In the server an API connected to Prismic to deliver content to the client
 - Offline support with a service worker
 - A manifest and robots.txt files
-- Linting & code formatting with Eslint, Prettier, Airbnb rules ...
+- Linting & code formatting with Eslint, Prettier ...
 - Styling with SCSS files and with Autoprefixer. Also allows to add custom PostCSS config.
 - A Redux store to get the content from the API
 
