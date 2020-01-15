@@ -93,7 +93,7 @@
     "webpack-bundle-analyzer": "^3.3.2"
   },
   "engines": {
-    "node": "8.11.x"
+    "node": "12.14.x"
   },
   "browserslist": [
     "last 2 versions",
