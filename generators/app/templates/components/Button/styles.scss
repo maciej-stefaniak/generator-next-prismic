@@ -1,4 +1,4 @@
-@import '../Layout/common/index.scss';
+@import '../Layout/common/colors';
 
 .Button {
   display: inline-block;
@@ -9,4 +9,5 @@
   cursor: pointer;
   min-height: 62px;
   min-width: 184px;
+  background-color: $primaryColor;
 }
