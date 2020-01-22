@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link } = '../'
+import { Link } from '../'
 
 import { connect } from 'react-redux'
 import { withRouter } from 'next/router'
