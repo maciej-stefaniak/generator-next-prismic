@@ -1,5 +1,5 @@
 import * as React from 'react'
-const { Link } = require('../../server/routes')
+import { Link } = '../'
 
 import { connect } from 'react-redux'
 import { withRouter } from 'next/router'
@@ -49,8 +49,8 @@ class Navbar extends React.Component<INavbarProps> {
       <div>
         <nav>
           {/*
-            <Link route={`/${lang}`}>
-              <a />
+            <Link url={`/${lang}`}>
+              Link Text
             </Link>
           */}
         </nav>
